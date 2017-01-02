@@ -9,10 +9,10 @@ export function filter (query = {}, paginate = {}) {
   if (result.filters.$skip === undefined) {
     result.filters.$skip = 0;
   }
-  // result.filters.$skip = Math.min(
-  //   result.filters.$skip || 0,
-  //   10000 - result.filters.$limit
-  // );
+
+  if (result.filters.$select === undefined) {
+    result.filters.$select = true;
+  }
 
   return result;
 }

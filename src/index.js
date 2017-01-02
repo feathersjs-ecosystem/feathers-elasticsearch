@@ -30,10 +30,7 @@ class Service {
 
   // GET
   find (params) {
-    return find(this, params)
-      .then(results => {
-        return results;
-      });
+    return find(this, params);
   }
 
   // GET
@@ -71,7 +68,10 @@ class Service {
       }
     );
 
-    return this.Model.index(updateParams)
+    // The first get is a bit of an overhead, as per the spec we want to update only existing elements.
+    // TODO: add `allowUpsert` option which will allow upserts and allieviate the need for the first get.
+    return get(this, id, merge(true, params, { query: { $select: false } }))
+      .then(result => this.Model.index(updateParams))
       .then(result => get(this, result._id, params))
       .catch(error => errorHandler(error, id));
   }
@@ -87,7 +87,7 @@ class Service {
         body: {
           doc: trimMeta(data, this.metaPrefix)
         },
-        _source: filters.$select || true
+        _source: filters.$select
       }
     );
 
@@ -120,12 +120,15 @@ class Service {
           return result;
         }
 
-        return this.Model.bulk({
-          refresh: this.params.refresh || false,
-          body: data.map(doc => ({
-            delete: { _index: this.params.index, _type: this.params.type, _id: doc[this.id] }
-          }))
-        })
+        return this.Model.bulk(merge(
+          true,
+          {
+            body: data.map(doc => ({
+              delete: { _id: doc[this.id] }
+            }))
+          },
+          this.params
+        ))
         .then(() => result);
       });
   }
@@ -142,7 +145,7 @@ function find (service, params) {
   let findParams = merge(
     true,
     {
-      _source: filters.$select || true,
+      _source: filters.$select,
       body: {}
     },
     service.params
@@ -182,9 +185,9 @@ function get (service, id, params) {
   let { filters } = filter(params.query, service.pagination);
   let getParams = merge(
     true,
-    { _source: filters.$select || true },
+    { _source: filters.$select },
     service.params,
-    { id }
+    { id: String(id) }
   );
 
   return service.Model.get(getParams)
