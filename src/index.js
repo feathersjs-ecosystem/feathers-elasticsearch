@@ -144,18 +144,16 @@ class Service {
         .catch(error => errorHandler(error, id));
     }
 
-    return find(this, params)
+    return find(this, merge(true, params, { paginate: false }))
       .then(result => {
-        let data = (Array.isArray(result) ? result : result.data);
-
-        if (!data.length) {
+        if (!result.length) {
           return result;
         }
 
         return this.Model.bulk(merge(
           true,
           {
-            body: data.map(doc => ({
+            body: result.map(doc => ({
               delete: { _id: doc[this.id] }
             }))
           },
@@ -172,7 +170,8 @@ export default function init (options) {
 }
 
 function find (service, params) {
-  let { filters, query } = filter(params.query, service.paginate);
+  let paginate = params.paginate !== undefined ? params.paginate : service.paginate;
+  let { filters, query } = filter(params.query, paginate);
   let esQuery = parseQuery(query);
   let findParams = merge(
     true,
@@ -209,7 +208,7 @@ function find (service, params) {
       service.id,
       service.metaPrefix,
       filters,
-      service.paginate.default !== undefined
+      !!(paginate && paginate.default)
     ));
 }
 
