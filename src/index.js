@@ -210,7 +210,7 @@ function find (service, params) {
   delete findParams.refresh;
 
   if (esQuery) {
-    findParams.body.query = esQuery;
+    findParams.body.query = { constant_score: { filter: { bool: esQuery } } };
   }
 
   if (undefined !== filters.$limit) {
