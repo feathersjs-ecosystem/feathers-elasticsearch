@@ -41,20 +41,52 @@ class Service {
 
   // POST
   create (data, params) {
-    let id = data[this.id];
-    let hasId = undefined !== id;
-    let createParams = merge(true, this.params, { body: data });
-    // Elasticsearch `create` expects _id, whereas index does not.
-    let method = hasId ? 'create' : 'index';
+    let bulkCreateParams;
 
-    if (hasId) {
-      delete createParams.body[this.id];
-      createParams._id = String(id);
+    // Check if we are adding a single items.
+    if (!Array.isArray(data)) {
+      let id = data[this.id];
+      let hasId = undefined !== id;
+      let createParams = merge(true, this.params, { body: data });
+      // Elasticsearch `create` expects _id, whereas index does not.
+      // Our `create` supports both forms.
+      let method = hasId ? 'create' : 'index';
+
+      if (hasId) {
+        delete createParams.body[this.id];
+        createParams._id = String(id);
+      }
+
+      return this.Model[method](createParams)
+        .then(result => get(this, result._id, params))
+        .catch(error => errorHandler(error, id));
     }
 
-    return this.Model[method](createParams)
-      .then(result => get(this, result._id, params))
-      .catch(error => errorHandler(error, id));
+    bulkCreateParams = merge(true, this.params);
+    // Elasticsearch bulk API takes two objects per index or create operation.
+    // First is the action descriptor, the second is the argument.
+    // https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/api-reference.html#api-bulk
+    bulkCreateParams.body = data.reduce((result, docArg) => {
+      let doc = Object.assign(docArg);
+
+      if (doc[this.id] !== undefined) {
+        result.push({ create: { _id: doc[this.id] } });
+        delete doc[this.id];
+      } else {
+        result.push({ index: {} });
+      }
+
+      result.push(doc);
+
+      return result;
+    }, []);
+
+    return this.Model.bulk(bulkCreateParams)
+      .then(result => mget(
+        this,
+        result.items.map(item => (item.index || item.create)._id),
+        params
+      ));
   }
 
   // PUT
@@ -192,6 +224,22 @@ function get (service, id, params) {
 
   return service.Model.get(getParams)
     .then(result => mapGet(result, service.id, service.metaPrefix));
+}
+
+function mget (service, ids, params) {
+  let { filters } = filter(params.query, service.paginate);
+  let mgetParams = merge(
+    true,
+    { _source: filters.$select },
+    service.params
+  );
+
+  mgetParams.body = { ids };
+
+  return service.Model.mget(mgetParams)
+    .then(result =>
+      result.docs.map(doc => mapGet(doc, service.id, service.metaPrefix))
+    );
 }
 
 function errorHandler (error, id) {
