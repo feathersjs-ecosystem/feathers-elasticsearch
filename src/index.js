@@ -111,24 +111,48 @@ class Service {
   // PATCH
   patch (id, data, params) {
     let { filters } = filter(params.query, this.paginate);
-    let patchParams = merge(
-      true,
-      this.params,
-      {
-        id: String(id),
-        body: {
-          doc: trimMeta(data, this.metaPrefix)
-        },
-        _source: filters.$select
-      }
-    );
 
-    // The `get` here is just to throw 404 if the document does not exist.
-    // Elasticsearch does upsert, normally.
-    return get(this, id, params)
-      .then(() => this.Model.update(patchParams))
-      .catch(error => errorHandler(error, id))
-      .then(result => mapPatch(result, this.id, this.metaPrefix));
+    if (id !== null) {
+      let patchParams = merge(
+        true,
+        this.params,
+        {
+          id: String(id),
+          body: {
+            doc: trimMeta(data, this.metaPrefix)
+          },
+          _source: filters.$select
+        }
+      );
+      // The `get` here is just to throw 404 if the document does not exist.
+      // Elasticsearch does upsert, normally.
+      return get(this, id, params)
+        .then(() => this.Model.update(patchParams))
+        .catch(error => errorHandler(error, id))
+        .then(result => mapPatch(result, this.id, this.metaPrefix));
+    }
+
+    return find(this, merge.recursive(true, params, { paginate: false, query: { $select: false } }))
+      .then(results => {
+        let bulkUpdateParams = merge(true, this.params, { _source: filters.$select });
+
+        if (!results.length) {
+          return results;
+        }
+
+        bulkUpdateParams.body = results.reduce((result, doc) => {
+          result.push({ update: { _id: doc[this.id] } });
+          result.push({ doc: trimMeta(data, this.metaPrefix) });
+
+          return result;
+        }, []);
+
+        return this.Model.bulk(bulkUpdateParams);
+      })
+      .then(results => results.items
+          .filter(result => result.update.result === 'updated')
+          .map(result => mapPatch(result.update, this.id, this.metaPrefix))
+      );
   }
 
   // DELETE
