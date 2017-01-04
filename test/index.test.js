@@ -1,11 +1,13 @@
 /* eslint-env mocha */
 import { expect } from 'chai';
 // remember to import example as well!
-import { base } from 'feathers-service-tests';
+import { base, example } from 'feathers-service-tests';
 import feathers from 'feathers';
 import errors from 'feathers-errors';
 import elasticsearch from 'elasticsearch';
+
 import service from '../src';
+import server from './test-app';
 
 describe('Elasticsearch Service', () => {
   const app = feathers();
@@ -27,6 +29,13 @@ describe('Elasticsearch Service', () => {
             people: {
               properties: {
                 name: {
+                  type: 'keyword'
+                }
+              }
+            },
+            todos: {
+              properties: {
+                text: {
                   type: 'keyword'
                 }
               }
@@ -66,4 +75,11 @@ describe('Elasticsearch Service', () => {
   });
 
   base(app, errors, 'people', '_id');
+
+  describe('Elasticsearch service example test', () => {
+    after(done => server.close(() => done()));
+
+    example('_id');
+  });
 });
+
