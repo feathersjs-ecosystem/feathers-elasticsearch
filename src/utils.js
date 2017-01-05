@@ -2,7 +2,6 @@
 
 import feathersFilter from 'feathers-query-filters';
 import errors from 'feathers-errors';
-import merge from 'merge';
 
 const queryCriteriaMap = {
   $nin: 'must_not.terms',
@@ -17,7 +16,7 @@ const queryCriteriaMap = {
 export function filter (query = {}, paginate = {}) {
   let result = feathersFilter(query, paginate);
 
-  if (result.filters.$skip === undefined) {
+  if (result.filters.$skip === undefined || isNaN(result.filters.$skip)) {
     result.filters.$skip = 0;
   }
 
@@ -25,11 +24,17 @@ export function filter (query = {}, paginate = {}) {
     result.filters.$select = true;
   }
 
+  if (typeof result.filters.$sort === 'object') {
+    result.filters.$sort = Object.keys(result.filters.$sort)
+      .map(key => key + ':' + (result.filters.$sort[key] > 0 ? 'asc' : 'desc'));
+  }
+
   return result;
 }
 
-export function mapFind (results, idProp, metaPrefix, filters, hasPagination) {
-  let data = results.hits.hits.map(result => mapGet(result, idProp, metaPrefix));
+export function mapFind (results, idProp, metaProp, filters, hasPagination) {
+  let data = results.hits.hits
+    .map(result => mapGet(result, idProp, metaProp));
 
   if (hasPagination) {
     return {
@@ -43,47 +48,36 @@ export function mapFind (results, idProp, metaPrefix, filters, hasPagination) {
   return data;
 }
 
-export function mapGet (result, idProp, metaPrefix) {
-  return merge(
-    true,
-    result._source,
+export function mapGet (item, idProp, metaProp) {
+  return mapItem(item, idProp, metaProp);
+}
+
+export function mapPatch (item, idProp, metaProp) {
+  let normalizedItem = removeProps(item, 'get');
+
+  normalizedItem._source = item.get._source;
+
+  return mapItem(normalizedItem, idProp, metaProp);
+}
+
+function mapItem (item, idProp, metaProp) {
+  let meta = removeProps(item, '_source');
+
+  return Object.assign(
     {
-      [idProp]: result._id,
-      [metaPrefix + 'type']: result._type
-    }
+      [metaProp]: meta,
+      [idProp]: meta._id
+    },
+    item._source
   );
 }
 
-export function mapUpdate (result, idProp, metaPrefix) {
-  return merge(
-    true,
-    result._source,
-    {
-      [idProp]: result._id,
-      [metaPrefix + 'type']: result._type
-    }
-  );
-}
+export function removeProps (object, ...props) {
+  let result = Object.assign({}, object);
 
-export function mapPatch (result, idProp, metaPrefix) {
-  return merge(
-    true,
-    result.get._source,
-    {
-      [idProp]: result._id,
-      [metaPrefix + 'type']: result._type
-    }
-  );
-}
+  props.forEach(prop => delete result[prop]);
 
-export function trimMeta (data, prefix) {
-  return Object.keys(data)
-    .filter(key => key.indexOf(prefix) !== 0)
-    .reduce((result, key) => {
-      result[key] = data[key];
-
-      return result;
-    }, {});
+  return result;
 }
 
 export function parseQuery (query) {
