@@ -311,7 +311,7 @@ describe('Elasticsearch utils', () => {
         active: true
       };
       let expectedResult = {
-        must: [
+        filter: [
           { term: { user: 'doug' } },
           { term: { age: 23 } },
           { term: { active: true } }
@@ -328,7 +328,7 @@ describe('Elasticsearch utils', () => {
         age: { $in: [ 23, 24, 50 ] }
       };
       let expectedResult = {
-        must: [
+        filter: [
           { terms: { user: [ 'doug', 'bob' ] } },
           { terms: { age: [ 23, 24, 50 ] } }
         ]
@@ -344,7 +344,7 @@ describe('Elasticsearch utils', () => {
         age: { $in: [ 23, 24 ] }
       };
       let expectedResult = {
-        must: [
+        filter: [
             { term: { user: 'doug' } },
             { terms: { age: [ 23, 24 ] } }
         ]
@@ -377,7 +377,7 @@ describe('Elasticsearch utils', () => {
         cars: { $gte: 2, $lt: 5 }
       };
       let expectedResult = {
-        must: [
+        filter: [
           { range: { age: { gt: 30 } } },
           { range: { age: { lt: 40 } } },
           { range: { likes: { lte: 100 } } },
@@ -400,7 +400,7 @@ describe('Elasticsearch utils', () => {
         should: [
           {
             bool: {
-              must: [
+              filter: [
                 { term: { user: 'Adam' } },
                 { range: { age: { gt: 40 } } }
               ]
@@ -408,7 +408,7 @@ describe('Elasticsearch utils', () => {
           },
           {
             bool: {
-              must: [
+              filter: [
                 { range: { age: { gt: 40 } } }
               ]
             }
@@ -422,7 +422,7 @@ describe('Elasticsearch utils', () => {
     it('should return all types of queries together', () => {
       let query = {
         $or: [
-          { likes: { $gt: 9, $lt: 12 } },
+          { likes: { $gt: 9, $lt: 12 }, age: { $ne: 10 } },
           { user: { $nin: [ 'Anakin', 'Luke' ] } }
         ],
         age: { $in: [ 12, 13 ] },
@@ -433,9 +433,12 @@ describe('Elasticsearch utils', () => {
         should: [
           {
             bool: {
-              must: [
+              filter: [
                 { range: { likes: { gt: 9 } } },
                 { range: { likes: { lt: 12 } } }
+              ],
+              'must_not': [
+                { term: { age: 10 } }
               ]
             }
           },
@@ -447,7 +450,7 @@ describe('Elasticsearch utils', () => {
             }
           }
         ],
-        must: [
+        filter: [
           { terms: { age: [ 12, 13 ] } },
           { term: { user: 'Obi Wan' } }
         ],

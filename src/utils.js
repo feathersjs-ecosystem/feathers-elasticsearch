@@ -5,11 +5,11 @@ import errors from 'feathers-errors';
 
 const queryCriteriaMap = {
   $nin: 'must_not.terms',
-  $in: 'must.terms',
-  $gt: 'must.range.gt',
-  $gte: 'must.range.gte',
-  $lt: 'must.range.lt',
-  $lte: 'must.range.lte',
+  $in: 'filter.terms',
+  $gt: 'filter.range.gt',
+  $gte: 'filter.range.gte',
+  $lt: 'filter.range.lt',
+  $lte: 'filter.range.lte',
   $ne: 'must_not.term'
 };
 
@@ -117,16 +117,16 @@ export function parseQuery (query) {
       }
 
       // The value is not an object, which means it's supposed to be a primitive.
-      // We need add simple must[{term: {}}] query.
+      // We need add simple filter[{term: {}}] query.
       if (value === null || typeof value !== 'object') {
         if (type !== 'number' && type !== 'string' && type !== 'undefined' && type !== 'boolean') {
           throw new errors.BadRequest(`criteria should be an object or a primitive: ${key} is array`);
         }
 
-        if (!result.must) {
-          result.must = [];
+        if (!result.filter) {
+          result.filter = [];
         }
-        result.must.push({ term: { [key]: value } });
+        result.filter.push({ term: { [key]: value } });
 
         return result;
       // In this case the key is not $or and value is an object,
