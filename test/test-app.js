@@ -17,7 +17,7 @@ const todoService = service({
     default: 2,
     max: 4
   },
-  params: {
+  elasticsearch: {
     index: 'test',
     type: 'todos',
     refresh: true

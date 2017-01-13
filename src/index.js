@@ -1,7 +1,6 @@
 import errors from 'feathers-errors';
 import makeDebug from 'debug';
-import { filter, mapGet, mapFind, mapPatch, parseQuery, removeProps } from './utils';
-import merge from 'merge';
+import { filter, mapGet, mapFind, mapPatch, mapBulk, parseQuery, removeProps } from './utils';
 import Proto from 'uberproto';
 
 const debug = makeDebug('feathers-elasticsearch');
@@ -17,11 +16,11 @@ class Service {
     }
 
     this.Model = options.Model;
-    this.params = options.params || {};
-    this.events = options.events || [];
     this.paginate = options.paginate || {};
+    this.events = options.events || [];
     this.id = options.id || '_id';
     this.meta = options.meta || '_meta';
+    this.esParams = options.elasticsearch || {};
   }
 
   extend (obj) {
@@ -30,7 +29,8 @@ class Service {
 
   // GET
   find (params) {
-    return find(this, params);
+    return find(this, params)
+      .catch(errorHandler);
   }
 
   // GET
@@ -40,164 +40,72 @@ class Service {
   }
 
   // POST
+  // Supports single and bulk creation, with or without id specified.
   create (data, params) {
-    let bulkCreateParams;
-
-    // Check if we are adding a single items.
+    // Check if we are creating single item.
     if (!Array.isArray(data)) {
-      let id = data[this.id];
-      let hasId = undefined !== id;
-      let createParams = Object.assign(
-        { body: removeProps(data, this.meta, this.id) },
-        this.params
-      );
-      // Elasticsearch `create` expects _id, whereas index does not.
-      // Our `create` supports both forms.
-      let method = hasId ? 'create' : 'index';
-
-      if (hasId) {
-        createParams._id = String(id);
-      }
-
-      return this.Model[method](createParams)
-        .then(result => get(this, result._id, params))
-        .catch(error => errorHandler(error, id));
+      return create(this, data, params)
+        .catch(error => errorHandler(error, data[this.id]));
     }
 
-    bulkCreateParams = merge(true, this.params);
-    // Elasticsearch bulk API takes two objects per index or create operation.
-    // First is the action descriptor, the second is the argument.
-    // https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/api-reference.html#api-bulk
-    bulkCreateParams.body = data.reduce((result, doc) => {
-      let id = doc[this.id];
-
-      if (id !== undefined) {
-        result.push({ create: { _id: id } });
-      } else {
-        result.push({ index: {} });
-      }
-
-      result.push(removeProps(doc, this.meta, this.id));
-
-      return result;
-    }, []);
-
-    return this.Model.bulk(bulkCreateParams)
-      .then(result => mget(
-        this,
-        result.items.map(item => (item.index || item.create)._id),
-        params
-      ));
+    return createBulk(this, data, params)
+      .catch(errorHandler);
   }
 
   // PUT
+  // Supports single item update.
   update (id, data, params) {
     let updateParams = Object.assign(
       {
         id: String(id),
         body: removeProps(data, this.meta, this.id)
       },
-      this.params,
+      this.esParams,
+    );
+    let getParams = Object.assign(
+      {},
+      params,
+      { query: { $select: false } }
     );
 
     // The first get is a bit of an overhead, as per the spec we want to update only existing elements.
     // TODO: add `allowUpsert` option which will allow upserts and allieviate the need for the first get.
-    return get(this, id, merge(true, params, { query: { $select: false } }))
+    return get(this, id, getParams)
       .then(() => this.Model.index(updateParams))
       .then(result => get(this, result._id, params))
       .catch(error => errorHandler(error, id));
   }
 
   // PATCH
+  // Supports single and bulk patching.
   patch (id, data, params) {
-    let { filters } = filter(params.query, this.paginate);
-
+    // Check if we are patching single item.
     if (id !== null) {
-      let patchParams = Object.assign(
-        {
-          id: String(id),
-          body: {
-            doc: removeProps(data, this.meta, this.id)
-          },
-          _source: filters.$select
-        },
-        this.params
-      );
-      // The `get` here is just to throw 404 if the document does not exist.
-      // Elasticsearch does upsert, normally.
-      return get(this, id, params)
-        .then(() => this.Model.update(patchParams))
-        .catch(error => errorHandler(error, id))
-        .then(result => mapPatch(result, this.id, this.meta));
-    }
-
-    return find(this, merge.recursive(true, params, { paginate: false, query: { $select: false } }))
-      .then(results => {
-        let bulkUpdateParams = Object.assign({ _source: filters.$select }, this.params);
-
-        if (!results.length) {
-          return results;
-        }
-
-        bulkUpdateParams.body = results.reduce((result, doc) => {
-          result.push({ update: { _id: doc[this.id] } });
-          result.push({ doc: removeProps(data, this.meta, this.id) });
-
-          return result;
-        }, []);
-
-        return this.Model.bulk(bulkUpdateParams);
-      })
-      .then(results => results.items
-          .filter(result => result.update.result === 'updated')
-          .map(result => mapPatch(result.update, this.id, this.meta))
-      );
-  }
-
-  // DELETE
-  remove (id, params) {
-    if (id !== null) {
-      let removeParams = Object.assign(
-        { id: String(id) },
-        this.params
-      );
-
-      return get(this, id, params)
-        .then(result => this.Model
-          .delete(removeParams)
-          .then(() => result)
-        )
+      return patch(this, id, data, params)
         .catch(error => errorHandler(error, id));
     }
 
-    return find(this, merge(true, params, { paginate: false }))
-      .then(result => {
-        if (!result.length) {
-          return result;
-        }
-
-        return this.Model.bulk(Object.assign(
-          {
-            body: result.map(doc => ({
-              delete: { _id: doc[this.id] }
-            }))
-          },
-          this.params
-        ))
-        .then(() => result);
-      });
+    return patchBulk(this, data, params)
+      .catch(errorHandler);
   }
-}
 
-export default function init (options) {
-  debug('Initializing feathers-elasticsearch plugin');
-  return new Service(options);
+  // DELETE
+  // Supports single and bulk removal.
+  remove (id, params) {
+    if (id !== null) {
+      return remove(this, id, params)
+        .catch(error => errorHandler(error, id));
+    }
+
+    return removeBulk(this, params)
+      .catch(errorHandler);
+  }
 }
 
 function find (service, params) {
   let paginate = params.paginate !== undefined ? params.paginate : service.paginate;
   let { filters, query } = filter(params.query, paginate);
-  let esQuery = parseQuery(query);
+  let esQuery = parseQuery(query, service.id);
   let findParams = Object.assign(
     {
       _source: filters.$select,
@@ -208,7 +116,7 @@ function find (service, params) {
         query: esQuery && { bool: esQuery } || undefined
       }
     },
-    service.params
+    service.esParams
   );
 
   // The `refresh` param is not recognised for search in Es.
@@ -231,33 +139,215 @@ function get (service, id, params) {
       _source: filters.$select,
       id: String(id)
     },
-    service.params
+    service.esParams
   );
 
   return service.Model.get(getParams)
     .then(result => mapGet(result, service.id, service.meta));
 }
 
-function mget (service, ids, params) {
-  let { filters } = filter(params.query, service.paginate);
-  let mgetParams = Object.assign(
+function create (service, data, params) {
+  let id = data[service.id];
+  let hasId = undefined !== id;
+  let createParams = Object.assign(
     {
-      _source: filters.$select,
-      body: { ids }
+      id: hasId ? String(id) : undefined,
+      body: removeProps(data, service.meta, service.id)
     },
-    service.params
+    service.esParams
+  );
+  // Elasticsearch `create` expects _id, whereas index does not.
+  // Our `create` supports both forms.
+  let method = hasId ? 'create' : 'index';
+
+  return service.Model[method](createParams)
+    .then(result => get(service, result._id, params));
+}
+
+function createBulk (service, data, params) {
+  let { filters } = filter(params.query, service.paginate);
+  let bulkCreateParams = Object.assign(
+    {
+      // Elasticsearch bulk API takes two objects per index or create operation.
+      // First is the action descriptor, the second is usually the data.
+      // https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/api-reference.html#api-bulk
+      // reduce() here is acting as a map() mapping one element into two.
+      body: data.reduce((result, item) => {
+        let id = item[service.id];
+
+        if (id !== undefined) {
+          result.push({ create: { _id: id } });
+        } else {
+          result.push({ index: {} });
+        }
+        result.push(removeProps(item, service.meta, service.id));
+
+        return result;
+      }, [])
+    },
+    service.esParams
   );
 
-  return service.Model.mget(mgetParams)
+  return service.Model.bulk(bulkCreateParams)
+    .then(results => {
+      let created = mapBulk(results.items, service.id, service.meta);
+      // We are fetching only items which have been correctly created.
+      let mgetParams = Object.assign(
+        {
+          _source: filters.$select,
+          body: {
+            ids: created
+              .filter(item => item._meta.created)
+              .map(item => item._meta._id)
+          }
+        },
+        service.esParams
+      );
+
+      return service.Model.mget(mgetParams)
+        .then(fetched => {
+          let fetchedIndex = 0;
+
+          // We need to return responses for all items, either success or failure,
+          // in the same order as the request.
+          return created.map(createdItem => {
+            if (createdItem._meta.created) {
+              let fetchedItem = mapGet(fetched.docs[fetchedIndex], service.id, service.meta);
+
+              fetchedIndex += 1;
+
+              return fetchedItem;
+            }
+
+            return createdItem;
+          });
+        });
+    });
+}
+
+function patch (service, id, data, params) {
+  let { filters } = filter(params.query, service.paginate);
+  let patchParams = Object.assign(
+    {
+      id: String(id),
+      body: {
+        doc: removeProps(data, service.meta, service.id)
+      },
+      _source: filters.$select
+    },
+    service.esParams
+  );
+  // The `get` here is just to throw 404 if the document does not exist.
+  // Elasticsearch does upsert, normally.
+  return get(service, id, params)
+    .then(() => service.Model.update(patchParams))
+    .then(result => mapPatch(result, service.id, service.meta));
+}
+
+function patchBulk (service, data, params) {
+  let { filters } = filter(params.query, service.paginate);
+  // Poor man's semi-deep object extension. We only want to override params.query.$select here.
+  let findParams = Object.assign(
+    removeProps(params, 'query'),
+    {
+      query: Object.assign(
+        {},
+        params.query,
+        { $select: false }
+      )
+    }
+  );
+
+  // Elasticsearch provides update by query, which is quite sadly somewhat unfit for our purpose here.
+  // Hence the find / bulk-update duo. We need to be aware, that the pagination rules apply here,
+  // therefore the update will be perform on max items at any time (Es default is 5).
+  return find(service, findParams)
+    .then(results => {
+      // The results might be paginated.
+      let found = Array.isArray(results) ? results : results.data;
+      let bulkUpdateParams;
+
+      if (!found.length) {
+        return found;
+      }
+
+      bulkUpdateParams = Object.assign(
+        {
+          _source: filters.$select,
+          body: found.reduce((result, item) => {
+            result.push({ update: { _id: item[service.id] } });
+            result.push({ doc: removeProps(data, service.meta, service.id) });
+
+            return result;
+          }, [])
+        },
+        service.esParams
+      );
+
+      return service.Model.bulk(bulkUpdateParams)
+        .then(results => results.items
+          .filter(item => item.update.result === 'updated')
+          .map(item => mapPatch(item.update, service.id, service.meta))
+        );
+    });
+}
+
+function remove (service, id, params) {
+  let removeParams = Object.assign(
+    { id: String(id) },
+    service.esParams
+  );
+
+  return get(service, id, params)
     .then(result =>
-      result.docs.map(doc => mapGet(doc, service.id, service.meta))
+      service.Model
+        .delete(removeParams)
+        .then(() => result)
     );
 }
 
+function removeBulk (service, params) {
+  return find(service, params)
+    .then(results => {
+      let found = Array.isArray(results) ? results : results.data;
+      let bulkRemoveParams;
+
+      if (!found.length) {
+        return found;
+      }
+
+      bulkRemoveParams = Object.assign(
+        {
+          body: found.map(item => ({
+            delete: { _id: item[service.id] }
+          }))
+        },
+        service.esParams
+      );
+
+      return service.Model.bulk(bulkRemoveParams)
+        .then(results => results.items
+          .map((item, index) => item.delete.result === 'deleted' ? found[index] : false)
+          .filter(item => !!item)
+        );
+    });
+}
+
 function errorHandler (error, id) {
-  if (error.statusCode === 404) {
+  let statusCode = error.statusCode;
+
+  if (statusCode === 404 && id !== undefined) {
     throw new errors.NotFound(`No record found for id '${id}'`);
   }
 
-  throw new errors.GeneralError('Ooops', error);
+  if (errors[statusCode]) {
+    throw new errors[statusCode](error.message, error);
+  }
+
+  throw new errors.GeneralError(error.message, error);
+}
+
+export default function init (options) {
+  debug('Initializing feathers-elasticsearch plugin');
+  return new Service(options);
 }

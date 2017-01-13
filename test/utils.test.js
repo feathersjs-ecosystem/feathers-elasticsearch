@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 import { expect } from 'chai';
-import { filter, mapFind, mapGet, mapPatch, removeProps, parseQuery } from '../src/utils';
+import { filter, mapFind, mapGet, mapPatch, mapBulk, removeProps, parseQuery } from '../src/utils';
 import { errors } from 'feathers-errors';
 
 describe('Elasticsearch utils', () => {
@@ -209,6 +209,7 @@ describe('Elasticsearch utils', () => {
         result: 'updated'
       };
     });
+
     it('should swap around meta and the doc', () => {
       let expectedResult = {
         _id: 12,
@@ -226,11 +227,57 @@ describe('Elasticsearch utils', () => {
         .deep.equal(expectedResult);
     });
 
+    it('should return just meta if patched document not present', () => {
+      delete item.get;
+      let expectedResult = {
+        _id: 12,
+        _meta: {
+          _id: 12,
+          _type: 'people',
+          _index: 'test',
+          result: 'updated'
+        }
+      };
+
+      expect(mapPatch(item, '_id', '_meta')).to
+        .deep.equal(expectedResult);
+    });
+
     it('should not change the original item', () => {
       let itemSnapshot = JSON.stringify(item);
 
       mapPatch(item, '_id', '_meta');
       expect(item).to.deep.equal(JSON.parse(itemSnapshot));
+    });
+  });
+
+  describe('mapBulk', () => {
+    it('should get rid of action name property swap around meta and the doc', () => {
+      let items = [
+        { create: { status: 409, _id: '12' } },
+        { index: { result: 'created', _id: '13' } },
+        { delete: { result: 'deleted' } },
+        { update: { result: 'updated', get: { _source: { name: 'Bob' } } } }
+      ];
+      let expectedResult = [
+        { id: '12', _meta: { status: 409, _id: '12' } },
+        { id: '13', _meta: { result: 'created', _id: '13' } },
+        { _meta: { result: 'deleted' } },
+        { _meta: { result: 'updated' }, name: 'Bob' }
+      ];
+
+      expect(mapBulk(items, 'id', '_meta')).to
+        .deep.equal(expectedResult);
+    });
+
+    it('should not change original items', () => {
+      let items = [
+        { create: { status: 409, _id: '12' } }
+      ];
+      let itemsSnapshot = JSON.stringify(items);
+
+      mapBulk(items, 'id', '_meta');
+      expect(items).to.deep.equal(JSON.parse(itemsSnapshot));
     });
   });
 
@@ -273,35 +320,35 @@ describe('Elasticsearch utils', () => {
 
   describe('parseQuery', () => {
     it('should return null if query is null or undefined', () => {
-      expect(parseQuery(null)).to.be.null;
+      expect(parseQuery(null, '_id')).to.be.null;
       expect(parseQuery()).to.be.null;
     });
 
     it('should return null if query has no own properties', () => {
       let query = Object.create({ hello: 'world' });
 
-      expect(parseQuery({})).to.be.null;
-      expect(parseQuery(query)).to.be.null;
+      expect(parseQuery({}, '_id')).to.be.null;
+      expect(parseQuery(query, '_id')).to.be.null;
     });
 
     it('should throw BadRequest if query is not an object, null or undefined', () => {
-      expect(() => parseQuery(12)).to.throw(errors.BadRequest);
-      expect(() => parseQuery(true)).to.throw(errors.BadRequest);
-      expect(() => parseQuery('abc')).to.throw(errors.BadRequest);
-      expect(() => parseQuery([])).to.throw(errors.BadRequest);
+      expect(() => parseQuery(12, '_id')).to.throw(errors.BadRequest);
+      expect(() => parseQuery(true, '_id')).to.throw(errors.BadRequest);
+      expect(() => parseQuery('abc', '_id')).to.throw(errors.BadRequest);
+      expect(() => parseQuery([], '_id')).to.throw(errors.BadRequest);
     });
 
     it('should throw BadRequest if $or is not an array', () => {
-      expect(() => parseQuery({ $or: 12 })).to.throw(errors.BadRequest);
-      expect(() => parseQuery({ $or: true })).to.throw(errors.BadRequest);
-      expect(() => parseQuery({ $or: 'abc' })).to.throw(errors.BadRequest);
-      expect(() => parseQuery({ $or: {} })).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ $or: 12 }, '_id')).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ $or: true }, '_id')).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ $or: 'abc' }, '_id')).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ $or: {} }, '_id')).to.throw(errors.BadRequest);
     });
 
     it('should throw BadRequest if criteria is not a primitive or an object', () => {
-      expect(() => parseQuery({ age: null })).to.throw(errors.BadRequest);
-      expect(() => parseQuery({ age: [] })).to.throw(errors.BadRequest);
-      expect(() => parseQuery({ age: () => {} })).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ age: null }, '_id')).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ age: [] }, '_id')).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ age: () => {} }, '_id')).to.throw(errors.BadRequest);
     });
 
     it('should return term query for each primitive param', () => {
@@ -318,7 +365,18 @@ describe('Elasticsearch utils', () => {
         ]
       };
 
-      expect(parseQuery(query)).to
+      expect(parseQuery(query, '_id')).to
+        .deep.equal(expectedResult);
+    });
+
+    it('should convert provided id property name to _id', () => {
+      let query = { id: 12 };
+      let expectedResult = {
+        filter: [
+          { term: { _id: 12 } }
+        ]
+      };
+      expect(parseQuery(query, 'id')).to
         .deep.equal(expectedResult);
     });
 
@@ -334,7 +392,7 @@ describe('Elasticsearch utils', () => {
         ]
       };
 
-      expect(parseQuery(query)).to
+      expect(parseQuery(query, '_id')).to
         .deep.equal(expectedResult);
     });
 
@@ -350,7 +408,7 @@ describe('Elasticsearch utils', () => {
         ]
       };
 
-      expect(parseQuery(query)).to
+      expect(parseQuery(query, '_id')).to
         .deep.equal(expectedResult);
     });
 
@@ -366,7 +424,7 @@ describe('Elasticsearch utils', () => {
         ]
       };
 
-      expect(parseQuery(query)).to
+      expect(parseQuery(query, '_id')).to
         .deep.equal(expectedResult);
     });
 
@@ -385,7 +443,7 @@ describe('Elasticsearch utils', () => {
           { range: { cars: { lt: 5 } } }
         ]
       };
-      expect(parseQuery(query)).to
+      expect(parseQuery(query, '_id')).to
         .deep.equal(expectedResult);
     });
 
@@ -415,7 +473,7 @@ describe('Elasticsearch utils', () => {
           }
         ]
       };
-      expect(parseQuery(query)).to
+      expect(parseQuery(query, '_id')).to
         .deep.equal(expectedResult);
     });
 
@@ -459,7 +517,7 @@ describe('Elasticsearch utils', () => {
         ]
       };
 
-      expect(parseQuery(query)).to
+      expect(parseQuery(query, '_id')).to
         .deep.equal(expectedResult);
     });
   });

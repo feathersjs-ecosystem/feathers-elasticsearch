@@ -55,19 +55,29 @@ export function mapGet (item, idProp, metaProp) {
 export function mapPatch (item, idProp, metaProp) {
   let normalizedItem = removeProps(item, 'get');
 
-  normalizedItem._source = item.get._source;
+  normalizedItem._source = item.get && item.get._source;
 
   return mapItem(normalizedItem, idProp, metaProp);
 }
 
+export function mapBulk (items, idProp, metaProp) {
+  return items
+    .map(item => {
+      if (item.update) {
+        return mapPatch(item.update, idProp, metaProp);
+      }
+
+      return mapItem(item.create || item.index || item.delete, idProp, metaProp);
+    });
+}
+
 function mapItem (item, idProp, metaProp) {
   let meta = removeProps(item, '_source');
+  let result = meta._id === undefined ? {} : { [idProp]: meta._id };
 
   return Object.assign(
-    {
-      [metaProp]: meta,
-      [idProp]: meta._id
-    },
+    result,
+    { [metaProp]: meta },
     item._source
   );
 }
@@ -80,7 +90,7 @@ export function removeProps (object, ...props) {
   return result;
 }
 
-export function parseQuery (query) {
+export function parseQuery (query, idProp) {
   let bool;
 
   if (query === null || query === undefined) {
@@ -97,6 +107,12 @@ export function parseQuery (query) {
       let isArray = Array.isArray(value);
       let type = typeof value;
 
+      // The search can be done by ids as well.
+      // We need to translate the id prop used by the app with the id prop used by Es.
+      if (key === idProp) {
+        key = '_id';
+      }
+
       // The key is $or, meaning we are dealing with subqueries.
       // We need to add subqueries to should[].
       if (key === '$or') {
@@ -108,7 +124,7 @@ export function parseQuery (query) {
           result.should = [];
         }
         result.should.push(...value
-          .map(subQuery => parseQuery(subQuery))
+          .map(subQuery => parseQuery(subQuery, idProp))
           .filter(parsed => !!parsed)
           .map(parsed => ({ bool: parsed }))
         );
@@ -120,7 +136,7 @@ export function parseQuery (query) {
       // We need add simple filter[{term: {}}] query.
       if (value === null || typeof value !== 'object') {
         if (type !== 'number' && type !== 'string' && type !== 'undefined' && type !== 'boolean') {
-          throw new errors.BadRequest(`criteria should be an object or a primitive: ${key} is array`);
+          throw new errors.BadRequest(`criteria should be an object or a primitive: ${key} is neither`);
         }
 
         if (!result.filter) {
