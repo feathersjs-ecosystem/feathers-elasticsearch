@@ -20,7 +20,10 @@ class Service {
     this.events = options.events || [];
     this.id = options.id || '_id';
     this.meta = options.meta || '_meta';
-    this.esParams = options.elasticsearch || {};
+    this.esParams = Object.assign(
+      { refresh: true },
+      options.elasticsearch
+    );
   }
 
   extend (obj) {

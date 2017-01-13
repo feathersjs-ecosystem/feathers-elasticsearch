@@ -19,8 +19,7 @@ const todoService = service({
   },
   elasticsearch: {
     index: 'test',
-    type: 'todos',
-    refresh: true
+    type: 'todos'
   }
 });
 

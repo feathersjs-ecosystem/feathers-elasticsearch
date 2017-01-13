@@ -51,8 +51,7 @@ describe('Elasticsearch Service', () => {
           id: 'id',
           elasticsearch: {
             index: 'test',
-            type: 'people',
-            refresh: true
+            type: 'people'
           }
         }));
       });
