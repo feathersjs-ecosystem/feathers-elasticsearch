@@ -1,6 +1,6 @@
 import errors from 'feathers-errors';
 import makeDebug from 'debug';
-import { filter, mapGet, mapFind, mapPatch, mapBulk, parseQuery, removeProps } from './utils';
+import { filter, mapGet, mapFind, mapBulk, parseQuery, removeProps } from './utils';
 import Proto from 'uberproto';
 
 const debug = makeDebug('feathers-elasticsearch');
@@ -21,7 +21,7 @@ class Service {
     this.id = options.id || '_id';
     this.meta = options.meta || '_meta';
     this.esParams = Object.assign(
-      { refresh: true },
+      { refresh: false },
       options.elasticsearch
     );
   }
@@ -149,6 +149,20 @@ function get (service, id, params) {
     .then(result => mapGet(result, service.id, service.meta));
 }
 
+function mget (service, ids, params) {
+  let { filters } = filter(params.query, service.pagination);
+  let mgetParams = Object.assign(
+    {
+      _source: filters.$select,
+      body: { ids }
+    },
+    service.esParams
+  );
+
+  return service.Model.mget(mgetParams)
+    .then(fetched => fetched.docs.map(item => mapGet(item, service.id, service.meta)));
+}
+
 function create (service, data, params) {
   let id = data[service.id];
   let hasId = undefined !== id;
@@ -168,7 +182,6 @@ function create (service, data, params) {
 }
 
 function createBulk (service, data, params) {
-  let { filters } = filter(params.query, service.paginate);
   let bulkCreateParams = Object.assign(
     {
       // Elasticsearch bulk API takes two objects per index or create operation.
@@ -195,27 +208,19 @@ function createBulk (service, data, params) {
     .then(results => {
       let created = mapBulk(results.items, service.id, service.meta);
       // We are fetching only items which have been correctly created.
-      let mgetParams = Object.assign(
-        {
-          _source: filters.$select,
-          body: {
-            ids: created
-              .filter(item => item._meta.created)
-              .map(item => item._meta._id)
-          }
-        },
-        service.esParams
-      );
+      let ids = created
+        .filter(item => item[service.meta].status === 201)
+        .map(item => item[service.meta]._id);
 
-      return service.Model.mget(mgetParams)
+      return mget(service, ids, params)
         .then(fetched => {
           let fetchedIndex = 0;
 
           // We need to return responses for all items, either success or failure,
           // in the same order as the request.
           return created.map(createdItem => {
-            if (createdItem._meta.created) {
-              let fetchedItem = mapGet(fetched.docs[fetchedIndex], service.id, service.meta);
+            if (createdItem[service.meta].status === 201) {
+              let fetchedItem = fetched[fetchedIndex];
 
               fetchedIndex += 1;
 
@@ -229,26 +234,22 @@ function createBulk (service, data, params) {
 }
 
 function patch (service, id, data, params) {
-  let { filters } = filter(params.query, service.paginate);
-  let patchParams = Object.assign(
+  let updateParams = Object.assign(
     {
       id: String(id),
       body: {
         doc: removeProps(data, service.meta, service.id)
       },
-      _source: filters.$select
+      _source: false
     },
     service.esParams
   );
-  // The `get` here is just to throw 404 if the document does not exist.
-  // Elasticsearch does upsert, normally.
-  return get(service, id, params)
-    .then(() => service.Model.update(patchParams))
-    .then(result => mapPatch(result, service.id, service.meta));
+
+  return service.Model.update(updateParams)
+    .then(() => get(service, id, params));
 }
 
 function patchBulk (service, data, params) {
-  let { filters } = filter(params.query, service.paginate);
   // Poor man's semi-deep object extension. We only want to override params.query.$select here.
   let findParams = Object.assign(
     removeProps(params, 'query'),
@@ -276,7 +277,7 @@ function patchBulk (service, data, params) {
 
       bulkUpdateParams = Object.assign(
         {
-          _source: filters.$select,
+          _source: false,
           body: found.reduce((result, item) => {
             result.push({ update: { _id: item[service.id] } });
             result.push({ doc: removeProps(data, service.meta, service.id) });
@@ -288,10 +289,29 @@ function patchBulk (service, data, params) {
       );
 
       return service.Model.bulk(bulkUpdateParams)
-        .then(results => results.items
-          .filter(item => item.update.result === 'updated')
-          .map(item => mapPatch(item.update, service.id, service.meta))
-        );
+        .then(result => {
+          let patched = mapBulk(result.items, service.id, service.meta);
+          let ids = patched
+            .filter(item => item[service.meta].status === 200)
+            .map(item => item[service.meta]._id);
+
+          return mget(service, ids, params)
+            .then(fetched => {
+              let fetchedIndex = 0;
+
+              return patched.map(patchedItem => {
+                if (patchedItem[service.meta].status === 200) {
+                  let fetchedItem = fetched[fetchedIndex];
+
+                  fetchedIndex += 1;
+
+                  return fetchedItem;
+                }
+
+                return patchedItem;
+              });
+            });
+        });
     });
 }
 
@@ -330,7 +350,7 @@ function removeBulk (service, params) {
 
       return service.Model.bulk(bulkRemoveParams)
         .then(results => results.items
-          .map((item, index) => item.delete.result === 'deleted' ? found[index] : false)
+          .map((item, index) => item.delete.status === 200 ? found[index] : false)
           .filter(item => !!item)
         );
     });

@@ -18,7 +18,7 @@ describe('Elasticsearch Service', () => {
   before(() => {
     client = new elasticsearch.Client({
       host: 'localhost:9200',
-      apiVersion: '5.0'
+      apiVersion: '2.4'
     });
 
     return client.indices.exists({ index: 'test' })
@@ -30,14 +30,16 @@ describe('Elasticsearch Service', () => {
             people: {
               properties: {
                 name: {
-                  type: 'keyword'
+                  type: 'string',
+                  index: 'not_analyzed'
                 }
               }
             },
             todos: {
               properties: {
                 text: {
-                  type: 'keyword'
+                  type: 'string',
+                  index: 'not_analyzed'
                 }
               }
             }
@@ -51,7 +53,8 @@ describe('Elasticsearch Service', () => {
           id: 'id',
           elasticsearch: {
             index: 'test',
-            type: 'people'
+            type: 'people',
+            refresh: true
           }
         }));
       });

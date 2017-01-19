@@ -8,7 +8,7 @@ import service from '../lib';
 // Connect to the db, create and register a Feathers service.
 const db = new elasticsearch.Client({
   host: 'localhost:9200',
-  apiVersion: '5.0'
+  apiVersion: '2.4'
 });
 
 const todoService = service({
@@ -19,7 +19,8 @@ const todoService = service({
   },
   elasticsearch: {
     index: 'test',
-    type: 'todos'
+    type: 'todos',
+    refresh: true
   }
 });
 
