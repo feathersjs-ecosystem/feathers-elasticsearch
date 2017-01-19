@@ -1,3 +1,4 @@
+sudo: required
 language: node_js
 node_js:
   - 'node'
@@ -8,11 +9,11 @@ addons:
     repo_token: 'your repo token'
 notifications:
   email: false
-services:
-  - elasticsearch
+before_install:
+  - sudo sysctl vm.max_map_count=262144
+  - curl -O https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/deb/elasticsearch/2.4.3/elasticsearch-2.4.3.deb && sudo dpkg -i --force-confnew elasticsearch-2.4.3.deb && sudo service elasticsearch restart
 before_script:
   - sleep 10
   - npm install -g codeclimate-test-reporter
-  - npm install -g --only=dev
 after_script:
   - codeclimate-test-reporter < coverage/lcov.info
