@@ -1,9 +1,9 @@
 # feathers-elasticsearch
 
-[![Build Status](https://travis-ci.org/jciolek/feathers-elasticsearch.svg?branch=master)](https://travis-ci.org/jciolek/feathers-elasticsearch)
-[![Code Climate](https://codeclimate.com/github/jciolek/feathers-elasticsearch/badges/gpa.svg)](https://codeclimate.com/github/jciolek/feathers-elasticsearch)
-[![Test Coverage](https://codeclimate.com/github/jciolek/feathers-elasticsearch/badges/coverage.svg)](https://codeclimate.com/github/jciolek/feathers-elasticsearch/coverage)
-[![Dependency Status](https://david-dm.org/jciolek/feathers-elasticsearch/status.svg)](https://david-dm.org/jciolek/feathers-elasticsearch)
+[![Build Status](https://travis-ci.org/feathersjs/feathers-elasticsearch.svg?branch=master)](https://travis-ci.org/feathersjs/feathers-elasticsearch)
+[![Code Climate](https://codeclimate.com/github/feathersjs/feathers-elasticsearch/badges/gpa.svg)](https://codeclimate.com/github/feathersjs/feathers-elasticsearch)
+[![Test Coverage](https://codeclimate.com/github/feathersjs/feathers-elasticsearch/badges/coverage.svg)](https://codeclimate.com/github/feathersjs/feathers-elasticsearch/coverage)
+[![Dependency Status](https://david-dm.org/feathersjs/feathers-elasticsearch/status.svg)](https://david-dm.org/feathersjs/feathers-elasticsearch)
 [![Download Status](https://img.shields.io/npm/dm/feathers-elasticsearch.svg?style=flat-square)](https://www.npmjs.com/package/feathers-elasticsearch)
 
 > Elasticsearch adapter for FeathersJs
