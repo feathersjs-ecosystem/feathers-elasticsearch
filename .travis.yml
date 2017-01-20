@@ -12,7 +12,7 @@ notifications:
   email: false
 before_install:
   - sudo sysctl vm.max_map_count=262144
-  - curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.0.2.deb && sudo dpkg -i --force-confnew elasticsearch-5.0.2.deb && sudo service elasticsearch restart
+  - curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.1.2.deb && sudo dpkg -i --force-confnew elasticsearch-5.1.2.deb && sudo service elasticsearch restart
 before_script:
   - sleep 10
   - npm install -g codeclimate-test-reporter

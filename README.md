@@ -1,6 +1,6 @@
 # feathers-elasticsearch
 
-[![Build Status](https://travis-ci.org/jciolek/feathers-elasticsearch.svg?branch=master)](https://travis-ci.org/jciolek/feathers-elasticsearch)
+[![Build Status](https://travis-ci.org/jciolek/feathers-elasticsearch.svg?branch=es-5.1-tests)](https://travis-ci.org/jciolek/feathers-elasticsearch)
 [![Code Climate](https://codeclimate.com/github/jciolek/feathers-elasticsearch/badges/gpa.svg)](https://codeclimate.com/github/jciolek/feathers-elasticsearch)
 [![Test Coverage](https://codeclimate.com/github/jciolek/feathers-elasticsearch/badges/coverage.svg)](https://codeclimate.com/github/jciolek/feathers-elasticsearch/coverage)
 [![Dependency Status](https://img.shields.io/david/jciolek/feathers-elasticsearch.svg?style=flat-square)](https://david-dm.org/jciolek/feathers-elasticsearch)
