@@ -1,8 +1,8 @@
 {
   "name": "feathers-elasticsearch",
   "description": "Elasticsearch adapter for FeathersJs",
-  "version": "0.0.0",
-  "homepage": "https://github.com/jciolek/feathers-elasticsearch",
+  "version": "0.1.0",
+  "homepage": "https://github.com/feathersjs/feathers-elasticsearch",
   "main": "lib/",
   "keywords": [
     "feathers",
@@ -11,7 +11,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/jciolek/feathers-elasticsearch.git"
+    "url": "git://github.com/feathersjs/feathers-elasticsearch.git"
   },
   "author": {
     "name": "Feathers contributors",
@@ -20,7 +20,7 @@
   },
   "contributors": [],
   "bugs": {
-    "url": "https://github.com/jciolek/feathers-elasticsearch/issues"
+    "url": "https://github.com/feathersjs/feathers-elasticsearch/issues"
   },
   "engines": {
     "node": ">= 4.6.0"
