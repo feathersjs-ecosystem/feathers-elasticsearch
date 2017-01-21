@@ -1,9 +1,9 @@
 # feathers-elasticsearch
 
-[![Build Status](https://travis-ci.org/jciolek/feathers-elasticsearch.svg?branch=es-5.0-tests)](https://travis-ci.org/jciolek/feathers-elasticsearch)
-[![Code Climate](https://codeclimate.com/github/jciolek/feathers-elasticsearch/badges/gpa.svg)](https://codeclimate.com/github/jciolek/feathers-elasticsearch)
-[![Test Coverage](https://codeclimate.com/github/jciolek/feathers-elasticsearch/badges/coverage.svg)](https://codeclimate.com/github/jciolek/feathers-elasticsearch/coverage)
-[![Dependency Status](https://david-dm.org/jciolek/feathers-elasticsearch/status.svg)](https://david-dm.org/jciolek/feathers-elasticsearch)
+[![Build Status](https://travis-ci.org/feathersjs/feathers-elasticsearch.svg?branch=es-5.0-tests)](https://travis-ci.org/feathersjs/feathers-elasticsearch)
+[![Code Climate](https://codeclimate.com/github/feathersjs/feathers-elasticsearch/badges/gpa.svg)](https://codeclimate.com/github/feathersjs/feathers-elasticsearch)
+[![Test Coverage](https://codeclimate.com/github/feathersjs/feathers-elasticsearch/badges/coverage.svg)](https://codeclimate.com/github/feathersjs/feathers-elasticsearch/coverage)
+[![Dependency Status](https://david-dm.org/feathersjs/feathers-elasticsearch/status.svg)](https://david-dm.org/feathersjs/feathers-elasticsearch)
 [![Download Status](https://img.shields.io/npm/dm/feathers-elasticsearch.svg?style=flat-square)](https://www.npmjs.com/package/feathers-elasticsearch)
 
 > Elasticsearch adapter for FeathersJs
@@ -51,7 +51,7 @@ app.listen(3030);
 The following options can be passed when creating a new Elasticsearch service:
 
 - `Model` (**required**) - The Elasticsearch client instance.
-- `elasticsearch` (**required**) - Configuration object for elasticsearch requests. The required properties are `index` and `type`. Apart from that you can specify anything that can be passed to all requests going to Elasticsearch. Another recognised property is [https://www.elastic.co/guide/en/elasticsearch/guide/2.x/near-real-time.html#refresh-api](`refresh`) which is set to `false` by default. Anything else use at your own risk.
+- `elasticsearch` (**required**) - Configuration object for elasticsearch requests. The required properties are `index` and `type`. Apart from that you can specify anything that can be passed to all requests going to Elasticsearch. Another recognised property is [`refresh`](https://www.elastic.co/guide/en/elasticsearch/guide/2.x/near-real-time.html#refresh-api) which is set to `false` by default. Anything else use at your own risk.
 - `id` (default: '_id') [optional] - The id property of your documents in this service.
 - `meta` (default: '_meta') [optional] - The meta property of your documents in this service. The meta field is an object containing elasticsearch specific information, e.g. _score, _type, _index, and so forth.
 - `paginate` [optional] - A pagination object containing a `default` and `max` page size (see the [Pagination chapter](http://docs.feathersjs.com/databases/pagination.html)).
@@ -113,7 +113,7 @@ however that does not mean it wouldn't work fine on anything lower than 2.4.
 
 ### Updating and deleting by query
 
-Elasticsearch is special in many ways. For example, the [https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-update-by-query.html]("update by query") API is still considered experimental and so is the [https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-delete-by-query.html]("delete by query") API introduced in Elasticsearch 5.0.
+Elasticsearch is special in many ways. For example, the ["update by query"](https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-update-by-query.html) API is still considered experimental and so is the ["delete by query"](https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-delete-by-query.html) API introduced in Elasticsearch 5.0.
 
 Just to clarify - update in Elasticsearch is an equivalent to `patch` in feathers. I will use `patch` from now on, to set focus on the feathers side of the fence.
 
