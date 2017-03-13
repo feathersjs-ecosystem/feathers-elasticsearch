@@ -477,11 +477,25 @@ describe('Elasticsearch utils', () => {
         .deep.equal(expectedResult);
     });
 
+    it('should return "prefix" query for $prefix', () => {
+      let query = {
+        user: { $prefix: 'ada' }
+      };
+      let expectedResult = {
+        filter: [
+          { prefix: { user: 'ada' } }
+        ]
+      };
+      expect(parseQuery(query, '_id')).to
+        .deep.equal(expectedResult);
+    });
+
     it('should return all types of queries together', () => {
       let query = {
         $or: [
           { likes: { $gt: 9, $lt: 12 }, age: { $ne: 10 } },
-          { user: { $nin: [ 'Anakin', 'Luke' ] } }
+          { user: { $nin: [ 'Anakin', 'Luke' ] } },
+          { user: { $prefix: 'ada' } }
         ],
         age: { $in: [ 12, 13 ] },
         user: 'Obi Wan',
@@ -504,6 +518,13 @@ describe('Elasticsearch utils', () => {
             bool: {
               must_not: [
                 { terms: { user: [ 'Anakin', 'Luke' ] } }
+              ]
+            }
+          },
+          {
+            bool: {
+              filter: [
+                { prefix: { user: 'ada' } }
               ]
             }
           }

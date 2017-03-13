@@ -120,6 +120,19 @@ describe('Elasticsearch Service', () => {
             expect(results.data).to.be.an('array').and.be.empty;
           });
       });
+
+      describe('special filters', () => {
+        it('can $prefix', () => {
+          return app.service(serviceName)
+            .find({
+              query: { name: { $prefix: 'B' } }
+            })
+            .then(results => {
+              expect(results.length).to.equal(1);
+              expect(results[0].name).to.equal('Bob');
+            });
+        });
+      });
     });
 
     describe('create()', () => {
