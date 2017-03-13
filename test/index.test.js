@@ -12,13 +12,18 @@ import server from './test-app';
 describe('Elasticsearch Service', () => {
   const app = feathers();
   const serviceName = 'people';
-
+  const apiVersion = !process.env.ES_VERSION || process.env.ES_VERSION.split('.')[0] !== '5'
+    ? '2.4'
+    : '5.0';
+  const keywordMapping = apiVersion === '2.4'
+    ? { type: 'string', index: 'not_analyzed' }
+    : { type: 'keyword' };
   let client;
 
   before(() => {
     client = new elasticsearch.Client({
       host: 'localhost:9200',
-      apiVersion: '2.4'
+      apiVersion
     });
 
     return client.indices.exists({ index: 'test' })
@@ -29,18 +34,12 @@ describe('Elasticsearch Service', () => {
           mappings: {
             people: {
               properties: {
-                name: {
-                  type: 'string',
-                  index: 'not_analyzed'
-                }
+                name: keywordMapping
               }
             },
             todos: {
               properties: {
-                text: {
-                  type: 'string',
-                  index: 'not_analyzed'
-                }
+                text: keywordMapping
               }
             }
           }

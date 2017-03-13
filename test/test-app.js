@@ -5,10 +5,13 @@ import socketio from 'feathers-socketio';
 import bodyParser from 'body-parser';
 import service from '../lib';
 
+const apiVersion = !process.env.ES_VERSION || process.env.ES_VERSION.split('.')[0] !== '5'
+  ? '2.4'
+  : '5.0';
 // Connect to the db, create and register a Feathers service.
 const db = new elasticsearch.Client({
   host: 'localhost:9200',
-  apiVersion: '2.4'
+  apiVersion
 });
 
 const todoService = service({

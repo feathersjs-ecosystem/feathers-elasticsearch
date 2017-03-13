@@ -135,7 +135,7 @@ Read more on the `prefix` query in the [Elasticsearch documentation](https://www
 
 ## Supported Elasticsearch versions
 
-feathers-elasticsearch is currently tested on Elasticsearch 2.4, 5.0 and 5.1. The lowest version supported is 2.4,
+feathers-elasticsearch is currently tested on Elasticsearch 2.4, 5.0, 5.1 and 5.2. The lowest version supported is 2.4,
 however that does not mean it wouldn't work fine on anything lower than 2.4.
 
 
