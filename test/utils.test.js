@@ -490,6 +490,19 @@ describe('Elasticsearch utils', () => {
         .deep.equal(expectedResult);
     });
 
+    it('should return "match" query for $match', () => {
+      let query = {
+        text: { $match: 'javascript' }
+      };
+      let expectedResult = {
+        must: [
+          { match: { text: 'javascript' } }
+        ]
+      };
+      expect(parseQuery(query, '_id')).to
+        .deep.equal(expectedResult);
+    });
+
     it('should return all types of queries together', () => {
       let query = {
         $or: [
@@ -499,7 +512,8 @@ describe('Elasticsearch utils', () => {
         ],
         age: { $in: [ 12, 13 ] },
         user: 'Obi Wan',
-        country: { $nin: [ 'us', 'pl', 'ae' ] }
+        country: { $nin: [ 'us', 'pl', 'ae' ] },
+        bio: { $match: 'javascript' }
       };
       let expectedResult = {
         should: [
@@ -535,6 +549,9 @@ describe('Elasticsearch utils', () => {
         ],
         must_not: [
           { terms: { country: [ 'us', 'pl', 'ae' ] } }
+        ],
+        must: [
+          { match: { bio: 'javascript' } }
         ]
       };
 

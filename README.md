@@ -107,8 +107,21 @@ You should see an empty array. That's because you don't have any messages yet bu
 
 On top of the standard, cross-adapter [queries](http://docs.feathersjs.com/databases/querying.html), feathers-elasticsearch also supports Elasticsearch specific queries.
 
+### $match
+Full text query. Find all documents which have given given fields matching the specified value (analysed).
+
+```js
+query: {
+  bio: {
+    $match: 'javascript'
+  }
+}
+```
+
+Read more on the `match` query in the [Elasticsearch documentation](https://https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-query.html).
+
 ### $prefix
-Find all documents which have given field containing terms with a specified prefix (not analyzed).
+Term level query. Find all documents which have given field containing terms with a specified prefix (not analyzed).
 
 ```js
 query: {

@@ -11,7 +11,8 @@ const queryCriteriaMap = {
   $lt: 'filter.range.lt',
   $lte: 'filter.range.lte',
   $ne: 'must_not.term',
-  $prefix: 'filter.prefix'
+  $prefix: 'filter.prefix',
+  $match: 'must.match'
 };
 
 export function filter (query = {}, paginate = {}) {

@@ -87,10 +87,12 @@ describe('Elasticsearch Service', () => {
         .then(() => {
           return app.service(serviceName).create([
             {
-              name: 'Bob'
+              name: 'Bob',
+              bio: 'I like JavaScript.'
             },
             {
-              name: 'Moody'
+              name: 'Moody',
+              bio: 'I don\'t like .NET.'
             }
           ]);
         });
@@ -126,6 +128,17 @@ describe('Elasticsearch Service', () => {
           return app.service(serviceName)
             .find({
               query: { name: { $prefix: 'B' } }
+            })
+            .then(results => {
+              expect(results.length).to.equal(1);
+              expect(results[0].name).to.equal('Bob');
+            });
+        });
+
+        it('can $match', () => {
+          return app.service(serviceName)
+            .find({
+              query: { bio: { $match: 'javascript' } }
             })
             .then(results => {
               expect(results.length).to.equal(1);
