@@ -516,6 +516,19 @@ describe('Elasticsearch utils', () => {
         .deep.equal(expectedResult);
     });
 
+    it('should return "match_phrase_prefix" query for $phrase_prefix', () => {
+      let query = {
+        text: { $phrase_prefix: 'javasc' }
+      };
+      let expectedResult = {
+        must: [
+          { match_phrase_prefix: { text: 'javasc' } }
+        ]
+      };
+      expect(parseQuery(query, '_id')).to
+        .deep.equal(expectedResult);
+    });
+
     it('should return all types of queries together', () => {
       let query = {
         $or: [

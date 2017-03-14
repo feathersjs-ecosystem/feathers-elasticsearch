@@ -140,11 +140,21 @@ query: {
 }
 ```
 
+### $phrase_prefix
+[Full text query `match_phrase_prefix`](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-query-phrase-prefix.html). Find all documents which have given given fields matching the specified phrase prefix (analysed).
+
+```js
+query: {
+  bio: {
+    $phrase_prefix: 'I like JavaS'
+  }
+}
+```
+
 ## Supported Elasticsearch versions
 
-feathers-elasticsearch is currently tested on Elasticsearch 2.4, 5.0, 5.1 and 5.2. The lowest version supported is 2.4,
-however that does not mean it wouldn't work fine on anything lower than 2.4.
-
+feathers-elasticsearch is currently tested on Elasticsearch 2.4, 5.0, 5.1 and 5.2. Please note, event though the lowest version supported is 2.4,
+that does not mean it wouldn't work fine on anything lower than 2.4.
 
 ## Quirks
 
@@ -163,7 +173,7 @@ Considering, however that elasticsearch is mainly used to dump data in it and se
 
 ### Full-text search
 
-In the first version of feathers-elasticsearch full texts search has not been implemented yet. It is coming soon. It is very important feature and it sits at the top of my TODO list.
+Currently feathers-elasticsearch supports most important full-text queries in their default form. Elasticsearch search allows additional parameters to be passed to each of those queries for fine-tuning. Those parameters can change behaviour and affect peformance of the queries therefore I believe they should not be exposed to the client. I am considering ways of adding them safely to the queries while retaining flexibility.
 
 ### Performance considerations
 

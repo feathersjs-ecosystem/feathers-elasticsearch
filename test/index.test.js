@@ -154,6 +154,17 @@ describe('Elasticsearch Service', () => {
               expect(results[0].name).to.equal('Bob');
             });
         });
+
+        it('can $phrase_prefix', () => {
+          return app.service(serviceName)
+            .find({
+              query: { bio: { $phrase_prefix: 'I like JavaS' } }
+            })
+            .then(results => {
+              expect(results.length).to.equal(1);
+              expect(results[0].name).to.equal('Bob');
+            });
+        });
       });
     });
 

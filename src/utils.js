@@ -13,7 +13,8 @@ const queryCriteriaMap = {
   $ne: 'must_not.term',
   $prefix: 'filter.prefix',
   $match: 'must.match',
-  $phrase: 'must.match_phrase'
+  $phrase: 'must.match_phrase',
+  $phrase_prefix: 'must.match_phrase_prefix'
 };
 
 export function filter (query = {}, paginate = {}) {
@@ -152,7 +153,7 @@ export function parseQuery (query, idProp) {
       // so we are most probably dealing with criteria.
       } else {
         if (isArray) {
-          throw new errors.BadRequest(`criteria should be an object or a primitive: ${key} is array`);
+          throw new errors.BadRequest(`criteria should be an object or a primitive: ${key} is an array`);
         }
 
         Object.keys(value)
