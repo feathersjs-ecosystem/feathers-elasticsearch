@@ -107,21 +107,8 @@ You should see an empty array. That's because you don't have any messages yet bu
 
 On top of the standard, cross-adapter [queries](http://docs.feathersjs.com/databases/querying.html), feathers-elasticsearch also supports Elasticsearch specific queries.
 
-### $match
-Full text query. Find all documents which have given given fields matching the specified value (analysed).
-
-```js
-query: {
-  bio: {
-    $match: 'javascript'
-  }
-}
-```
-
-Read more on the `match` query in the [Elasticsearch documentation](https://https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-query.html).
-
 ### $prefix
-Term level query. Find all documents which have given field containing terms with a specified prefix (not analyzed).
+[Term level query `prefix`](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-prefix-query.html). Find all documents which have given field containing terms with a specified prefix (not analyzed).
 
 ```js
 query: {
@@ -131,7 +118,27 @@ query: {
 }
 ```
 
-Read more on the `prefix` query in the [Elasticsearch documentation](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-prefix-query.html).
+### $match
+[Full text query `match`]((https://https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-query.html). Find all documents which have given given fields matching the specified value (analysed).
+
+```js
+query: {
+  bio: {
+    $match: 'javascript'
+  }
+}
+```
+
+### $phrase
+[Full text query `match_phrase`](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-query-phrase.html). Find all documents which have given given fields matching the specified phrase (analysed).
+
+```js
+query: {
+  bio: {
+    $phrase: 'I like JavaScript'
+  }
+}
+```
 
 ## Supported Elasticsearch versions
 

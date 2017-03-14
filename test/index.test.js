@@ -137,7 +137,17 @@ describe('Elasticsearch Service', () => {
         it('can $match', () => {
           return app.service(serviceName)
             .find({
-              query: { bio: { $match: 'javascript' } }
+              query: { bio: { $match: 'I like JavaScript' } }
+            })
+            .then(results => {
+              expect(results.length).to.equal(2);
+            });
+        });
+
+        it('can $phrase', () => {
+          return app.service(serviceName)
+            .find({
+              query: { bio: { $phrase: 'I like JavaScript' } }
             })
             .then(results => {
               expect(results.length).to.equal(1);
