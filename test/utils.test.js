@@ -490,6 +490,28 @@ describe('Elasticsearch utils', () => {
         .deep.equal(expectedResult);
     });
 
+    it('should return "match_all" query for $all: true', () => {
+      let query = {
+        $all: true
+      };
+      let expectedResult = {
+        must: [
+          { match_all: {} }
+        ]
+      };
+      expect(parseQuery(query, '_id')).to
+        .deep.equal(expectedResult);
+    });
+
+    it('should not return "match_all" query for $all: false', () => {
+      let query = {
+        $all: false
+      };
+      let expectedResult = null;
+      expect(parseQuery(query, '_id')).to
+        .deep.equal(expectedResult);
+    });
+
     it('should return "match" query for $match', () => {
       let query = {
         text: { $match: 'javascript' }
@@ -534,7 +556,8 @@ describe('Elasticsearch utils', () => {
         $or: [
           { likes: { $gt: 9, $lt: 12 }, age: { $ne: 10 } },
           { user: { $nin: [ 'Anakin', 'Luke' ] } },
-          { user: { $prefix: 'ada' } }
+          { user: { $prefix: 'ada' } },
+          { $all: true }
         ],
         age: { $in: [ 12, 13 ] },
         user: 'Obi Wan',
@@ -565,6 +588,13 @@ describe('Elasticsearch utils', () => {
             bool: {
               filter: [
                 { prefix: { user: 'ada' } }
+              ]
+            }
+          },
+          {
+            bool: {
+              must: [
+                { match_all: {} }
               ]
             }
           }

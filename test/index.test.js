@@ -92,6 +92,10 @@ describe('Elasticsearch Service', () => {
             {
               name: 'Moody',
               bio: 'I don\'t like .NET.'
+            },
+            {
+              name: 'Douglas',
+              bio: 'A legend'
             }
           ]);
         });
@@ -131,6 +135,16 @@ describe('Elasticsearch Service', () => {
             .then(results => {
               expect(results.length).to.equal(1);
               expect(results[0].name).to.equal('Bob');
+            });
+        });
+
+        it('can $all', () => {
+          return app.service(serviceName)
+            .find({
+              query: { $all: true }
+            })
+            .then(results => {
+              expect(results.length).to.equal(3);
             });
         });
 

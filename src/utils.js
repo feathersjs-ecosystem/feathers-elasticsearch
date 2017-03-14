@@ -136,6 +136,20 @@ export function parseQuery (query, idProp) {
         return result;
       }
 
+      if (key === '$all') {
+        if (!value) {
+          return result;
+        }
+
+        if (!result.must) {
+          result.must = [];
+        }
+
+        result.must.push({ match_all: {} });
+
+        return result;
+      }
+
       // The value is not an object, which means it's supposed to be a primitive.
       // We need add simple filter[{term: {}}] query.
       if (value === null || typeof value !== 'object') {
