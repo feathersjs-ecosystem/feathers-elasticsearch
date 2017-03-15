@@ -10,7 +10,11 @@ const queryCriteriaMap = {
   $gte: 'filter.range.gte',
   $lt: 'filter.range.lt',
   $lte: 'filter.range.lte',
-  $ne: 'must_not.term'
+  $ne: 'must_not.term',
+  $prefix: 'filter.prefix',
+  $match: 'must.match',
+  $phrase: 'must.match_phrase',
+  $phrase_prefix: 'must.match_phrase_prefix'
 };
 
 export function filter (query = {}, paginate = {}) {
@@ -132,6 +136,20 @@ export function parseQuery (query, idProp) {
         return result;
       }
 
+      if (key === '$all') {
+        if (!value) {
+          return result;
+        }
+
+        if (!result.must) {
+          result.must = [];
+        }
+
+        result.must.push({ match_all: {} });
+
+        return result;
+      }
+
       // The value is not an object, which means it's supposed to be a primitive.
       // We need add simple filter[{term: {}}] query.
       if (value === null || typeof value !== 'object') {
@@ -149,7 +167,7 @@ export function parseQuery (query, idProp) {
       // so we are most probably dealing with criteria.
       } else {
         if (isArray) {
-          throw new errors.BadRequest(`criteria should be an object or a primitive: ${key} is array`);
+          throw new errors.BadRequest(`criteria should be an object or a primitive: ${key} is an array`);
         }
 
         Object.keys(value)

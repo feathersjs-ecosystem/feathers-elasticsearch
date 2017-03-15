@@ -477,15 +477,92 @@ describe('Elasticsearch utils', () => {
         .deep.equal(expectedResult);
     });
 
+    it('should return "prefix" query for $prefix', () => {
+      let query = {
+        user: { $prefix: 'ada' }
+      };
+      let expectedResult = {
+        filter: [
+          { prefix: { user: 'ada' } }
+        ]
+      };
+      expect(parseQuery(query, '_id')).to
+        .deep.equal(expectedResult);
+    });
+
+    it('should return "match_all" query for $all: true', () => {
+      let query = {
+        $all: true
+      };
+      let expectedResult = {
+        must: [
+          { match_all: {} }
+        ]
+      };
+      expect(parseQuery(query, '_id')).to
+        .deep.equal(expectedResult);
+    });
+
+    it('should not return "match_all" query for $all: false', () => {
+      let query = {
+        $all: false
+      };
+      let expectedResult = null;
+      expect(parseQuery(query, '_id')).to
+        .deep.equal(expectedResult);
+    });
+
+    it('should return "match" query for $match', () => {
+      let query = {
+        text: { $match: 'javascript' }
+      };
+      let expectedResult = {
+        must: [
+          { match: { text: 'javascript' } }
+        ]
+      };
+      expect(parseQuery(query, '_id')).to
+        .deep.equal(expectedResult);
+    });
+
+    it('should return "match_phrase" query for $phrase', () => {
+      let query = {
+        text: { $phrase: 'javascript' }
+      };
+      let expectedResult = {
+        must: [
+          { match_phrase: { text: 'javascript' } }
+        ]
+      };
+      expect(parseQuery(query, '_id')).to
+        .deep.equal(expectedResult);
+    });
+
+    it('should return "match_phrase_prefix" query for $phrase_prefix', () => {
+      let query = {
+        text: { $phrase_prefix: 'javasc' }
+      };
+      let expectedResult = {
+        must: [
+          { match_phrase_prefix: { text: 'javasc' } }
+        ]
+      };
+      expect(parseQuery(query, '_id')).to
+        .deep.equal(expectedResult);
+    });
+
     it('should return all types of queries together', () => {
       let query = {
         $or: [
           { likes: { $gt: 9, $lt: 12 }, age: { $ne: 10 } },
-          { user: { $nin: [ 'Anakin', 'Luke' ] } }
+          { user: { $nin: [ 'Anakin', 'Luke' ] } },
+          { user: { $prefix: 'ada' } },
+          { $all: true }
         ],
         age: { $in: [ 12, 13 ] },
         user: 'Obi Wan',
-        country: { $nin: [ 'us', 'pl', 'ae' ] }
+        country: { $nin: [ 'us', 'pl', 'ae' ] },
+        bio: { $match: 'javascript', $phrase: 'the good parts' }
       };
       let expectedResult = {
         should: [
@@ -506,6 +583,20 @@ describe('Elasticsearch utils', () => {
                 { terms: { user: [ 'Anakin', 'Luke' ] } }
               ]
             }
+          },
+          {
+            bool: {
+              filter: [
+                { prefix: { user: 'ada' } }
+              ]
+            }
+          },
+          {
+            bool: {
+              must: [
+                { match_all: {} }
+              ]
+            }
           }
         ],
         filter: [
@@ -514,6 +605,10 @@ describe('Elasticsearch utils', () => {
         ],
         must_not: [
           { terms: { country: [ 'us', 'pl', 'ae' ] } }
+        ],
+        must: [
+          { match: { bio: 'javascript' } },
+          { match_phrase: { bio: 'the good parts' } }
         ]
       };
 

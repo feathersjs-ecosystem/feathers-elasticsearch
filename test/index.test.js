@@ -12,13 +12,18 @@ import server from './test-app';
 describe('Elasticsearch Service', () => {
   const app = feathers();
   const serviceName = 'people';
-
+  const apiVersion = !process.env.ES_VERSION || process.env.ES_VERSION.split('.')[0] !== '5'
+    ? '2.4'
+    : '5.0';
+  const keywordMapping = apiVersion === '2.4'
+    ? { type: 'string', index: 'not_analyzed' }
+    : { type: 'keyword' };
   let client;
 
   before(() => {
     client = new elasticsearch.Client({
       host: 'localhost:9200',
-      apiVersion: '2.4'
+      apiVersion
     });
 
     return client.indices.exists({ index: 'test' })
@@ -29,18 +34,12 @@ describe('Elasticsearch Service', () => {
           mappings: {
             people: {
               properties: {
-                name: {
-                  type: 'string',
-                  index: 'not_analyzed'
-                }
+                name: keywordMapping
               }
             },
             todos: {
               properties: {
-                text: {
-                  type: 'string',
-                  index: 'not_analyzed'
-                }
+                text: keywordMapping
               }
             }
           }
@@ -87,10 +86,16 @@ describe('Elasticsearch Service', () => {
         .then(() => {
           return app.service(serviceName).create([
             {
-              name: 'Bob'
+              name: 'Bob',
+              bio: 'I like JavaScript.'
             },
             {
-              name: 'Moody'
+              name: 'Moody',
+              bio: 'I don\'t like .NET.'
+            },
+            {
+              name: 'Douglas',
+              bio: 'A legend'
             }
           ]);
         });
@@ -119,6 +124,61 @@ describe('Elasticsearch Service', () => {
             expect(results.total).to.equal(0);
             expect(results.data).to.be.an('array').and.be.empty;
           });
+      });
+
+      describe('special filters', () => {
+        it('can $prefix', () => {
+          return app.service(serviceName)
+            .find({
+              query: { name: { $prefix: 'B' } }
+            })
+            .then(results => {
+              expect(results.length).to.equal(1);
+              expect(results[0].name).to.equal('Bob');
+            });
+        });
+
+        it('can $all', () => {
+          return app.service(serviceName)
+            .find({
+              query: { $all: true }
+            })
+            .then(results => {
+              expect(results.length).to.equal(3);
+            });
+        });
+
+        it('can $match', () => {
+          return app.service(serviceName)
+            .find({
+              query: { bio: { $match: 'I like JavaScript' } }
+            })
+            .then(results => {
+              expect(results.length).to.equal(2);
+            });
+        });
+
+        it('can $phrase', () => {
+          return app.service(serviceName)
+            .find({
+              query: { bio: { $phrase: 'I like JavaScript' } }
+            })
+            .then(results => {
+              expect(results.length).to.equal(1);
+              expect(results[0].name).to.equal('Bob');
+            });
+        });
+
+        it('can $phrase_prefix', () => {
+          return app.service(serviceName)
+            .find({
+              query: { bio: { $phrase_prefix: 'I like JavaS' } }
+            })
+            .then(results => {
+              expect(results.length).to.equal(1);
+              expect(results[0].name).to.equal('Bob');
+            });
+        });
       });
     });
 
