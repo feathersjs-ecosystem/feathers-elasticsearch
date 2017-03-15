@@ -1,5 +1,19 @@
 # Change Log
 
+## [v0.2.0](https://github.com/feathersjs/feathers-elasticsearch/tree/v0.2.0) (2017-03-15)
+[Full Changelog](https://github.com/feathersjs/feathers-elasticsearch/compare/v0.1.0...v0.2.0)
+
+**Closed issues:**
+
+- Support full text search [\#1](https://github.com/feathersjs/feathers-elasticsearch/issues/1)
+
+**Merged pull requests:**
+
+- Add full-text and term level queries specific to Elasticsearch [\#5](https://github.com/feathersjs/feathers-elasticsearch/pull/5) ([jciolek](https://github.com/jciolek))
+- Merged master to es-5.1-tests  [\#4](https://github.com/feathersjs/feathers-elasticsearch/pull/4) ([jciolek](https://github.com/jciolek))
+- Merged master to es-5.0-tests [\#3](https://github.com/feathersjs/feathers-elasticsearch/pull/3) ([jciolek](https://github.com/jciolek))
+- Update repo links in package.json. [\#2](https://github.com/feathersjs/feathers-elasticsearch/pull/2) ([jciolek](https://github.com/jciolek))
+
 ## [v0.1.0](https://github.com/feathersjs/feathers-elasticsearch/tree/v0.1.0) (2017-01-20)
 
 
