@@ -1,4 +1,7 @@
 /* eslint-env mocha */
+// The following is required for some of the Chai's `expect` assertions,
+// e.g. expect(someVariable).to.be.empty;
+/* eslint no-unused-expressions: "off" */
 import { expect } from 'chai';
 import { filter, mapFind, mapGet, mapPatch, mapBulk, removeProps, parseQuery } from '../src/utils';
 import { errors } from 'feathers-errors';

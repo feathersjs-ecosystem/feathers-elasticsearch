@@ -116,7 +116,7 @@ function find (service, params) {
       size: filters.$limit,
       sort: filters.$sort,
       body: {
-        query: esQuery && { bool: esQuery } || undefined
+        query: esQuery ? { bool: esQuery } : undefined
       }
     },
     service.esParams
