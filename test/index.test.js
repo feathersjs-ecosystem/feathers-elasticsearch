@@ -1,4 +1,7 @@
 /* eslint-env mocha */
+// The following is required for some of the Chai's `expect` assertions,
+// e.g. expect(someVariable).to.be.empty;
+/* eslint no-unused-expressions: "off" */
 import { expect } from 'chai';
 // remember to import example as well!
 import { base, example } from 'feathers-service-tests';
@@ -278,4 +281,3 @@ describe('Elasticsearch Service', () => {
     example('_id');
   });
 });
-
