@@ -132,6 +132,7 @@ export function parseQuery (query, idProp) {
           .filter(parsed => !!parsed)
           .map(parsed => ({ bool: parsed }))
         );
+        result.minimum_should_match = 1;
 
         return result;
       }
