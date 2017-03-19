@@ -1,5 +1,14 @@
 # Change Log
 
+## [v0.2.1](https://github.com/feathersjs/feathers-elasticsearch/tree/v0.2.1) (2017-03-19)
+[Full Changelog](https://github.com/feathersjs/feathers-elasticsearch/compare/v0.2.0...v0.2.1)
+
+**Merged pull requests:**
+
+- fix\(query\) add minimum\_should\_match = 1 to the "should" query [\#8](https://github.com/feathersjs/feathers-elasticsearch/pull/8) ([jciolek](https://github.com/jciolek))
+- fix\(eslint\) minor changes to satisfy new version of semistandard [\#7](https://github.com/feathersjs/feathers-elasticsearch/pull/7) ([jciolek](https://github.com/jciolek))
+- Update all dependencies 🌴 [\#6](https://github.com/feathersjs/feathers-elasticsearch/pull/6) ([greenkeeperio-bot](https://github.com/greenkeeperio-bot))
+
 ## [v0.2.0](https://github.com/feathersjs/feathers-elasticsearch/tree/v0.2.0) (2017-03-15)
 [Full Changelog](https://github.com/feathersjs/feathers-elasticsearch/compare/v0.1.0...v0.2.0)
 
