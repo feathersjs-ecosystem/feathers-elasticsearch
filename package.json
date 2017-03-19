@@ -1,7 +1,7 @@
 {
   "name": "feathers-elasticsearch",
   "description": "Elasticsearch adapter for FeathersJs",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "homepage": "https://github.com/feathersjs/feathers-elasticsearch",
   "main": "lib/",
   "keywords": [
