@@ -182,6 +182,23 @@ describe('Elasticsearch Service', () => {
               expect(results[0].name).to.equal('Bob');
             });
         });
+
+        it('can $or correctly with other filters', () => {
+          return app.service(serviceName)
+            .find({
+              query: {
+                $or: [
+                  { name: 'Moody' },
+                  { name: 'Douglas' }
+                ],
+                bio: { $match: 'JavaScript legend' }
+              }
+            })
+            .then(result => {
+              expect(result.length).to.equal(1);
+              expect(result[0].name).to.equal('Douglas');
+            });
+        });
       });
     });
 

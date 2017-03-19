@@ -474,7 +474,8 @@ describe('Elasticsearch utils', () => {
               ]
             }
           }
-        ]
+        ],
+        minimum_should_match: 1
       };
       expect(parseQuery(query, '_id')).to
         .deep.equal(expectedResult);
@@ -602,6 +603,7 @@ describe('Elasticsearch utils', () => {
             }
           }
         ],
+        minimum_should_match: 1,
         filter: [
           { terms: { age: [ 12, 13 ] } },
           { term: { user: 'Obi Wan' } }
