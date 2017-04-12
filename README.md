@@ -1,5 +1,7 @@
 # feathers-elasticsearch
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/feathersjs/feathers-elasticsearch.svg)](https://greenkeeper.io/)
+
 [![Build Status](https://travis-ci.org/feathersjs/feathers-elasticsearch.svg?branch=master)](https://travis-ci.org/feathersjs/feathers-elasticsearch)
 [![Code Climate](https://codeclimate.com/github/feathersjs/feathers-elasticsearch/badges/gpa.svg)](https://codeclimate.com/github/feathersjs/feathers-elasticsearch)
 [![Test Coverage](https://codeclimate.com/github/feathersjs/feathers-elasticsearch/badges/coverage.svg)](https://codeclimate.com/github/feathersjs/feathers-elasticsearch/coverage)
