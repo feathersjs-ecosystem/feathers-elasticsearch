@@ -164,7 +164,7 @@ query: {
 
 ## Supported Elasticsearch versions
 
-feathers-elasticsearch is currently tested on Elasticsearch 2.4, 5.0, 5.1 and 5.2. Please note, event though the lowest version supported is 2.4,
+feathers-elasticsearch is currently tested on Elasticsearch 2.4, 5.0, 5.1, 5.2 and 5.3. Please note, event though the lowest version supported is 2.4,
 that does not mean it wouldn't work fine on anything lower than 2.4.
 
 ## Quirks
