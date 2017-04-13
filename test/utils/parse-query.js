@@ -3,324 +3,10 @@
 // e.g. expect(someVariable).to.be.empty;
 /* eslint no-unused-expressions: "off" */
 import { expect } from 'chai';
-import { filter, mapFind, mapGet, mapPatch, mapBulk, removeProps, parseQuery } from '../src/utils';
+import { parseQuery } from '../../src/utils';
 import { errors } from 'feathers-errors';
 
-describe('Elasticsearch utils', () => {
-  describe('filter', () => {
-    let expectedResult;
-
-    beforeEach(() => {
-      expectedResult = {
-        filters: {
-          $sort: undefined,
-          $limit: undefined,
-          $skip: 0,
-          $select: true,
-          $populate: undefined
-        },
-        query: {}
-      };
-    });
-
-    it('should return all filters if no parameters are defined', () => {
-      expect(filter()).to
-        .deep.equal(expectedResult);
-    });
-
-    it('should convert $sort object to Elasticsearch sort param', () => {
-      expectedResult.filters.$sort = [ 'name:asc', 'age:desc' ];
-
-      expect(filter({ $sort: { name: 1, age: -1 } })).to
-        .deep.equal(expectedResult);
-    });
-
-    // TODO: fix the original feathers-query-filters, which checkes only for typeof === 'object'.
-    // It can be an array or null.
-    [ 'some random string', 23, undefined ]
-      .forEach(sort => {
-        it(`should pass through $sort if it is ${typeof sort} '${String(sort)}'`, () => {
-          expectedResult.filters.$sort = sort;
-
-          expect(filter({ $sort: sort })).to
-            .deep.equal(expectedResult);
-        });
-      });
-
-    [ 'some random string', 23, undefined ]
-      .forEach(sort => {
-        it(`should pass through $sort if it is ${typeof sort} e.g. '${JSON.stringify(sort)}'`, () => {
-          expectedResult.filters.$sort = sort;
-
-          expect(filter({ $sort: sort })).to
-            .deep.equal(expectedResult);
-        });
-      });
-
-    it('should return $skip 0 if $skip is not a number', () => {
-      expectedResult.filters.$skip = 0;
-
-      expect(filter({ $skip: 'abc' })).to
-        .deep.equal(expectedResult);
-    });
-
-    it('should return $skip 0 if $skip is not NaN', () => {
-      expectedResult.filters.$skip = 0;
-
-      expect(filter({ $skip: NaN })).to
-        .deep.equal(expectedResult);
-    });
-
-    [ 'some random string', 23, null, [], {} ]
-      .forEach(select => {
-        it(`should pass through $select if it ${typeof select} e.g. '${JSON.stringify(select)}'`, () => {
-          expectedResult.filters.$select = select;
-
-          expect(filter({ $select: select })).to
-            .deep.equal(expectedResult);
-        });
-      });
-  });
-
-  describe('mapFind', () => {
-    let sourceResults;
-    let mappedResults;
-
-    beforeEach(() => {
-      sourceResults = {
-        hits: {
-          max_score: 0.677,
-          total: 2,
-          hits: [
-            {
-              _id: 12,
-              _type: 'people',
-              _source: {
-                name: 'Andy'
-              }
-            },
-            {
-              _id: 15,
-              _type: 'people',
-              _source: {
-                name: 'Duke'
-              }
-            }
-          ]
-        }
-      };
-      mappedResults = [
-        {
-          _id: 12,
-          name: 'Andy',
-          _meta: {
-            _id: 12,
-            _type: 'people'
-          }
-        },
-        {
-          _id: 15,
-          name: 'Duke',
-          _meta: {
-            _id: 15,
-            _type: 'people'
-          }
-        }
-      ];
-    });
-
-    it('should swap around meta and the docs', () => {
-      let expectedResult = mappedResults;
-
-      expect(mapFind(sourceResults, '_id', '_meta')).to
-        .deep.equal(expectedResult);
-    });
-
-    it('should returned paginated results when hasPagination is true', () => {
-      let filters = {
-        $skip: 10,
-        $limit: 25
-      };
-      let expectedResult = {
-        total: 2,
-        skip: filters.$skip,
-        limit: filters.$limit,
-        data: mappedResults
-      };
-
-      expect(mapFind(sourceResults, '_id', '_meta', filters, true)).to
-        .deep.equal(expectedResult);
-    });
-  });
-
-  describe('mapGet', () => {
-    let item;
-
-    beforeEach(() => {
-      item = {
-        _id: 12,
-        _type: 'people',
-        _index: 'test',
-        _source: {
-          name: 'John',
-          age: 13
-        },
-        found: true
-      };
-    });
-
-    it('should swap around meta and the doc', () => {
-      let expectedResult = {
-        name: 'John',
-        age: 13,
-        _id: 12,
-        _meta: {
-          _id: 12,
-          _type: 'people',
-          _index: 'test',
-          found: true
-        }
-      };
-
-      expect(mapGet(item, '_id', '_meta')).to
-        .deep.equal(expectedResult);
-    });
-
-    it('should not change the original item', () => {
-      let itemSnapshot = JSON.stringify(item);
-
-      mapGet(item, '_id', '_meta');
-      expect(item).to.deep.equal(JSON.parse(itemSnapshot));
-    });
-  });
-
-  describe('mapPatch', () => {
-    let item;
-
-    beforeEach(() => {
-      item = {
-        _id: 12,
-        _type: 'people',
-        _index: 'test',
-        get: {
-          _source: {
-            name: 'John',
-            age: 13
-          },
-          found: true
-        },
-        result: 'updated'
-      };
-    });
-
-    it('should swap around meta and the doc', () => {
-      let expectedResult = {
-        _id: 12,
-        name: 'John',
-        age: 13,
-        _meta: {
-          _id: 12,
-          _type: 'people',
-          _index: 'test',
-          result: 'updated'
-        }
-      };
-
-      expect(mapPatch(item, '_id', '_meta')).to
-        .deep.equal(expectedResult);
-    });
-
-    it('should return just meta if patched document not present', () => {
-      delete item.get;
-      let expectedResult = {
-        _id: 12,
-        _meta: {
-          _id: 12,
-          _type: 'people',
-          _index: 'test',
-          result: 'updated'
-        }
-      };
-
-      expect(mapPatch(item, '_id', '_meta')).to
-        .deep.equal(expectedResult);
-    });
-
-    it('should not change the original item', () => {
-      let itemSnapshot = JSON.stringify(item);
-
-      mapPatch(item, '_id', '_meta');
-      expect(item).to.deep.equal(JSON.parse(itemSnapshot));
-    });
-  });
-
-  describe('mapBulk', () => {
-    it('should get rid of action name property swap around meta and the doc', () => {
-      let items = [
-        { create: { status: 409, _id: '12' } },
-        { index: { result: 'created', _id: '13' } },
-        { delete: { result: 'deleted' } },
-        { update: { result: 'updated', get: { _source: { name: 'Bob' } } } }
-      ];
-      let expectedResult = [
-        { id: '12', _meta: { status: 409, _id: '12' } },
-        { id: '13', _meta: { result: 'created', _id: '13' } },
-        { _meta: { result: 'deleted' } },
-        { _meta: { result: 'updated' }, name: 'Bob' }
-      ];
-
-      expect(mapBulk(items, 'id', '_meta')).to
-        .deep.equal(expectedResult);
-    });
-
-    it('should not change original items', () => {
-      let items = [
-        { create: { status: 409, _id: '12' } }
-      ];
-      let itemsSnapshot = JSON.stringify(items);
-
-      mapBulk(items, 'id', '_meta');
-      expect(items).to.deep.equal(JSON.parse(itemsSnapshot));
-    });
-  });
-
-  describe('removeProps', () => {
-    let object;
-
-    beforeEach(() => {
-      object = {
-        _id: 12,
-        _meta: {
-          _index: 'test'
-        },
-        age: 13
-      };
-    });
-
-    it('should remove all properties from given list', () => {
-      expect(removeProps(object, '_id', '_meta')).to
-        .deep.equal({ age: 13 });
-    });
-
-    it('should not change the original object', () => {
-      let objectSnapshot = JSON.stringify(object);
-
-      removeProps(object);
-      expect(JSON.stringify(object)).to
-        .equal(objectSnapshot);
-    });
-
-    it('should work if some properties are not defined on the object', () => {
-      expect(removeProps(object, '_meta', 'not_there')).to
-        .deep.equal({ _id: 12, age: 13 });
-    });
-
-    it('should work if there are no props to remove', () => {
-      expect(removeProps(object)).to
-        .deep.equal(object);
-    });
-  });
-
+export default function parseQueryTests () {
   describe('parseQuery', () => {
     it('should return null if query is null or undefined', () => {
       expect(parseQuery(null, '_id')).to.be.null;
@@ -346,6 +32,46 @@ describe('Elasticsearch utils', () => {
       expect(() => parseQuery({ $or: true }, '_id')).to.throw(errors.BadRequest);
       expect(() => parseQuery({ $or: 'abc' }, '_id')).to.throw(errors.BadRequest);
       expect(() => parseQuery({ $or: {} }, '_id')).to.throw(errors.BadRequest);
+    });
+
+    it('should throw BadRequest if $child is not an object, null or undefined', () => {
+      expect(() => parseQuery({ $child: 12 })).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ $child: true })).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ $child: 'abc' })).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ $child: [] })).to.throw(errors.BadRequest);
+    });
+
+    it('should return null if $child is null or undefined', () => {
+      expect(parseQuery({ $child: null }, '_id')).to.be.null;
+      expect(parseQuery({ $child: undefined }, '_id')).to.be.null;
+    });
+
+    it('should return null if $child has no criteria', () => {
+      expect(parseQuery({ $child: { $type: 'hello' } })).to.be.null;
+    });
+
+    it('should throw BadRequest if $parent is not an object, null or undefined', () => {
+      expect(() => parseQuery({ $parent: 12 })).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ $parent: true })).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ $parent: 'abc' })).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ $parent: [] })).to.throw(errors.BadRequest);
+    });
+
+    it('should return null if $parent is null or undefined', () => {
+      expect(parseQuery({ $parent: null }, '_id')).to.be.null;
+      expect(parseQuery({ $parent: undefined }, '_id')).to.be.null;
+    });
+
+    it('should return null if $parent has no criteria', () => {
+      expect(parseQuery({ $parent: { $type: 'hello' } })).to.be.null;
+    });
+
+    it('should throw BadRequest if $parent does not have (string)$type property', () => {
+      expect(parseQuery({ $parent: { $type: 'hello' } })).to.be.null;
+      expect(() => parseQuery({ $parent: {} })).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ $parent: { $type: 123 } })).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ $parent: { $type: true } })).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ $parent: { $type: {} } })).to.throw(errors.BadRequest);
     });
 
     it('should throw BadRequest if criteria is not a primitive or an object', () => {
@@ -555,6 +281,60 @@ describe('Elasticsearch utils', () => {
         .deep.equal(expectedResult);
     });
 
+    it('should return "has_child" query for $child', () => {
+      let query = {
+        $child: {
+          $type: 'address',
+          city: 'Ashford'
+        }
+      };
+      let expectedResult = {
+        must: [
+          {
+            has_child: {
+              type: 'address',
+              query: {
+                bool: {
+                  filter: [
+                    { term: { city: 'Ashford' } }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      };
+      expect(parseQuery(query, '_id')).to
+        .deep.equal(expectedResult);
+    });
+
+    it('should return "has_parent" query for $parent', () => {
+      let query = {
+        $parent: {
+          $type: 'people',
+          name: 'Douglas'
+        }
+      };
+      let expectedResult = {
+        must: [
+          {
+            has_parent: {
+              parent_type: 'people',
+              query: {
+                bool: {
+                  filter: [
+                    { term: { name: 'Douglas' } }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      };
+      expect(parseQuery(query, '_id')).to
+        .deep.equal(expectedResult);
+    });
+
     it('should return all types of queries together', () => {
       let query = {
         $or: [
@@ -566,7 +346,9 @@ describe('Elasticsearch utils', () => {
         age: { $in: [ 12, 13 ] },
         user: 'Obi Wan',
         country: { $nin: [ 'us', 'pl', 'ae' ] },
-        bio: { $match: 'javascript', $phrase: 'the good parts' }
+        bio: { $match: 'javascript', $phrase: 'the good parts' },
+        $child: { $type: 'address', city: 'Ashford' },
+        $parent: { $type: 'people', name: 'Douglas' }
       };
       let expectedResult = {
         should: [
@@ -613,7 +395,31 @@ describe('Elasticsearch utils', () => {
         ],
         must: [
           { match: { bio: 'javascript' } },
-          { match_phrase: { bio: 'the good parts' } }
+          { match_phrase: { bio: 'the good parts' } },
+          {
+            has_child: {
+              type: 'address',
+              query: {
+                bool: {
+                  filter: [
+                    { term: { city: 'Ashford' } }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            has_parent: {
+              parent_type: 'people',
+              query: {
+                bool: {
+                  filter: [
+                    { term: { name: 'Douglas' } }
+                  ]
+                }
+              }
+            }
+          }
         ]
       };
 
@@ -621,4 +427,4 @@ describe('Elasticsearch utils', () => {
         .deep.equal(expectedResult);
     });
   });
-});
+}

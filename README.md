@@ -56,6 +56,7 @@ The following options can be passed when creating a new Elasticsearch service:
 - `elasticsearch` (**required**) - Configuration object for elasticsearch requests. The required properties are `index` and `type`. Apart from that you can specify anything that can be passed to all requests going to Elasticsearch. Another recognised property is [`refresh`](https://www.elastic.co/guide/en/elasticsearch/guide/2.x/near-real-time.html#refresh-api) which is set to `false` by default. Anything else use at your own risk.
 - `id` (default: '_id') [optional] - The id property of your documents in this service.
 - `meta` (default: '_meta') [optional] - The meta property of your documents in this service. The meta field is an object containing elasticsearch specific information, e.g. _score, _type, _index, and so forth.
+- `parent` (default: '_parent') [optional] - The parent property used in this service to set the parent document id for an Elasticsearch type with parent mapping.
 - `paginate` [optional] - A pagination object containing a `default` and `max` page size (see the [Pagination chapter](http://docs.feathersjs.com/databases/pagination.html)).
 
 ## Complete Example
@@ -160,6 +161,69 @@ query: {
     $phrase_prefix: 'I like JavaS'
   }
 }
+```
+
+### $child
+[Joining query `has_child`](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-has-child-query.html).
+Find all documents which have children matching the query. The `$child` query is essentially a full-blown query of its own. The `$child` query requires `$type` property.
+
+
+```js
+query: {
+  $child: {
+    $type: 'blog_tag',
+    tag: 'something'
+  }
+}
+```
+
+### $parent
+[Joining query `has_parent`](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-has-parent-query.html).
+Find all documents which have parent matching the query. The `$parent` query is essentially a full-blown query of its own. The `$parent` query requires `$type` property.
+
+
+```js
+query: {
+  $parent: {
+    $type: 'blog',
+    title: {
+      $match: 'javascript'
+    }
+  }
+}
+```
+
+## Parent-child relationship
+Elasticsearch supports [parent-child relationship](https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-parent-field.html), however it is not exactly the same as in relational databases. feathers-elasticsearch supports all CRUD operations for Elasticsearch types with parent mapping, and does that with the Elasticsearch constrains. Therefore:
+
+- each operation concering a single document (create, get, patch, update, remove) is required to provide parent id
+- creating documents in bulk (providing a list of documents) is the same as many single document operations, so parent id is required as well
+- to avoid any doubts, each query based operation (find, bulk patch, bulk remove) cannot have the parent id
+
+### How to specify parent id
+Parent id should be provided as part of the data for the create operations (single and bulk):
+
+```javascript
+parentService.create({
+  _id: 123,
+  title: 'JavaScript: The Good Parts'
+});
+
+childService.create({
+  _id: 1000
+  tag: 'javascript',
+  _parent: 123
+})
+```
+Please note, that name of the parent property (`_parent` by default) is configurable through the service options, so that you can set it to whatever suits you.
+
+For all other operations (get, patch, update, remove), the parent id should be provided as part of the query:
+
+```javascript
+childService.remove(
+  1000,
+  { query: { _parent: 123 } }
+);
 ```
 
 ## Supported Elasticsearch versions

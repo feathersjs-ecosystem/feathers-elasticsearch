@@ -151,6 +151,50 @@ export function parseQuery (query, idProp) {
         return result;
       }
 
+      if (key === '$child' || key === '$parent') {
+        let query;
+        let queryName = 'has_child';
+        let typeName = 'type';
+
+        if (value === null || value === undefined) {
+          return result;
+        }
+
+        if (type !== 'object' || isArray) {
+          throw new errors.BadRequest('$child should be an object');
+        }
+
+        if (typeof value.$type !== 'string') {
+          throw new errors.BadRequest('$child.$type must be a string');
+        }
+
+        query = parseQuery(removeProps(value, '$type'));
+
+        if (!query) {
+          return result;
+        }
+
+        if (!result.must) {
+          result.must = [];
+        }
+
+        if (key === '$parent') {
+          queryName = 'has_parent';
+          typeName = 'parent_type';
+        }
+
+        result.must.push({
+          [queryName]: {
+            [typeName]: value.$type,
+            query: {
+              bool: query
+            }
+          }
+        });
+
+        return result;
+      }
+
       // The value is not an object, which means it's supposed to be a primitive.
       // We need add simple filter[{term: {}}] query.
       if (value === null || typeof value !== 'object') {
