@@ -1,5 +1,17 @@
 # Change Log
 
+## [v0.2.2](https://github.com/feathersjs/feathers-elasticsearch/tree/v0.2.2) (2017-04-15)
+[Full Changelog](https://github.com/feathersjs/feathers-elasticsearch/compare/v0.2.1...v0.2.2)
+
+**Closed issues:**
+
+- How to use with existing datastore question? [\#9](https://github.com/feathersjs/feathers-elasticsearch/issues/9)
+
+**Merged pull requests:**
+
+- feat\(query\) add $child \(es: has\_child\) and $parent \(es: has\_parent\) [\#11](https://github.com/feathersjs/feathers-elasticsearch/pull/11) ([jciolek](https://github.com/jciolek))
+- Add Greenkeeper badge 🌴 [\#10](https://github.com/feathersjs/feathers-elasticsearch/pull/10) ([greenkeeper[bot]](https://github.com/integration/greenkeeper))
+
 ## [v0.2.1](https://github.com/feathersjs/feathers-elasticsearch/tree/v0.2.1) (2017-03-19)
 [Full Changelog](https://github.com/feathersjs/feathers-elasticsearch/compare/v0.2.0...v0.2.1)
 
