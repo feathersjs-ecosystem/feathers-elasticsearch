@@ -40,6 +40,14 @@ describe('Elasticsearch Service', () => {
                 name: keywordMapping
               }
             },
+            mobiles: {
+              _parent: {
+                type: 'people'
+              },
+              properties: {
+                number: keywordMapping
+              }
+            },
             todos: {
               properties: {
                 text: keywordMapping
@@ -56,6 +64,16 @@ describe('Elasticsearch Service', () => {
           elasticsearch: {
             index: 'test',
             type: 'people',
+            refresh: true
+          }
+        }));
+        app.use('/mobiles', service({
+          Model: client,
+          id: 'id',
+          parent: 'parent',
+          elasticsearch: {
+            index: 'test',
+            type: 'mobiles',
             refresh: true
           }
         }));
@@ -83,26 +101,35 @@ describe('Elasticsearch Service', () => {
   base(app, errors, 'people', 'id');
 
   describe('Specific Elasticsearch tests', () => {
-    before(() => {
-      return app.service(serviceName)
-        .remove(null, { query: { $limit: 1000 } })
-        .then(() => {
-          return app.service(serviceName).create([
-            {
-              name: 'Bob',
-              bio: 'I like JavaScript.'
-            },
-            {
-              name: 'Moody',
-              bio: 'I don\'t like .NET.'
-            },
-            {
-              name: 'Douglas',
-              bio: 'A legend'
-            }
-          ]);
-        });
-    });
+    before(() => app.service(serviceName)
+      .remove(null, { query: { $limit: 1000 } })
+      .then(() => app.service(serviceName)
+        .create([
+          {
+            id: 'bob',
+            name: 'Bob',
+            bio: 'I like JavaScript.'
+          },
+          {
+            id: 'moody',
+            name: 'Moody',
+            bio: 'I don\'t like .NET.'
+          },
+          {
+            id: 'douglas',
+            name: 'Douglas',
+            bio: 'A legend'
+          }
+        ])
+      )
+      .then(() => app.service('mobiles')
+        .create([
+          { number: '991', parent: 'douglas' },
+          { number: '992', parent: 'douglas' },
+          { number: '991', parent: 'moody' }
+        ])
+      )
+    );
 
     after(() => {
       app.service(serviceName).remove(null, { query: { $limit: 1000 } });
@@ -199,6 +226,42 @@ describe('Elasticsearch Service', () => {
               expect(result[0].name).to.equal('Douglas');
             });
         });
+
+        it('can $child', () => {
+          return app.service(serviceName)
+            .find({
+              query: {
+                $sort: { name: 1 },
+                $child: {
+                  $type: 'mobiles',
+                  number: '991'
+                }
+              }
+            })
+            .then(results => {
+              expect(results.length).to.equal(2);
+              expect(results[0].name).to.equal('Douglas');
+              expect(results[1].name).to.equal('Moody');
+            });
+        });
+
+        it('can $parent', () => {
+          return app.service('mobiles')
+            .find({
+              query: {
+                $sort: { number: 1 },
+                $parent: {
+                  $type: 'people',
+                  name: 'Douglas'
+                }
+              }
+            })
+            .then(results => {
+              expect(results.length).to.equal(2);
+              expect(results[0].number).to.equal('991');
+              expect(results[1].number).to.equal('992');
+            });
+        });
       });
     });
 
@@ -261,6 +324,54 @@ describe('Elasticsearch Service', () => {
             expect(results[2].name).to.equal('Mark');
           });
       });
+
+      it('should create single item with provided parent', () => {
+        return app.service('mobiles')
+          .create({ number: '0123456789', parent: 'bob' })
+          .then(result => {
+            expect(result.number).to.equal('0123456789');
+            expect(result._meta._parent).to.equal('bob');
+          });
+      });
+
+      it('should create multiple items with provided parents', () => {
+        return app.service('mobiles')
+          .create([
+            { number: '0123', parent: 'bob', id: 'bobMobile' },
+            { number: '1234', parent: 'moody' }
+          ])
+          .then(results => {
+            expect(results.length).to.equal(2);
+            expect(results[0].number).to.equal('0123');
+            expect(results[0]._meta._parent).to.equal('bob');
+            expect(results[1].number).to.equal('1234');
+            expect(results[1]._meta._parent).to.equal('moody');
+          });
+      });
+    });
+
+    describe('get()', () => {
+      it('should get an item with specified parent', () => {
+        return app.service('mobiles')
+          .get('bobMobile', { query: { parent: 'bob' } })
+          .then(result => {
+            expect(result.number).to.equal('0123');
+          });
+      });
+    });
+
+    describe('update()', () => {
+      it('should update an item with specified parent', () => {
+        return app.service('mobiles')
+          .update(
+            'bobMobile',
+            { number: '123' },
+            { query: { parent: 'bob' } }
+          )
+          .then(result => {
+            expect(result.number).to.equal('123');
+          });
+      });
     });
 
     describe('patch()', () => {
@@ -275,6 +386,38 @@ describe('Elasticsearch Service', () => {
             expect(results).to.be.an('array').and.be.empty;
           });
       });
+
+      it('should patch an item with a specified parent', () => {
+        return app.service('mobiles')
+          .patch(
+            'bobMobile',
+            { number: '321' },
+            { query: { parent: 'bob' } }
+          )
+          .then(result => {
+            expect(result.number).to.equal('321');
+          });
+      });
+
+      it('should patch items which have parents (bulk)', () => {
+        return app.service('mobiles')
+          .create([
+            { number: 'patchme', parent: 'bob' },
+            { number: 'patchme', parent: 'moody' }
+          ])
+          .then(() => app.service('mobiles')
+            .patch(
+              null,
+              { number: 'patched' },
+              { query: { number: 'patchme' } }
+            )
+          )
+          .then(results => {
+            expect(results.length).to.equal(2);
+            expect(results[0].number).to.equal('patched');
+            expect(results[1].number).to.equal('patched');
+          });
+      });
     });
 
     describe('remove()', () => {
@@ -286,6 +429,35 @@ describe('Elasticsearch Service', () => {
           )
           .then(results => {
             expect(results).to.be.an('array').and.be.empty;
+          });
+      });
+
+      it('should remove an item with a specified parent', () => {
+        return app.service('mobiles')
+          .remove('bobMobile', { query: { parent: 'bob' } })
+          .then(result => {
+            expect(result.number).to.equal('321');
+          });
+      });
+
+      it('should remove items which have a parent', () => {
+        return app.service('mobiles')
+          .create([
+            { number: 'removeme', parent: 'bob' },
+            { number: 'removeme', parent: 'moody' }
+          ])
+          .then(() => app.service('mobiles')
+            .remove(
+              null,
+              { query: { number: 'removeme', $sort: { _parent: 1 } } }
+            )
+          )
+          .then(results => {
+            expect(results.length).to.equal(2);
+            expect(results[0].number).to.equal('removeme');
+            expect(results[0]._meta._parent).to.equal('bob');
+            expect(results[1].number).to.equal('removeme');
+            expect(results[1]._meta._parent).to.equal('moody');
           });
       });
     });

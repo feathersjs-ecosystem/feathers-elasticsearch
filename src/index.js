@@ -19,6 +19,7 @@ class Service {
     this.paginate = options.paginate || {};
     this.events = options.events || [];
     this.id = options.id || '_id';
+    this.parent = options.parent || '_parent';
     this.meta = options.meta || '_meta';
     this.esParams = Object.assign(
       { refresh: false },
@@ -58,17 +59,23 @@ class Service {
   // PUT
   // Supports single item update.
   update (id, data, params) {
+    let { query } = filter(params.query, this.paginate);
     let updateParams = Object.assign(
       {
         id: String(id),
+        parent: query[this.parent],
         body: removeProps(data, this.meta, this.id)
       },
       this.esParams,
     );
     let getParams = Object.assign(
-      {},
-      params,
-      { query: { $select: false } }
+      removeProps(params, 'query'),
+      {
+        query: Object.assign(
+          { $select: false },
+          params.query
+        )
+      }
     );
 
     // The first get is a bit of an overhead, as per the spec we want to update only existing elements.
@@ -136,11 +143,13 @@ function find (service, params) {
 }
 
 function get (service, id, params) {
-  let { filters } = filter(params.query, service.pagination);
+  let { filters, query } = filter(params.query, service.paginate);
+  let parent = query[service.parent];
   let getParams = Object.assign(
     {
       _source: filters.$select,
-      id: String(id)
+      id: String(id),
+      parent: parent ? String(parent) : undefined
     },
     service.esParams
   );
@@ -149,12 +158,12 @@ function get (service, id, params) {
     .then(result => mapGet(result, service.id, service.meta));
 }
 
-function mget (service, ids, params) {
-  let { filters } = filter(params.query, service.pagination);
+function mget (service, docs, params) {
+  let { filters } = filter(params.query, service.paginate);
   let mgetParams = Object.assign(
     {
       _source: filters.$select,
-      body: { ids }
+      body: { docs }
     },
     service.esParams
   );
@@ -165,20 +174,31 @@ function mget (service, ids, params) {
 
 function create (service, data, params) {
   let id = data[service.id];
+  let parent = data[service.parent] ? String(data[service.parent]) : undefined;
   let hasId = undefined !== id;
   let createParams = Object.assign(
     {
       id: hasId ? String(id) : undefined,
-      body: removeProps(data, service.meta, service.id)
+      parent,
+      body: removeProps(data, service.meta, service.id, service.parent)
     },
     service.esParams
+  );
+  let getParams = Object.assign(
+    removeProps(params, 'query'),
+    {
+      query: Object.assign(
+        { [service.parent]: parent },
+        params.query
+      )
+    },
   );
   // Elasticsearch `create` expects _id, whereas index does not.
   // Our `create` supports both forms.
   let method = hasId ? 'create' : 'index';
 
   return service.Model[method](createParams)
-    .then(result => get(service, result._id, params));
+    .then(result => get(service, result._id, getParams));
 }
 
 function createBulk (service, data, params) {
@@ -192,11 +212,11 @@ function createBulk (service, data, params) {
         let id = item[service.id];
 
         if (id !== undefined) {
-          result.push({ create: { _id: id } });
+          result.push({ create: { _id: id, parent: item[service.parent] } });
         } else {
-          result.push({ index: {} });
+          result.push({ index: { parent: item[service.parent] } });
         }
-        result.push(removeProps(item, service.meta, service.id));
+        result.push(removeProps(item, service.meta, service.id, service.parent));
 
         return result;
       }, [])
@@ -208,11 +228,18 @@ function createBulk (service, data, params) {
     .then(results => {
       let created = mapBulk(results.items, service.id, service.meta);
       // We are fetching only items which have been correctly created.
-      let ids = created
+      let docs = created
+        .map((item, index) => Object.assign(
+          { [service.parent]: data[index][service.parent] },
+          item
+        ))
         .filter(item => item[service.meta].status === 201)
-        .map(item => item[service.meta]._id);
+        .map(item => ({
+          _id: item[service.meta]._id,
+          parent: item[service.parent]
+        }));
 
-      return mget(service, ids, params)
+      return mget(service, docs, params)
         .then(fetched => {
           let fetchedIndex = 0;
 
@@ -234,9 +261,11 @@ function createBulk (service, data, params) {
 }
 
 function patch (service, id, data, params) {
+  let { query } = filter(params.query, service.paginate);
   let updateParams = Object.assign(
     {
       id: String(id),
+      parent: query[service.parent],
       body: {
         doc: removeProps(data, service.meta, service.id)
       },
@@ -274,12 +303,11 @@ function patchBulk (service, data, params) {
       if (!found.length) {
         return found;
       }
-
       bulkUpdateParams = Object.assign(
         {
           _source: false,
           body: found.reduce((result, item) => {
-            result.push({ update: { _id: item[service.id] } });
+            result.push({ update: { _id: item[service.id], parent: item[service.meta]._parent } });
             result.push({ doc: removeProps(data, service.meta, service.id) });
 
             return result;
@@ -291,11 +319,18 @@ function patchBulk (service, data, params) {
       return service.Model.bulk(bulkUpdateParams)
         .then(result => {
           let patched = mapBulk(result.items, service.id, service.meta);
-          let ids = patched
+          let docs = patched
+            .map((item, index) => Object.assign(
+              { [service.parent]: found[index][service.meta]._parent },
+              item
+            ))
             .filter(item => item[service.meta].status === 200)
-            .map(item => item[service.meta]._id);
+            .map(item => ({
+              _id: item[service.meta]._id,
+              parent: item[service.parent]
+            }));
 
-          return mget(service, ids, params)
+          return mget(service, docs, params)
             .then(fetched => {
               let fetchedIndex = 0;
 
@@ -316,8 +351,9 @@ function patchBulk (service, data, params) {
 }
 
 function remove (service, id, params) {
+  let { query } = filter(params.query, service.paginate);
   let removeParams = Object.assign(
-    { id: String(id) },
+    { id: String(id), parent: query[service.parent] },
     service.esParams
   );
 
@@ -342,7 +378,7 @@ function removeBulk (service, params) {
       bulkRemoveParams = Object.assign(
         {
           body: found.map(item => ({
-            delete: { _id: item[service.id] }
+            delete: { _id: item[service.id], parent: item[service.meta]._parent }
           }))
         },
         service.esParams
