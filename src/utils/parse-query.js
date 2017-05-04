@@ -18,6 +18,7 @@ const queryCriteriaMap = {
 
 const specialQueryHandlers = {
   $or: $or,
+  $and: $and,
   $all: $all,
   $child: (...args) => $childOr$parent('$child', ...args),
   $parent: (...args) => $childOr$parent('$parent', ...args)
@@ -44,6 +45,23 @@ function $all (value, esQuery) {
 
   esQuery.must = esQuery.must || [];
   esQuery.must.push({ match_all: {} });
+
+  return esQuery;
+}
+
+function $and (value, esQuery, idProp) {
+  validateType(value, '$nad', 'array');
+
+  value
+    .map(subQuery => parseQuery(subQuery, idProp))
+    .filter(parsed => !!parsed)
+    .forEach(parsed => {
+      Object.keys(parsed)
+        .forEach(section => {
+          esQuery[section] = esQuery[section] || [];
+          esQuery[section].push(...parsed[section]);
+        });
+    });
 
   return esQuery;
 }
@@ -103,12 +121,16 @@ function parseQuery (query, idProp) {
         return specialQueryHandlers[key](value, result, idProp);
       }
 
-      validateType(value, key, ['number', 'string', 'boolean', 'undefined', 'object']);
-      // The value is not an object, which means it's supposed to be a primitive.
+      validateType(value, key, ['number', 'string', 'boolean', 'undefined', 'object', 'array']);
+      // The value is not an object, which means it's supposed to be a primitive or an array.
       // We need add simple filter[{term: {}}] query.
       if (type !== 'object') {
         result.filter = result.filter || [];
-        result.filter.push({ term: { [key]: value } });
+        if (type === 'array') {
+          value.forEach(value => result.filter.push({ term: { [key]: value } }));
+        } else {
+          result.filter.push({ term: { [key]: value } });
+        }
 
         return result;
       }
