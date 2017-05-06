@@ -1,5 +1,19 @@
 # Change Log
 
+## [v0.2.3](https://github.com/feathersjs/feathers-elasticsearch/tree/v0.2.3) (2017-05-06)
+[Full Changelog](https://github.com/feathersjs/feathers-elasticsearch/compare/v0.2.2...v0.2.3)
+
+**Implemented enhancements:**
+
+- Multi term search [\#14](https://github.com/feathersjs/feathers-elasticsearch/issues/14)
+
+**Merged pull requests:**
+
+- feat\(query\) add $all query \(es: array datatype\) [\#16](https://github.com/feathersjs/feathers-elasticsearch/pull/16) ([jciolek](https://github.com/jciolek))
+- Update feathers-service-tests to the latest version 🚀 [\#15](https://github.com/feathersjs/feathers-elasticsearch/pull/15) ([greenkeeper[bot]](https://github.com/integration/greenkeeper))
+- Update elasticsearch to the latest version 🚀 [\#13](https://github.com/feathersjs/feathers-elasticsearch/pull/13) ([greenkeeper[bot]](https://github.com/integration/greenkeeper))
+- Update semistandard to the latest version 🚀 [\#12](https://github.com/feathersjs/feathers-elasticsearch/pull/12) ([greenkeeper[bot]](https://github.com/integration/greenkeeper))
+
 ## [v0.2.2](https://github.com/feathersjs/feathers-elasticsearch/tree/v0.2.2) (2017-04-15)
 [Full Changelog](https://github.com/feathersjs/feathers-elasticsearch/compare/v0.2.1...v0.2.2)
 
