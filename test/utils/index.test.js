@@ -3,8 +3,9 @@
 // e.g. expect(someVariable).to.be.empty;
 /* eslint no-unused-expressions: "off" */
 import { expect } from 'chai';
-import { filter, mapFind, mapGet, mapPatch, mapBulk, removeProps } from '../../src/utils';
+import { filter, mapFind, mapGet, mapPatch, mapBulk } from '../../src/utils';
 import parseQueryTests from './parse-query.js';
+import coreUtilsTests from './core.js';
 
 describe('Elasticsearch utils', () => {
   describe('filter', () => {
@@ -284,42 +285,6 @@ describe('Elasticsearch utils', () => {
     });
   });
 
-  describe('removeProps', () => {
-    let object;
-
-    beforeEach(() => {
-      object = {
-        _id: 12,
-        _meta: {
-          _index: 'test'
-        },
-        age: 13
-      };
-    });
-
-    it('should remove all properties from given list', () => {
-      expect(removeProps(object, '_id', '_meta')).to
-        .deep.equal({ age: 13 });
-    });
-
-    it('should not change the original object', () => {
-      let objectSnapshot = JSON.stringify(object);
-
-      removeProps(object);
-      expect(JSON.stringify(object)).to
-        .equal(objectSnapshot);
-    });
-
-    it('should work if some properties are not defined on the object', () => {
-      expect(removeProps(object, '_meta', 'not_there')).to
-        .deep.equal({ _id: 12, age: 13 });
-    });
-
-    it('should work if there are no props to remove', () => {
-      expect(removeProps(object)).to
-        .deep.equal(object);
-    });
-  });
-
   parseQueryTests();
+  coreUtilsTests();
 });

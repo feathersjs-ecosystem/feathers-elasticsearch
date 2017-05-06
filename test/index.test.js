@@ -37,7 +37,8 @@ describe('Elasticsearch Service', () => {
           mappings: {
             people: {
               properties: {
-                name: keywordMapping
+                name: keywordMapping,
+                tags: keywordMapping
               }
             },
             mobiles: {
@@ -108,17 +109,20 @@ describe('Elasticsearch Service', () => {
           {
             id: 'bob',
             name: 'Bob',
-            bio: 'I like JavaScript.'
+            bio: 'I like JavaScript.',
+            tags: ['javascript', 'programmer']
           },
           {
             id: 'moody',
             name: 'Moody',
-            bio: 'I don\'t like .NET.'
+            bio: 'I don\'t like .NET.',
+            tags: ['programmer']
           },
           {
             id: 'douglas',
             name: 'Douglas',
-            bio: 'A legend'
+            bio: 'A legend',
+            tags: ['javascript', 'legend', 'programmer']
           }
         ])
       )
@@ -153,6 +157,17 @@ describe('Elasticsearch Service', () => {
           .then(results => {
             expect(results.total).to.equal(0);
             expect(results.data).to.be.an('array').and.be.empty;
+          });
+      });
+
+      it('should filter results by array parameter', () => {
+        return app.service(serviceName)
+          .find({
+            query: { tags: ['legend', 'javascript'] }
+          })
+          .then(results => {
+            expect(results.length).to.equal(1);
+            expect(results[0].name).to.equal('Douglas');
           });
       });
 
@@ -221,9 +236,27 @@ describe('Elasticsearch Service', () => {
                 bio: { $match: 'JavaScript legend' }
               }
             })
-            .then(result => {
-              expect(result.length).to.equal(1);
-              expect(result[0].name).to.equal('Douglas');
+            .then(results => {
+              expect(results.length).to.equal(1);
+              expect(results[0].name).to.equal('Douglas');
+            });
+        });
+
+        it('can $and', () => {
+          return app.service(serviceName)
+            .find({
+              query: {
+                $sort: { name: 1 },
+                $and: [
+                  { tags: 'javascript' },
+                  { tags: 'programmer' }
+                ]
+              }
+            })
+            .then(results => {
+              expect(results.length).to.equal(2);
+              expect(results[0].name).to.equal('Bob');
+              expect(results[1].name).to.equal('Douglas');
             });
         });
 

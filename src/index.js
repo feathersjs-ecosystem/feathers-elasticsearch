@@ -1,6 +1,9 @@
+'use strict';
+
 import errors from 'feathers-errors';
 import makeDebug from 'debug';
-import { filter, mapGet, mapFind, mapBulk, parseQuery, removeProps } from './utils';
+
+import { filter, removeProps, parseQuery, mapGet, mapFind, mapBulk } from './utils';
 import Proto from 'uberproto';
 
 const debug = makeDebug('feathers-elasticsearch');
@@ -66,7 +69,7 @@ class Service {
         parent: query[this.parent],
         body: removeProps(data, this.meta, this.id)
       },
-      this.esParams,
+      this.esParams
     );
     let getParams = Object.assign(
       removeProps(params, 'query'),
@@ -191,7 +194,7 @@ function create (service, data, params) {
         { [service.parent]: parent },
         params.query
       )
-    },
+    }
   );
   // Elasticsearch `create` expects _id, whereas index does not.
   // Our `create` supports both forms.

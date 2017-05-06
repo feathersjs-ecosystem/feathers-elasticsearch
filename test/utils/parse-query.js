@@ -34,6 +34,13 @@ export default function parseQueryTests () {
       expect(() => parseQuery({ $or: {} }, '_id')).to.throw(errors.BadRequest);
     });
 
+    it('should throw BadRequest if $and is not an array', () => {
+      expect(() => parseQuery({ $and: 12 }, '_id')).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ $and: true }, '_id')).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ $and: 'abc' }, '_id')).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ $and: {} }, '_id')).to.throw(errors.BadRequest);
+    });
+
     it('should throw BadRequest if $child is not an object, null or undefined', () => {
       expect(() => parseQuery({ $child: 12 })).to.throw(errors.BadRequest);
       expect(() => parseQuery({ $child: true })).to.throw(errors.BadRequest);
@@ -74,9 +81,9 @@ export default function parseQueryTests () {
       expect(() => parseQuery({ $parent: { $type: {} } })).to.throw(errors.BadRequest);
     });
 
-    it('should throw BadRequest if criteria is not a primitive or an object', () => {
+    it('should throw BadRequest if criteria is not a valid primitive, array or an object', () => {
       expect(() => parseQuery({ age: null }, '_id')).to.throw(errors.BadRequest);
-      expect(() => parseQuery({ age: [] }, '_id')).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ age: NaN }, '_id')).to.throw(errors.BadRequest);
       expect(() => parseQuery({ age: () => {} }, '_id')).to.throw(errors.BadRequest);
     });
 
@@ -91,6 +98,23 @@ export default function parseQueryTests () {
           { term: { user: 'doug' } },
           { term: { age: 23 } },
           { term: { active: true } }
+        ]
+      };
+
+      expect(parseQuery(query, '_id')).to
+        .deep.equal(expectedResult);
+    });
+
+    it('should return term query for each value from an array', () => {
+      let query = {
+        tags: ['javascript', 'nodejs'],
+        user: 'doug'
+      };
+      let expectedResult = {
+        filter: [
+          { term: { tags: 'javascript' } },
+          { term: { tags: 'nodejs' } },
+          { term: { user: 'doug' } }
         ]
       };
 
@@ -203,6 +227,32 @@ export default function parseQueryTests () {
         ],
         minimum_should_match: 1
       };
+      expect(parseQuery(query, '_id')).to
+        .deep.equal(expectedResult);
+    });
+
+    it('should return all queries for $and', () => {
+      let query = {
+        $and: [
+          { tags: 'javascript' },
+          { tags: { $ne: 'legend' } },
+          { age: { $nin: [23, 24] } },
+          { age: { $in: [25, 26] } }
+        ],
+        name: 'Doug'
+      };
+      let expectedResult = {
+        filter: [
+          { term: { tags: 'javascript' } },
+          { terms: { age: [25, 26] } },
+          { term: { name: 'Doug' } }
+        ],
+        must_not: [
+          { term: { tags: 'legend' } },
+          { terms: { age: [23, 24] } }
+        ]
+      };
+
       expect(parseQuery(query, '_id')).to
         .deep.equal(expectedResult);
     });
@@ -348,7 +398,11 @@ export default function parseQueryTests () {
         country: { $nin: [ 'us', 'pl', 'ae' ] },
         bio: { $match: 'javascript', $phrase: 'the good parts' },
         $child: { $type: 'address', city: 'Ashford' },
-        $parent: { $type: 'people', name: 'Douglas' }
+        $parent: { $type: 'people', name: 'Douglas' },
+        $and: [
+          { tags: 'javascript' },
+          { tags: 'legend' }
+        ]
       };
       let expectedResult = {
         should: [
@@ -388,7 +442,9 @@ export default function parseQueryTests () {
         minimum_should_match: 1,
         filter: [
           { terms: { age: [ 12, 13 ] } },
-          { term: { user: 'Obi Wan' } }
+          { term: { user: 'Obi Wan' } },
+          { term: { tags: 'javascript' } },
+          { term: { tags: 'legend' } }
         ],
         must_not: [
           { terms: { country: [ 'us', 'pl', 'ae' ] } }
