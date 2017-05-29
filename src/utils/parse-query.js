@@ -50,7 +50,7 @@ function $all (value, esQuery) {
 }
 
 function $and (value, esQuery, idProp) {
-  validateType(value, '$nad', 'array');
+  validateType(value, '$and', 'array');
 
   value
     .map(subQuery => parseQuery(subQuery, idProp))
