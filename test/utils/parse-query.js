@@ -41,6 +41,13 @@ export default function parseQueryTests () {
       expect(() => parseQuery({ $and: {} }, '_id')).to.throw(errors.BadRequest);
     });
 
+    it('should throw BadRequest if $sqs is not an object', () => {
+      expect(() => parseQuery({ $sqs: 12 }, '_id')).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ $sqs: true }, '_id')).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ $sqs: 'abc' }, '_id')).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ $sqs: {} }, '_id')).to.throw(errors.BadRequest);
+    });
+
     it('should throw BadRequest if $child is not an object, null or undefined', () => {
       expect(() => parseQuery({ $child: 12 })).to.throw(errors.BadRequest);
       expect(() => parseQuery({ $child: true })).to.throw(errors.BadRequest);
@@ -250,6 +257,35 @@ export default function parseQueryTests () {
         must_not: [
           { term: { tags: 'legend' } },
           { terms: { age: [23, 24] } }
+        ]
+      };
+
+      expect(parseQuery(query, '_id')).to
+        .deep.equal(expectedResult);
+    });
+
+    it('should return "must" $sqs', () => {
+      let query = {
+        $sqs: {
+          $fields: [
+            'description',
+            'title^5'
+          ],
+          $query: '-(track another)'
+        }
+      };
+      let expectedResult = {
+        must: [
+          {
+            simple_query_string: {
+              fields: [
+                'description',
+                'title^5'
+              ],
+              query: '-(track another)',
+              default_operator: 'or'
+            }
+          }
         ]
       };
 

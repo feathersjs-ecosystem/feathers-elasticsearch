@@ -20,6 +20,7 @@ const specialQueryHandlers = {
   $or: $or,
   $and: $and,
   $all: $all,
+  $sqs: $sqs,
   $child: (...args) => $childOr$parent('$child', ...args),
   $parent: (...args) => $childOr$parent('$parent', ...args)
 };
@@ -62,6 +63,31 @@ function $and (value, esQuery, idProp) {
           esQuery[section].push(...parsed[section]);
         });
     });
+
+  return esQuery;
+}
+
+function $sqs (value, esQuery, idProp) {
+  if (value === null || value === undefined) {
+    return esQuery;
+  }
+
+  validateType(value, '$sqs', 'object');
+  validateType(value.$fields, `value.$fields`, 'array');
+  validateType(value.$query, `value.$query`, 'string');
+
+  if (value.$default_operator) {
+    validateType(value.$default_operator, `value.$default_operator`, 'string');
+  }
+
+  esQuery.must = esQuery.must || [];
+  esQuery.must.push({
+    simple_query_string: {
+      fields: value.$fields,
+      query: value.$query,
+      default_operator: value.$default_operator || 'or'
+    }
+  });
 
   return esQuery;
 }
