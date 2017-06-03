@@ -413,3 +413,5 @@ export default function init (options) {
   debug('Initializing feathers-elasticsearch plugin');
   return new Service(options);
 }
+
+init.Service = Service;
