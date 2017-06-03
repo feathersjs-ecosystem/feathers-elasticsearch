@@ -260,6 +260,27 @@ describe('Elasticsearch Service', () => {
             });
         });
 
+        it('can $sqs (simple_query_string)', () => {
+          return app.service(serviceName)
+            .find({
+              query: {
+                $sort: { name: 1 },
+                $sqs: {
+                  $fields: [
+                    'bio',
+                    'name^5'
+                  ],
+                  $query: '+like -javascript',
+                  $default_operator: 'and'
+                }
+              }
+            })
+            .then(results => {
+              expect(results.length).to.equal(1);
+              expect(results[0].name).to.equal('Moody');
+            });
+        });
+
         it('can $child', () => {
           return app.service(serviceName)
             .find({
