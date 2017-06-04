@@ -271,13 +271,35 @@ describe('Elasticsearch Service', () => {
                     'name^5'
                   ],
                   $query: '+like -javascript',
-                  $default_operator: 'and'
+                  $operator: 'and'
                 }
               }
             })
             .then(results => {
               expect(results.length).to.equal(1);
               expect(results[0].name).to.equal('Moody');
+            });
+        });
+
+        it('can $sqs (simple_query_string) with other filters', () => {
+          return app.service(serviceName)
+            .find({
+              query: {
+                $sort: { name: 1 },
+                $and: [
+                  { tags: 'javascript' }
+                ],
+                $sqs: {
+                  $fields: [
+                    'bio'
+                  ],
+                  $query: '-legend'
+                }
+              }
+            })
+            .then(results => {
+              expect(results.length).to.equal(1);
+              expect(results[0].name).to.equal('Bob');
             });
         });
 
