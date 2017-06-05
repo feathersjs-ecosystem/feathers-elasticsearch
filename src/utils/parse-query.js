@@ -73,11 +73,11 @@ function $sqs (value, esQuery, idProp) {
   }
 
   validateType(value, '$sqs', 'object');
-  validateType(value.$fields, `value.$fields`, 'array');
-  validateType(value.$query, `value.$query`, 'string');
+  validateType(value.$fields, `$sqs.$fields`, 'array');
+  validateType(value.$query, `$sqs.$query`, 'string');
 
-  if (value.$default_operator) {
-    validateType(value.$default_operator, `value.$default_operator`, 'string');
+  if (value.$operator) {
+    validateType(value.$operator, `$sqs.$operator`, 'string');
   }
 
   esQuery.must = esQuery.must || [];
@@ -85,7 +85,7 @@ function $sqs (value, esQuery, idProp) {
     simple_query_string: {
       fields: value.$fields,
       query: value.$query,
-      default_operator: value.$default_operator || 'or'
+      default_operator: value.$operator || 'or'
     }
   });
 
