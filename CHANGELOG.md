@@ -1,5 +1,13 @@
 # Change Log
 
+## [v0.3.1](https://github.com/feathersjs/feathers-elasticsearch/tree/v0.3.1) (2017-06-07)
+[Full Changelog](https://github.com/feathersjs/feathers-elasticsearch/compare/v0.3.0...v0.3.1)
+
+**Merged pull requests:**
+
+- Updated tests and operator [\#27](https://github.com/feathersjs/feathers-elasticsearch/pull/27) ([Mattchewone](https://github.com/Mattchewone))
+- export Service [\#25](https://github.com/feathersjs/feathers-elasticsearch/pull/25) ([christopherjbaker](https://github.com/christopherjbaker))
+
 ## [v0.3.0](https://github.com/feathersjs/feathers-elasticsearch/tree/v0.3.0) (2017-06-03)
 [Full Changelog](https://github.com/feathersjs/feathers-elasticsearch/compare/v0.2.3...v0.3.0)
 
