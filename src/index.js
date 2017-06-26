@@ -113,6 +113,17 @@ class Service {
     return removeBulk(this, params)
       .catch(errorHandler);
   }
+
+  raw (query) {
+    return raw(this, query)
+      .catch(errorHandler);
+  }
+}
+
+function raw(service, query) {
+  const method = query.method;
+  const params = query.query;
+  return service.Model[method](params);
 }
 
 function find (service, params) {
