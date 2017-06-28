@@ -114,16 +114,16 @@ class Service {
       .catch(errorHandler);
   }
 
-  raw (query) {
-    return raw(this, query)
+  // Interface to leverage functionality provided in elasticsearchJS
+  raw (params) {
+    return raw(this, params)
       .catch(errorHandler);
   }
 }
 
-function raw(service, query) {
-  const method = query.method;
-  const params = query.query;
-  return service.Model[method](params);
+function raw(service, params) {
+  const { method, query } = params;
+  return service.Model[method](query);
 }
 
 function find (service, params) {
