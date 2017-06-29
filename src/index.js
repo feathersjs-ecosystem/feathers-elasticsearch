@@ -126,7 +126,14 @@ class Service {
 }
 
 function raw(service, method, params) {
-  return service.Model[method](params);
+  // handle client methods like indices.create
+  const [meth, ext] = method.split('.');
+
+  if (typeof ext !== 'undefined') {
+    return service.Model[meth][ext](params);
+  }
+
+  return service.Model[meth](params);
 }
 
 function find (service, params) {

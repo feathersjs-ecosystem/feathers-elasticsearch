@@ -537,6 +537,48 @@ describe('Elasticsearch Service', () => {
           });
       });
     });
+
+    describe('raw()', () => {
+      it('should search documents in index with syntax term', () => {
+        return app.service('mobiles')
+          .raw('search', {
+            size: 50,
+            body: {
+              query: {
+                term: {
+                  name: 'Bob'
+                }
+              }
+            }
+          }).then(results => {
+            expect(results.hits.hits.length).to.equal(2);
+          });
+      });
+
+      it('should search documents in index with syntax match', () => {
+        return app.service('mobiles')
+          .raw('search', {
+            size: 50,
+            body: {
+              query: {
+                match: {
+                  bio: 'javascript'
+                }
+              }
+            }
+          }).then(results => {
+            expect(results.hits.hits.length).to.equal(1);
+          });
+      });
+
+      it('should show the mapping of index test', () => {
+        return app.service('mobiles')
+          .raw('indices.getMapping', {})
+          .then(results => {
+            expect(results.test.mappings.mobiles._parent.type).to.equal('people');
+          });
+      })
+    });
   });
 
   describe('Elasticsearch service example test', () => {
