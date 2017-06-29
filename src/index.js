@@ -115,15 +115,18 @@ class Service {
   }
 
   // Interface to leverage functionality provided in elasticsearchJS
-  raw (params) {
-    return raw(this, params)
+  raw (method, params) {
+    if(typeof method === 'undefined') {
+      return new Error('params.method must be defined.');
+    }
+
+    return raw(this, method, params)
       .catch(errorHandler);
   }
 }
 
-function raw(service, params) {
-  const { method, query } = params;
-  return service.Model[method](query);
+function raw(service, method, params) {
+  return service.Model[method](params);
 }
 
 function find (service, params) {
