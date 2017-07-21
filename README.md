@@ -279,6 +279,11 @@ childService.remove(
 );
 ```
 
+## Raw Queries
+Elastic Search is very powerful and sometimes the feathers interface isn't powerful enough. You can use `client.raw({})` to pass an elastic search query directly to the ES client.
+
+For examples of this power feature, please review the tests in this repo.
+
 ## Supported Elasticsearch versions
 
 feathers-elasticsearch is currently tested on Elasticsearch 2.4, 5.0, 5.1, 5.2 and 5.3. Please note, event though the lowest version supported is 2.4,

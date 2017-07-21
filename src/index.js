@@ -113,6 +113,27 @@ class Service {
     return removeBulk(this, params)
       .catch(errorHandler);
   }
+
+  // Interface to leverage functionality provided in elasticsearchJS
+  raw (method, params) {
+    if(typeof method === 'undefined') {
+      return new Error('params.method must be defined.');
+    }
+
+    return raw(this, method, params)
+      .catch(errorHandler);
+  }
+}
+
+function raw(service, method, params) {
+  // handle client methods like indices.create
+  const [meth, ext] = method.split('.');
+
+  if (typeof ext !== 'undefined') {
+    return service.Model[meth][ext](params);
+  }
+
+  return service.Model[meth](params);
 }
 
 function find (service, params) {
