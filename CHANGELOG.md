@@ -1,5 +1,16 @@
 # Change Log
 
+## [v0.4.0](https://github.com/feathersjs/feathers-elasticsearch/tree/v0.4.0) (2017-07-21)
+[Full Changelog](https://github.com/feathersjs/feathers-elasticsearch/compare/v0.3.1...v0.4.0)
+
+**Closed issues:**
+
+- An in-range update of elasticsearch is breaking the build 🚨 [\#29](https://github.com/feathersjs/feathers-elasticsearch/issues/29)
+
+**Merged pull requests:**
+
+- add raw method [\#30](https://github.com/feathersjs/feathers-elasticsearch/pull/30) ([xwa130](https://github.com/xwa130))
+
 ## [v0.3.1](https://github.com/feathersjs/feathers-elasticsearch/tree/v0.3.1) (2017-06-07)
 [Full Changelog](https://github.com/feathersjs/feathers-elasticsearch/compare/v0.3.0...v0.3.1)
 
