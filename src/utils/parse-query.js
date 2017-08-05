@@ -20,6 +20,7 @@ const specialQueryHandlers = {
   $or: $or,
   $and: $and,
   $all: $all,
+  $sqs: $sqs,
   $child: (...args) => $childOr$parent('$child', ...args),
   $parent: (...args) => $childOr$parent('$parent', ...args)
 };
@@ -50,7 +51,7 @@ function $all (value, esQuery) {
 }
 
 function $and (value, esQuery, idProp) {
-  validateType(value, '$nad', 'array');
+  validateType(value, '$and', 'array');
 
   value
     .map(subQuery => parseQuery(subQuery, idProp))
@@ -62,6 +63,31 @@ function $and (value, esQuery, idProp) {
           esQuery[section].push(...parsed[section]);
         });
     });
+
+  return esQuery;
+}
+
+function $sqs (value, esQuery, idProp) {
+  if (value === null || value === undefined) {
+    return esQuery;
+  }
+
+  validateType(value, '$sqs', 'object');
+  validateType(value.$fields, `$sqs.$fields`, 'array');
+  validateType(value.$query, `$sqs.$query`, 'string');
+
+  if (value.$operator) {
+    validateType(value.$operator, `$sqs.$operator`, 'string');
+  }
+
+  esQuery.must = esQuery.must || [];
+  esQuery.must.push({
+    simple_query_string: {
+      fields: value.$fields,
+      query: value.$query,
+      default_operator: value.$operator || 'or'
+    }
+  });
 
   return esQuery;
 }

@@ -260,6 +260,49 @@ describe('Elasticsearch Service', () => {
             });
         });
 
+        it('can $sqs (simple_query_string)', () => {
+          return app.service(serviceName)
+            .find({
+              query: {
+                $sort: { name: 1 },
+                $sqs: {
+                  $fields: [
+                    'bio',
+                    'name^5'
+                  ],
+                  $query: '+like -javascript',
+                  $operator: 'and'
+                }
+              }
+            })
+            .then(results => {
+              expect(results.length).to.equal(1);
+              expect(results[0].name).to.equal('Moody');
+            });
+        });
+
+        it('can $sqs (simple_query_string) with other filters', () => {
+          return app.service(serviceName)
+            .find({
+              query: {
+                $sort: { name: 1 },
+                $and: [
+                  { tags: 'javascript' }
+                ],
+                $sqs: {
+                  $fields: [
+                    'bio'
+                  ],
+                  $query: '-legend'
+                }
+              }
+            })
+            .then(results => {
+              expect(results.length).to.equal(1);
+              expect(results[0].name).to.equal('Bob');
+            });
+        });
+
         it('can $child', () => {
           return app.service(serviceName)
             .find({
@@ -493,6 +536,48 @@ describe('Elasticsearch Service', () => {
             expect(results[1]._meta._parent).to.equal('moody');
           });
       });
+    });
+
+    describe('raw()', () => {
+      it('should search documents in index with syntax term', () => {
+        return app.service('mobiles')
+          .raw('search', {
+            size: 50,
+            body: {
+              query: {
+                term: {
+                  name: 'Bob'
+                }
+              }
+            }
+          }).then(results => {
+            expect(results.hits.hits.length).to.equal(2);
+          });
+      });
+
+      it('should search documents in index with syntax match', () => {
+        return app.service('mobiles')
+          .raw('search', {
+            size: 50,
+            body: {
+              query: {
+                match: {
+                  bio: 'javascript'
+                }
+              }
+            }
+          }).then(results => {
+            expect(results.hits.hits.length).to.equal(1);
+          });
+      });
+
+      it('should show the mapping of index test', () => {
+        return app.service('mobiles')
+          .raw('indices.getMapping', {})
+          .then(results => {
+            expect(results.test.mappings.mobiles._parent.type).to.equal('people');
+          });
+      })
     });
   });
 

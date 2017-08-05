@@ -18,11 +18,12 @@ npm install elasticsearch feathers-elasticsearch --save
 
 ## Documentation
 
-Please refer to the [Feathers database adapter documentation](http://docs.feathersjs.com/databases/readme.html) for more details or directly at:
+Please refer to the [Feathers database adapter documentation](https://docs.feathersjs.com/api/databases/common.html) for more details or directly at:
 
-- [Extending](http://docs.feathersjs.com/databases/extending.html) - How to extend a database adapter
-- [Pagination and Sorting](http://docs.feathersjs.com/databases/pagination.html) - How to use pagination and sorting for the database adapter
-- [Querying](http://docs.feathersjs.com/databases/querying.html) - The common adapter querying mechanism
+- [ElasticSearch](https://docs.feathersjs.com/api/databases/elasticsearch.html) - The detailed documentation for this adapter
+- [Extending](https://docs.feathersjs.com/api/databases/common.html#extending-adapters) - How to extend a database adapter
+- [Pagination](https://docs.feathersjs.com/api/databases/common.html#pagination) - How to use pagination
+- [Querying and Sorting](https://docs.feathersjs.com/api/databases/querying.html) - The common adapter querying mechanism and sorting for the database adapter
 
 ## Getting Started
 
@@ -226,6 +227,26 @@ query: {
 }
 ```
 
+### $sqs
+[simple_query_string](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-simple-query-string-query.html). A query that uses the SimpleQueryParser to parse its context. Optional `$operator` which is set to `or` by default but can be set to `and` if required.
+
+```js
+query: {
+  $sqs: {
+    $fields: [
+      'title^5',
+      'description'
+    ],
+    $query: '+like +javascript',
+    $operator: 'and'
+  }
+}
+```
+This can also be expressed in an URL as the following:
+```http
+http://localhost:3030/users?$sqs[$fields][]=title^5&$sqs[$fields][]=description&$sqs[$query]=+like +javascript&$sqs[$operator]=and
+```
+
 ## Parent-child relationship
 Elasticsearch supports [parent-child relationship](https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-parent-field.html), however it is not exactly the same as in relational databases. feathers-elasticsearch supports all CRUD operations for Elasticsearch types with parent mapping, and does that with the Elasticsearch constrains. Therefore:
 
@@ -258,6 +279,11 @@ childService.remove(
   { query: { _parent: 123 } }
 );
 ```
+
+## Raw Queries
+Elastic Search is very powerful and sometimes the feathers interface isn't powerful enough. You can use `client.raw({})` to pass an elastic search query directly to the ES client.
+
+For examples of this power feature, please review the tests in this repo.
 
 ## Supported Elasticsearch versions
 
