@@ -116,7 +116,7 @@ class Service {
 
   // Interface to leverage functionality provided in elasticsearchJS
   raw (method, params) {
-    if(typeof method === 'undefined') {
+    if (typeof method === 'undefined') {
       return new Error('params.method must be defined.');
     }
 
@@ -125,7 +125,7 @@ class Service {
   }
 }
 
-function raw(service, method, params) {
+function raw (service, method, params) {
   // handle client methods like indices.create
   const [meth, ext] = method.split('.');
 

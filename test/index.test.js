@@ -15,9 +15,8 @@ import server from './test-app';
 describe('Elasticsearch Service', () => {
   const app = feathers();
   const serviceName = 'people';
-  const apiVersion = !process.env.ES_VERSION || process.env.ES_VERSION.split('.')[0] !== '5'
-    ? '2.4'
-    : '5.0';
+  const esVersion = process.env.ES_VERSION || '2.4.0';
+  const apiVersion = esVersion.split('.').slice(0, 2).join('.');
   const keywordMapping = apiVersion === '2.4'
     ? { type: 'string', index: 'not_analyzed' }
     : { type: 'keyword' };
@@ -519,13 +518,13 @@ describe('Elasticsearch Service', () => {
       it('should remove items which have a parent', () => {
         return app.service('mobiles')
           .create([
-            { number: 'removeme', parent: 'bob' },
-            { number: 'removeme', parent: 'moody' }
+            { number: 'removeme', no: 1, parent: 'bob' },
+            { number: 'removeme', no: 2, parent: 'moody' }
           ])
           .then(() => app.service('mobiles')
             .remove(
               null,
-              { query: { number: 'removeme', $sort: { _parent: 1 } } }
+              { query: { number: 'removeme', $sort: { no: 1 } } }
             )
           )
           .then(results => {
@@ -577,7 +576,7 @@ describe('Elasticsearch Service', () => {
           .then(results => {
             expect(results.test.mappings.mobiles._parent.type).to.equal('people');
           });
-      })
+      });
     });
   });
 
