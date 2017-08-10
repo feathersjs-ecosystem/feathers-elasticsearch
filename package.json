@@ -50,7 +50,7 @@
     "lib": "lib"
   },
   "dependencies": {
-    "debug": "^2.6.0",
+    "debug": "^3.0.0",
     "feathers-errors": "^2.5.0",
     "feathers-query-filters": "^2.1.2",
     "uberproto": "^1.2.0"
