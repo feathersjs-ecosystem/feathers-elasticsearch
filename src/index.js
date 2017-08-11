@@ -126,7 +126,7 @@ class Service {
   }
 }
 
-function raw(service, method, params) {
+function raw (service, method, params) {
   // handle client methods like indices.create
   const [meth, ext] = method.split('.');
 

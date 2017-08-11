@@ -1,5 +1,13 @@
 # Change Log
 
+## [v0.4.1](https://github.com/feathersjs/feathers-elasticsearch/tree/v0.4.1) (2017-08-11)
+[Full Changelog](https://github.com/feathersjs/feathers-elasticsearch/compare/v0.4.0...v0.4.1)
+
+**Merged pull requests:**
+
+- test\(elasticsearch\) add support for elasticsearch 5.4 and 5.5 [\#33](https://github.com/feathersjs/feathers-elasticsearch/pull/33) ([jciolek](https://github.com/jciolek))
+- Update debug to the latest version 🚀 [\#32](https://github.com/feathersjs/feathers-elasticsearch/pull/32) ([greenkeeper[bot]](https://github.com/apps/greenkeeper))
+
 ## [v0.4.0](https://github.com/feathersjs/feathers-elasticsearch/tree/v0.4.0) (2017-07-21)
 [Full Changelog](https://github.com/feathersjs/feathers-elasticsearch/compare/v0.3.1...v0.4.0)
 
