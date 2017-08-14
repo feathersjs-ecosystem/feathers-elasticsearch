@@ -116,8 +116,9 @@ class Service {
 
   // Interface to leverage functionality provided in elasticsearchJS
   raw (method, params) {
-    if (typeof method === 'undefined') {
-      return new Error('params.method must be defined.');
+    if(typeof method === 'undefined') {
+      return Promise
+        .reject(new Error('params.method must be defined.'));
     }
 
     return raw(this, method, params)
