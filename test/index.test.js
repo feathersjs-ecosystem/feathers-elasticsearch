@@ -579,19 +579,21 @@ describe('Elasticsearch Service', () => {
       });
 
       it('should return a promise when the passed in method is not defined', () => {
-        expect(app
+        app
           .service('mobiles')
           .raw(undefined, {})
-          .catch(err => 'Error is:' + err)
-          .toString() === '[object Promise]');
+          .catch(err => {
+            expect(err.message === 'params.method must be defined.');
+          });
       });
 
       it('should return a promise when service.method is not a function', () => {
-        expect(app
+        app
           .service('mobiles')
           .raw('notafunction', {})
-          .catch(err => 'Error is:' + err)
-          .toString() === '[object Promise]');
+          .catch(err => {
+            expect(err.message === 'There is no query method notafunction.');
+          });
       })
     });
   });
