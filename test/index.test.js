@@ -594,7 +594,16 @@ describe('Elasticsearch Service', () => {
           .catch(err => {
             expect(err.message === 'There is no query method notafunction.');
           });
-      })
+      });
+
+      it('should return a promise when service.method.extention is not a function', () => {
+        app
+          .service('mobiles')
+          .raw('indices.notafunction', {})
+          .catch(err => {
+            expect(err.message === 'There is no query method indices.notafunction.');
+          });
+      });
     });
   });
 
