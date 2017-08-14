@@ -1,5 +1,12 @@
 # Change Log
 
+## [v0.4.2](https://github.com/feathersjs/feathers-elasticsearch/tree/v0.4.2) (2017-08-14)
+[Full Changelog](https://github.com/feathersjs/feathers-elasticsearch/compare/v0.4.1...v0.4.2)
+
+**Merged pull requests:**
+
+- make raw method robuster [\#31](https://github.com/feathersjs/feathers-elasticsearch/pull/31) ([xwa130](https://github.com/xwa130))
+
 ## [v0.4.1](https://github.com/feathersjs/feathers-elasticsearch/tree/v0.4.1) (2017-08-11)
 [Full Changelog](https://github.com/feathersjs/feathers-elasticsearch/compare/v0.4.0...v0.4.1)
 
