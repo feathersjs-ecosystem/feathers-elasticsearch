@@ -577,6 +577,22 @@ describe('Elasticsearch Service', () => {
             expect(results.test.mappings.mobiles._parent.type).to.equal('people');
           });
       });
+
+      it('should return a promise when the passed in method is not defined', () => {
+        expect(app
+          .service('mobiles')
+          .raw(undefined, {})
+          .catch(err => 'Error is:' + err)
+          .toString() === '[object Promise]');
+      });
+
+      it('should return a promise when service.method is not a function', () => {
+        expect(app
+          .service('mobiles')
+          .raw('notafunction', {})
+          .catch(err => 'Error is:' + err)
+          .toString() === '[object Promise]');
+      })
     });
   });
 
