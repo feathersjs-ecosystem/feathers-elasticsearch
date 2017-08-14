@@ -118,7 +118,8 @@ class Service {
   raw (method, params) {
     if(typeof method === 'undefined') {
       return Promise
-        .reject(new Error('params.method must be defined.'));
+        .reject(new Error('params.method must be defined.'))
+        .catch(errorHandler);
     }
 
     return raw(this, method, params)
@@ -128,16 +129,22 @@ class Service {
 
 function raw (service, method, params) {
   // handle client methods like indices.create
-  const [meth, ext] = method.split('.');
+  const [primaryMethod, secondaryMethod] = method.split('.');
 
-  if (typeof service.Model[meth] === 'undefined') {
+  if (typeof service.Model[primaryMethod] === 'undefined') {
     return Promise
-      .reject(new Error(`There is no query method ${meth}`));
+      .reject(new Error(`There is no query method ${primaryMethod}.`));
+  } else if (
+    secondaryMethod &&
+    typeof service.Model[primaryMethod][secondaryMethod] === 'undefined'
+  ) {
+    return Promise
+      .reject(new Error(`There is no query method ${primaryMethod}.${secondaryMethod}.`));
   }
 
-  return (typeof service.Model[meth][ext] === 'function')
-    ? service.Model[meth][ext](params)
-    : service.Model[meth](params);
+  return (typeof service.Model[primaryMethod][secondaryMethod] === 'function')
+    ? service.Model[primaryMethod][secondaryMethod](params)
+    : service.Model[primaryMethod](params);
 }
 
 function find (service, params) {
