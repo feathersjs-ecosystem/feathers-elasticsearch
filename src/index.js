@@ -118,7 +118,7 @@ class Service {
   raw (method, params) {
     if(typeof method === 'undefined') {
       return Promise
-        .reject(new Error('params.method must be defined.'))
+        .reject(errors.MethodNotAllowed('params.method must be defined.'))
         .catch(errorHandler);
     }
 
@@ -133,13 +133,13 @@ function raw (service, method, params) {
 
   if (typeof service.Model[primaryMethod] === 'undefined') {
     return Promise
-      .reject(new Error(`There is no query method ${primaryMethod}.`));
+      .reject(errors.MethodNotAllowed(`There is no query method ${primaryMethod}.`));
   } else if (
     secondaryMethod &&
     typeof service.Model[primaryMethod][secondaryMethod] === 'undefined'
   ) {
     return Promise
-      .reject(new Error(`There is no query method ${primaryMethod}.${secondaryMethod}.`));
+      .reject(errors.MethodNotAllowed(`There is no query method ${primaryMethod}.${secondaryMethod}.`));
   }
 
   return (typeof service.Model[primaryMethod][secondaryMethod] === 'function')
