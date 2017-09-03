@@ -35,7 +35,7 @@ const feathers = require('feathers');
 const service = require('feathers-elasticsearch');
 const app = feathers();
 
-app.use(`/messages}`, service({
+app.use(`/messages`, service({
   Model: new elasticsearch.Client({
     host: 'localhost:9200',
     apiVersion: '5.0'
