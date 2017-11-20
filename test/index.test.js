@@ -37,7 +37,13 @@ describe('Elasticsearch Service', () => {
             people: {
               properties: {
                 name: keywordMapping,
-                tags: keywordMapping
+                tags: keywordMapping,
+                addresses: {
+                  type: 'nested',
+                  properties: {
+                    street: keywordMapping
+                  }
+                }
               }
             },
             mobiles: {
@@ -109,19 +115,22 @@ describe('Elasticsearch Service', () => {
             id: 'bob',
             name: 'Bob',
             bio: 'I like JavaScript.',
-            tags: ['javascript', 'programmer']
+            tags: ['javascript', 'programmer'],
+            addresses: [ { street: '1 The Road' }, { street: 'Programmer Lane' } ]
           },
           {
             id: 'moody',
             name: 'Moody',
             bio: 'I don\'t like .NET.',
-            tags: ['programmer']
+            tags: ['programmer'],
+            addresses: [ { street: '2 The Road' }, { street: 'Developer Lane' } ]
           },
           {
             id: 'douglas',
             name: 'Douglas',
             bio: 'A legend',
-            tags: ['javascript', 'legend', 'programmer']
+            tags: ['javascript', 'legend', 'programmer'],
+            addresses: [ { street: '3 The Road' }, { street: 'Coder Alley' } ]
           }
         ])
       )
@@ -335,6 +344,22 @@ describe('Elasticsearch Service', () => {
               expect(results.length).to.equal(2);
               expect(results[0].number).to.equal('991');
               expect(results[1].number).to.equal('992');
+            });
+        });
+
+        it('can $nested', () => {
+          return app.service(serviceName)
+            .find({
+              query: {
+                $nested: {
+                  $path: 'addresses',
+                  'addresses.street': '1 The Road'
+                }
+              }
+            })
+            .then(results => {
+              expect(results.length).to.equal(1);
+              expect(results[0].name).to.equal('Bob');
             });
         });
       });
