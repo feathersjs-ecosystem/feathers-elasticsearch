@@ -62,7 +62,7 @@ The following options can be passed when creating a new Elasticsearch service:
 
 ## Complete Example
 
-Here's an example of a Feathers server that uses `feathers-elasticsearch`. 
+Here's an example of a Feathers server that uses `feathers-elasticsearch`.
 
 ```js
 const feathers = require('feathers');
@@ -190,6 +190,20 @@ query: {
     title: {
       $match: 'javascript'
     }
+  }
+}
+```
+
+### $nested
+[Nested query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-nested-query.html).
+Find all documents which match the nested document. The `$nested` query is essentially a full-blown query of its own. The `$nested` query requires `$path` property.
+
+
+```js
+query: {
+  $nested: {
+    $path: 'tags',
+    'tags.name': 'javascript'
   }
 }
 ```
