@@ -1,11 +1,11 @@
 # feathers-elasticsearch
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/feathersjs/feathers-elasticsearch.svg)](https://greenkeeper.io/)
+[![Greenkeeper badge](https://badges.greenkeeper.io/feathersjs-ecosystem/feathers-elasticsearch.svg)](https://greenkeeper.io/)
 
-[![Build Status](https://travis-ci.org/feathersjs/feathers-elasticsearch.svg?branch=master)](https://travis-ci.org/feathersjs/feathers-elasticsearch)
-[![Code Climate](https://codeclimate.com/github/feathersjs/feathers-elasticsearch/badges/gpa.svg)](https://codeclimate.com/github/feathersjs/feathers-elasticsearch)
-[![Test Coverage](https://codeclimate.com/github/feathersjs/feathers-elasticsearch/badges/coverage.svg)](https://codeclimate.com/github/feathersjs/feathers-elasticsearch/coverage)
-[![Dependency Status](https://david-dm.org/feathersjs/feathers-elasticsearch/status.svg)](https://david-dm.org/feathersjs/feathers-elasticsearch)
+[![Build Status](https://travis-ci.org/feathersjs-ecosystem/feathers-elasticsearch.svg?branch=master)](https://travis-ci.org/feathersjs-ecosystem/feathers-elasticsearch)
+[![Code Climate](https://codeclimate.com/github/feathersjs-ecosystem/feathers-elasticsearch/badges/gpa.svg)](https://codeclimate.com/github/feathersjs-ecosystem/feathers-elasticsearch)
+[![Test Coverage](https://codeclimate.com/github/feathersjs-ecosystem/feathers-elasticsearch/badges/coverage.svg)](https://codeclimate.com/github/feathersjs-ecosystem/feathers-elasticsearch/coverage)
+[![Dependency Status](https://david-dm.org/feathersjs-ecosystem/feathers-elasticsearch/status.svg)](https://david-dm.org/feathersjs-ecosystem/feathers-elasticsearch)
 [![Download Status](https://img.shields.io/npm/dm/feathers-elasticsearch.svg?style=flat-square)](https://www.npmjs.com/package/feathers-elasticsearch)
 
 > Elasticsearch adapter for FeathersJs
