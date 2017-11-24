@@ -21,6 +21,7 @@ const specialQueryHandlers = {
   $and: $and,
   $all: $all,
   $sqs: $sqs,
+  $nested: $nested,
   $child: (...args) => $childOr$parent('$child', ...args),
   $parent: (...args) => $childOr$parent('$parent', ...args)
 };
@@ -114,6 +115,34 @@ function $childOr$parent (key, value, esQuery) {
   esQuery.must.push({
     [queryName]: {
       [typeName]: value.$type,
+      query: {
+        bool: subQuery
+      }
+    }
+  });
+
+  return esQuery;
+}
+
+function $nested (value, esQuery, idProd) {
+  let subQuery;
+  if (value === null || value === undefined) {
+    return esQuery;
+  }
+
+  validateType(value, 'nested', 'object');
+  validateType(value.$path, 'nested.$path', 'string');
+
+  subQuery = parseQuery(removeProps(value, '$path'));
+
+  if (!subQuery) {
+    return esQuery;
+  }
+
+  esQuery.must = esQuery.must || [];
+  esQuery.must.push({
+    nested: {
+      path: value.$path,
       query: {
         bool: subQuery
       }
