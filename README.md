@@ -15,6 +15,8 @@
 $ npm install --save elasticsearch feathers-elasticsearch
 ```
 
+> __Important:__ `feathers-elasticsearch` implements the [Feathers Common database adapter API](https://docs.feathersjs.com/api/databases/common.html) and [querying syntax](https://docs.feathersjs.com/api/databases/common.html).
+
 ## Getting Started
 
 The following bare-bones example will create a `messages` endpoint and connect to a local `messages` type in the `test` index in your Elasticsearch database:
