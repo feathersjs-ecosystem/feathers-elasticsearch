@@ -602,6 +602,33 @@ describe('Elasticsearch Service', () => {
             expect(results.test.mappings.mobiles._parent.type).to.equal('people');
           });
       });
+
+      it('should return a promise when the passed in method is not defined', () => {
+        app
+          .service('mobiles')
+          .raw(undefined, {})
+          .catch(err => {
+            expect(err.message === 'params.method must be defined.');
+          });
+      });
+
+      it('should return a promise when service.method is not a function', () => {
+        app
+          .service('mobiles')
+          .raw('notafunction', {})
+          .catch(err => {
+            expect(err.message === 'There is no query method notafunction.');
+          });
+      });
+
+      it('should return a promise when service.method.extention is not a function', () => {
+        app
+          .service('mobiles')
+          .raw('indices.notafunction', {})
+          .catch(err => {
+            expect(err.message === 'There is no query method indices.notafunction.');
+          });
+      });
     });
   });
 
