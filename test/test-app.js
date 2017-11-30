@@ -1,9 +1,10 @@
-import elasticsearch from 'elasticsearch';
-import feathers from 'feathers';
-import rest from 'feathers-rest';
-import socketio from 'feathers-socketio';
-import bodyParser from 'body-parser';
-import service from '../lib';
+/* eslint-disable no-unused-expressions */
+const elasticsearch = require('elasticsearch');
+const feathers = require('feathers');
+const rest = require('feathers-rest');
+const socketio = require('feathers-socketio');
+const bodyParser = require('body-parser');
+const service = require('../lib');
 
 const apiVersion = !process.env.ES_VERSION || process.env.ES_VERSION.split('.')[0] !== '5'
   ? '2.4'

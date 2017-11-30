@@ -8,34 +8,23 @@
 [![Dependency Status](https://david-dm.org/feathersjs-ecosystem/feathers-elasticsearch/status.svg)](https://david-dm.org/feathersjs-ecosystem/feathers-elasticsearch)
 [![Download Status](https://img.shields.io/npm/dm/feathers-elasticsearch.svg?style=flat-square)](https://www.npmjs.com/package/feathers-elasticsearch)
 
-> Elasticsearch adapter for FeathersJs
+[feathers-elasticsearch](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/) is a database adapter for [Elasticsearch](https://www.elastic.co/products/elasticsearch). This adapter is not using any ORM, it is dealing with the database directly through the [elasticsearch.js client](https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/quick-start.html).
 
-## Installation
 
+```bash
+$ npm install --save elasticsearch feathers-elasticsearch
 ```
-npm install elasticsearch feathers-elasticsearch --save
-```
-
-## Documentation
-
-Please refer to the [Feathers database adapter documentation](https://docs.feathersjs.com/api/databases/common.html) for more details or directly at:
-
-- [ElasticSearch](https://docs.feathersjs.com/api/databases/elasticsearch.html) - The detailed documentation for this adapter
-- [Extending](https://docs.feathersjs.com/api/databases/common.html#extending-adapters) - How to extend a database adapter
-- [Pagination](https://docs.feathersjs.com/api/databases/common.html#pagination) - How to use pagination
-- [Querying and Sorting](https://docs.feathersjs.com/api/databases/querying.html) - The common adapter querying mechanism and sorting for the database adapter
 
 ## Getting Started
 
-The following example will create a `messages` endpoint and connect to a local `messages` type in the `test` index on the `elasticsearch` database.
+The following bare-bones example will create a `messages` endpoint and connect to a local `messages` type in the `test` index in your Elasticsearch database:
 
 ```js
+const feathers = require('@feathersjs/feathers');
 const elasticsearch = require('elasticsearch');
-const feathers = require('feathers');
 const service = require('feathers-elasticsearch');
-const app = feathers();
 
-app.use(`/messages`, service({
+app.use('/messages', service({
   Model: new elasticsearch.Client({
     host: 'localhost:9200',
     apiVersion: '5.0'
@@ -45,8 +34,6 @@ app.use(`/messages`, service({
     type: 'messages'
   }
 }));
-
-app.listen(3030);
 ```
 
 ## Options
@@ -57,19 +44,17 @@ The following options can be passed when creating a new Elasticsearch service:
 - `elasticsearch` (**required**) - Configuration object for elasticsearch requests. The required properties are `index` and `type`. Apart from that you can specify anything that can be passed to all requests going to Elasticsearch. Another recognised property is [`refresh`](https://www.elastic.co/guide/en/elasticsearch/guide/2.x/near-real-time.html#refresh-api) which is set to `false` by default. Anything else use at your own risk.
 - `id` (default: '_id') [optional] - The id property of your documents in this service.
 - `meta` (default: '_meta') [optional] - The meta property of your documents in this service. The meta field is an object containing elasticsearch specific information, e.g. _score, _type, _index, and so forth.
-- `parent` (default: '_parent') [optional] - The parent property used in this service to set the parent document id for an Elasticsearch type with parent mapping.
-- `paginate` [optional] - A pagination object containing a `default` and `max` page size (see the [Pagination chapter](http://docs.feathersjs.com/databases/pagination.html)).
+- `paginate` [optional] - A pagination object containing a `default` and `max` page size (see the [Pagination chapter](pagination.md)).
 
 ## Complete Example
 
-Here's an example of a Feathers server that uses `feathers-elasticsearch`.
+Here's an example of a Feathers server that uses `feathers-elasticsearch`. 
 
 ```js
-const feathers = require('feathers');
-const rest = require('feathers-rest');
-const hooks = require('feathers-hooks');
-const bodyParser = require('body-parser');
-const errorHandler = require('feathers-errors/handler');
+const feathers = require('@feathersjs/feathers');
+const rest = require('@feathersjs/express/rest');
+const express = require('@feathersjs/express');
+
 const service = require('feathers-elasticsearch');
 const elasticsearch = require('elasticsearch');
 
@@ -89,15 +74,16 @@ const messageService = service({
 });
 
 // Initialize the application
-const app = feathers()
-  .configure(rest())
-  .configure(hooks())
-  // Needed for parsing bodies (login)
-  .use(bodyParser.json())
-  .use(bodyParser.urlencoded({ extended: true }))
-  // Initialize your feathers plugin
-  .use('/messages', messageService)
-  .use(errorHandler());
+const app = express(feathers());
+
+// Needed for parsing bodies (login)
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+// Enable REST services
+app.configure(express.rest());
+// Initialize your feathers plugin
+app.use('/messages', messageService);
+app.use(express.errorHandler());;
 
 app.listen(3030);
 
@@ -109,9 +95,10 @@ You should see an empty array. That's because you don't have any messages yet bu
 
 ## Supported Elasticsearch specific queries
 
-On top of the standard, cross-adapter [queries](http://docs.feathersjs.com/databases/querying.html), feathers-elasticsearch also supports Elasticsearch specific queries.
+On top of the standard, cross-adapter [queries](querying.md), feathers-elasticsearch also supports Elasticsearch specific queries.
 
 ### $all
+
 [The simplest query `match_all`](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-all-query.html). Find all documents.
 
 ```js
@@ -121,6 +108,7 @@ query: {
 ```
 
 ### $prefix
+
 [Term level query `prefix`](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-prefix-query.html). Find all documents which have given field containing terms with a specified prefix (not analyzed).
 
 ```js
@@ -132,7 +120,8 @@ query: {
 ```
 
 ### $match
-[Full text query `match`]((https://https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-query.html). Find all documents which have given given fields matching the specified value (analysed).
+
+[Full text query `match`](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-query.html). Find all documents which have given given fields matching the specified value (analysed).
 
 ```js
 query: {
@@ -143,6 +132,7 @@ query: {
 ```
 
 ### $phrase
+
 [Full text query `match_phrase`](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-query-phrase.html). Find all documents which have given given fields matching the specified phrase (analysed).
 
 ```js
@@ -154,6 +144,7 @@ query: {
 ```
 
 ### $phrase_prefix
+
 [Full text query `match_phrase_prefix`](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-query-phrase-prefix.html). Find all documents which have given given fields matching the specified phrase prefix (analysed).
 
 ```js
@@ -165,6 +156,7 @@ query: {
 ```
 
 ### $child
+
 [Joining query `has_child`](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-has-child-query.html).
 Find all documents which have children matching the query. The `$child` query is essentially a full-blown query of its own. The `$child` query requires `$type` property.
 
@@ -179,6 +171,7 @@ query: {
 ```
 
 ### $parent
+
 [Joining query `has_parent`](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-has-parent-query.html).
 Find all documents which have parent matching the query. The `$parent` query is essentially a full-blown query of its own. The `$parent` query requires `$type` property.
 
@@ -194,21 +187,8 @@ query: {
 }
 ```
 
-### $nested
-[Nested query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-nested-query.html).
-Find all documents which match the nested document. The `$nested` query is essentially a full-blown query of its own. The `$nested` query requires `$path` property.
-
-
-```js
-query: {
-  $nested: {
-    $path: 'tags',
-    'tags.name': 'javascript'
-  }
-}
-```
-
 ### $and
+
 This operator does not translate directly to any Elasticsearch query, but it provides support for [Elasticsearch array datatype](https://www.elastic.co/guide/en/elasticsearch/reference/current/array.html).
 Find all documents which match all of the given criteria. As any field in Elasticsearch can contain an array, therefore sometimes it is important to match more than one value per field.
 
@@ -242,6 +222,7 @@ query: {
 ```
 
 ### $sqs
+
 [simple_query_string](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-simple-query-string-query.html). A query that uses the SimpleQueryParser to parse its context. Optional `$operator` which is set to `or` by default but can be set to `and` if required.
 
 ```js
@@ -262,13 +243,13 @@ http://localhost:3030/users?$sqs[$fields][]=title^5&$sqs[$fields][]=description&
 ```
 
 ## Parent-child relationship
+
 Elasticsearch supports [parent-child relationship](https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-parent-field.html), however it is not exactly the same as in relational databases. feathers-elasticsearch supports all CRUD operations for Elasticsearch types with parent mapping, and does that with the Elasticsearch constrains. Therefore:
 
 - each operation concering a single document (create, get, patch, update, remove) is required to provide parent id
 - creating documents in bulk (providing a list of documents) is the same as many single document operations, so parent id is required as well
 - to avoid any doubts, each query based operation (find, bulk patch, bulk remove) cannot have the parent id
 
-### How to specify parent id
 Parent id should be provided as part of the data for the create operations (single and bulk):
 
 ```javascript
@@ -294,11 +275,6 @@ childService.remove(
 );
 ```
 
-## Raw Queries
-Elastic Search is very powerful and sometimes the feathers interface isn't powerful enough. You can use `client.raw({})` to pass an elastic search query directly to the ES client.
-
-For examples of this power feature, please review the tests in this repo.
-
 ## Supported Elasticsearch versions
 
 feathers-elasticsearch is currently tested on Elasticsearch 2.4, 5.0, 5.1, 5.2, 5.3, 5.4 and 5.5 Please note, event though the lowest version supported is 2.4, that does not mean it wouldn't work fine on anything lower than 2.4.
@@ -317,6 +293,10 @@ Considering the above, our implementation of path / remove by query uses combo o
 - The operation is a bit slower than it could potentially be, because of the two-step process involved.
 
 Considering, however that elasticsearch is mainly used to dump data in it and search through it, I presume that should not be a great problem.
+
+### Search visibility
+
+Please be aware that search visibility of the changes (creates, updates, patches, removals) is going to be delayed due to Elasticsearch [`index.refresh_interval`](https://www.elastic.co/guide/en/elasticsearch/reference/current/index-modules.html) setting. You may force refresh after each operation by setting the service option `elasticsearch.refresh` as decribed above but it is highly discouraged due to Elasticsearch performance implications.
 
 ### Full-text search
 

@@ -1,12 +1,10 @@
-/* eslint-env mocha */
-// The following is required for some of the Chai's `expect` assertions,
-// e.g. expect(someVariable).to.be.empty;
-/* eslint no-unused-expressions: "off" */
-import { expect } from 'chai';
-import { parseQuery } from '../../src/utils';
-import { errors } from 'feathers-errors';
+/* eslint-disable no-unused-expressions */
+const { expect } = require('chai');
+const { errors } = require('feathers-errors');
 
-export default function parseQueryTests () {
+const { parseQuery } = require('../../lib/utils');
+
+module.exports = function parseQueryTests () {
   describe('parseQuery', () => {
     it('should return null if query is null or undefined', () => {
       expect(parseQuery(null, '_id')).to.be.null;
@@ -519,4 +517,4 @@ export default function parseQueryTests () {
         .deep.equal(expectedResult);
     });
   });
-}
+};

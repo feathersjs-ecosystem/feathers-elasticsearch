@@ -1,12 +1,15 @@
-/* eslint-env mocha */
-// The following is required for some of the Chai's `expect` assertions,
-// e.g. expect(someVariable).to.be.empty;
-/* eslint no-unused-expressions: "off" */
-import { expect } from 'chai';
-import { getType, validateType, removeProps } from '../../src/utils/core';
-import { errors } from 'feathers-errors';
+/* eslint-disable no-unused-expressions */
+const { expect } = require('chai');
 
-export default function utilsCoreTests () {
+const {
+  getType,
+  validateType,
+  removeProps
+} = require('../../lib/utils/core');
+
+const { errors } = require('feathers-errors');
+
+module.exports = function utilsCoreTests () {
   describe('getType', () => {
     it('should recognize number', () => {
       expect(getType(1)).to.equal('number');
@@ -109,4 +112,4 @@ export default function utilsCoreTests () {
         .deep.equal(object);
     });
   });
-}
+};
