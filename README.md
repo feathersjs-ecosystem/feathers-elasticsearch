@@ -46,7 +46,7 @@ The following options can be passed when creating a new Elasticsearch service:
 - `elasticsearch` (**required**) - Configuration object for elasticsearch requests. The required properties are `index` and `type`. Apart from that you can specify anything that can be passed to all requests going to Elasticsearch. Another recognised property is [`refresh`](https://www.elastic.co/guide/en/elasticsearch/guide/2.x/near-real-time.html#refresh-api) which is set to `false` by default. Anything else use at your own risk.
 - `id` (default: '_id') [optional] - The id property of your documents in this service.
 - `meta` (default: '_meta') [optional] - The meta property of your documents in this service. The meta field is an object containing elasticsearch specific information, e.g. _score, _type, _index, and so forth.
-- `paginate` [optional] - A pagination object containing a `default` and `max` page size (see the [Pagination chapter](pagination.md)).
+- `paginate` [optional] - A pagination object containing a `default` and `max` page size (see the [Pagination documentation](https://docs.feathersjs.com/api/databases/common.html#pagination)).
 
 ## Complete Example
 
