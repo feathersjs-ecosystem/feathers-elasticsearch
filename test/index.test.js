@@ -1,16 +1,12 @@
-/* eslint-env mocha */
-// The following is required for some of the Chai's `expect` assertions,
-// e.g. expect(someVariable).to.be.empty;
-/* eslint no-unused-expressions: "off" */
-import { expect } from 'chai';
-// remember to import example as well!
-import { base, example } from 'feathers-service-tests';
-import feathers from 'feathers';
-import errors from 'feathers-errors';
-import elasticsearch from 'elasticsearch';
+/* eslint-disable no-unused-expressions */
+const { expect } = require('chai');
+const { base, example } = require('feathers-service-tests');
 
-import service from '../src';
-import server from './test-app';
+const feathers = require('feathers');
+const errors = require('feathers-errors');
+const elasticsearch = require('elasticsearch');
+const service = require('../lib');
+const server = require('./test-app');
 
 describe('Elasticsearch Service', () => {
   const app = feathers();

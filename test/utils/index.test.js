@@ -1,11 +1,16 @@
-/* eslint-env mocha */
-// The following is required for some of the Chai's `expect` assertions,
-// e.g. expect(someVariable).to.be.empty;
-/* eslint no-unused-expressions: "off" */
-import { expect } from 'chai';
-import { filter, mapFind, mapGet, mapPatch, mapBulk } from '../../src/utils';
-import parseQueryTests from './parse-query.js';
-import coreUtilsTests from './core.js';
+/* eslint-disable no-unused-expressions */
+const { expect } = require('chai');
+
+const {
+  filter,
+  mapFind,
+  mapGet,
+  mapPatch,
+  mapBulk
+} = require('../../lib/utils');
+
+const parseQueryTests = require('./parse-query.js');
+const coreUtilsTests = require('./core.js');
 
 describe('Elasticsearch utils', () => {
   describe('filter', () => {
