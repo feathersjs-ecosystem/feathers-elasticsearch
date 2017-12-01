@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-expressions */
 const elasticsearch = require('elasticsearch');
-const feathers = require('feathers');
-const rest = require('feathers-rest');
-const socketio = require('feathers-socketio');
-const bodyParser = require('body-parser');
+const feathers = require('@feathersjs/feathers');
+const express = require('@feathersjs/express');
+const rest = require('@feathersjs/express/rest');
+const socketio = require('@feathersjs/socketio');
 const service = require('../lib');
 
 const apiVersion = !process.env.ES_VERSION || process.env.ES_VERSION.split('.')[0] !== '5'
@@ -29,15 +29,15 @@ const todoService = service({
 });
 
 // Create a feathers instance.
-let app = feathers()
-  // Enable REST services
+let app = express(// Enable REST services
+feathers())
   .configure(rest())
   // Enable Socket.io services
   .configure(socketio())
   // Turn on JSON parser for REST services
-  .use(bodyParser.json())
+  .use(express.json())
   // Turn on URL-encoded parser for REST services
-  .use(bodyParser.urlencoded({ extended: true }))
+  .use(express.urlencoded({ extended: true }))
   .use('/todos', todoService);
 
 // Start the server.
