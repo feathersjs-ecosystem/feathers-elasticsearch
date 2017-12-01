@@ -1,5 +1,14 @@
 # Change Log
 
+## [v1.0.0](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v1.0.0) (2017-12-01)
+[Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v0.4.3...v1.0.0)
+
+**Merged pull requests:**
+
+- Update to Feathers Buzzard \(v3\) [\#40](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/40) ([daffl](https://github.com/daffl))
+- Update to new plugin infrastructure [\#39](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/39) ([daffl](https://github.com/daffl))
+- Add logic control to raw method and tests for corresponding codes [\#34](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/34) ([xwa130](https://github.com/xwa130))
+
 ## [v0.4.3](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v0.4.3) (2017-11-24)
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v0.4.2...v0.4.3)
 
