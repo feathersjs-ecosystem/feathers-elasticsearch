@@ -2,8 +2,8 @@
 const { expect } = require('chai');
 const { base, example } = require('feathers-service-tests');
 
-const feathers = require('feathers');
-const errors = require('feathers-errors');
+const feathers = require('@feathersjs/feathers');
+const errors = require('@feathersjs/errors');
 const elasticsearch = require('elasticsearch');
 const service = require('../lib');
 const server = require('./test-app');

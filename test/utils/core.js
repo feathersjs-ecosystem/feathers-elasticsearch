@@ -1,13 +1,12 @@
 /* eslint-disable no-unused-expressions */
 const { expect } = require('chai');
+const errors = require('@feathersjs/errors');
 
 const {
   getType,
   validateType,
   removeProps
 } = require('../../lib/utils/core');
-
-const { errors } = require('feathers-errors');
 
 module.exports = function utilsCoreTests () {
   describe('getType', () => {

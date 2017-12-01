@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 const { expect } = require('chai');
-const { errors } = require('feathers-errors');
+const errors = require('@feathersjs/errors');
 
 const { parseQuery } = require('../../lib/utils');
 
