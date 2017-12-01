@@ -22,6 +22,3 @@ before_install:
   - curl -O ${ES_DOWNLOAD} && sudo dpkg -i --force-confnew elasticsearch-${ES_VERSION}.deb && sudo service elasticsearch restart
 before_script:
   - sleep 10
-  - npm install -g codeclimate-test-reporter
-after_script:
-  - codeclimate-test-reporter < coverage/lcov.info
