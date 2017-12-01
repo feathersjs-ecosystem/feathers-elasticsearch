@@ -13,7 +13,7 @@
 $ npm install --save elasticsearch feathers-elasticsearch
 ```
 
-> __Important:__ `feathers-elasticsearch` implements the [Feathers Common database adapter API](https://docs.feathersjs.com/api/databases/common.html) and [querying syntax](https://docs.feathersjs.com/api/databases/common.html).
+> __Important:__ `feathers-elasticsearch` implements the [Feathers Common database adapter API](https://docs.feathersjs.com/api/databases/common.html) and [querying syntax](https://docs.feathersjs.com/api/databases/querying.html).
 
 ## Getting Started
 
