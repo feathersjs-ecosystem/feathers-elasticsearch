@@ -161,8 +161,8 @@ module.exports = function parseQueryTests () {
       };
       let expectedResult = {
         filter: [
-            { term: { user: 'doug' } },
-            { terms: { age: [ 23, 24 ] } }
+          { term: { user: 'doug' } },
+          { terms: { age: [ 23, 24 ] } }
         ]
       };
 
