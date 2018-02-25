@@ -39,11 +39,37 @@ module.exports = function parseQueryTests () {
       expect(() => parseQuery({ $and: {} }, '_id')).to.throw(errors.BadRequest);
     });
 
-    it('should throw BadRequest if $sqs is not an object', () => {
+    it('should throw BadRequest if $sqs is not an object, null or undefined', () => {
       expect(() => parseQuery({ $sqs: 12 }, '_id')).to.throw(errors.BadRequest);
       expect(() => parseQuery({ $sqs: true }, '_id')).to.throw(errors.BadRequest);
       expect(() => parseQuery({ $sqs: 'abc' }, '_id')).to.throw(errors.BadRequest);
       expect(() => parseQuery({ $sqs: {} }, '_id')).to.throw(errors.BadRequest);
+    });
+
+    it('should return null if $sqs is null or undefined', () => {
+      expect(parseQuery({ $sqs: null }, '_id')).to.be.null;
+      expect(parseQuery({ $sqs: undefined }, '_id')).to.be.null;
+    });
+
+    it('should throw BadRequest if $sqs does not have (array)$fields property', () => {
+      expect(() => parseQuery({ $sqs: { $query: '' } })).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ $sqs: { $query: '', $fields: 123 } })).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ $sqs: { $query: '', $fields: true } })).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ $sqs: { $query: '', $fields: {} } })).to.throw(errors.BadRequest);
+    });
+
+    it('should throw BadRequest if $sqs does not have (string)$query property', () => {
+      expect(() => parseQuery({ $sqs: { $fields: [] } })).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ $sqs: { $fields: [], $query: 123 } })).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ $sqs: { $fields: [], $query: true } })).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ $sqs: { $fields: [], $query: {} } })).to.throw(errors.BadRequest);
+    });
+
+    it('should throw BadRequest if $sqs has non-string $operator property', () => {
+      expect(() => parseQuery({ $sqs: { $fields: [], $query: '', $operator: [] } })).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ $sqs: { $fields: [], $query: '', $operator: 123 } })).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ $sqs: { $fields: [], $query: '', $operator: true } })).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ $sqs: { $fields: [], $query: '', $operator: {} } })).to.throw(errors.BadRequest);
     });
 
     it('should throw BadRequest if $child is not an object, null or undefined', () => {
@@ -79,11 +105,33 @@ module.exports = function parseQueryTests () {
     });
 
     it('should throw BadRequest if $parent does not have (string)$type property', () => {
-      expect(parseQuery({ $parent: { $type: 'hello' } })).to.be.null;
       expect(() => parseQuery({ $parent: {} })).to.throw(errors.BadRequest);
       expect(() => parseQuery({ $parent: { $type: 123 } })).to.throw(errors.BadRequest);
       expect(() => parseQuery({ $parent: { $type: true } })).to.throw(errors.BadRequest);
       expect(() => parseQuery({ $parent: { $type: {} } })).to.throw(errors.BadRequest);
+    });
+
+    it('should throw BadRequest if $nested is not an object, null or undefined', () => {
+      expect(() => parseQuery({ $nested: 12 })).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ $nested: true })).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ $nested: 'abc' })).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ $nested: [] })).to.throw(errors.BadRequest);
+    });
+
+    it('should return null if $nested is null or undefined', () => {
+      expect(parseQuery({ $nested: null })).to.be.null;
+      expect(parseQuery({ $nested: undefined })).to.be.null;
+    });
+
+    it('should throw BadRequest if $nested does not have (string)$path property', () => {
+      expect(() => parseQuery({ $nested: {} })).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ $nested: { $path: 12 } })).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ $nested: { $path: true } })).to.throw(errors.BadRequest);
+      expect(() => parseQuery({ $nested: { $path: {} } })).to.throw(errors.BadRequest);
+    });
+
+    it('should return null if $nested has no critera', () => {
+      expect(parseQuery({ $nested: { $path: 'hello' } })).to.be.null;
     });
 
     it('should throw BadRequest if criteria is not a valid primitive, array or an object', () => {
@@ -262,7 +310,7 @@ module.exports = function parseQueryTests () {
         .deep.equal(expectedResult);
     });
 
-    it('should return "must" $sqs', () => {
+    it('should return "simple_query_string" for $sqs with default_operator "or" by default', () => {
       let query = {
         $sqs: {
           $fields: [
@@ -282,6 +330,34 @@ module.exports = function parseQueryTests () {
               ],
               query: '-(track another)',
               default_operator: 'or'
+            }
+          }
+        ]
+      };
+
+      expect(parseQuery(query, '_id')).to
+        .deep.equal(expectedResult);
+    });
+
+    it('should return "simple_query_string" for $sqs with specified default_operator', () => {
+      let query = {
+        $sqs: {
+          $fields: [
+            'description'
+          ],
+          $query: '-(track another)',
+          $operator: 'and'
+        }
+      };
+      let expectedResult = {
+        must: [
+          {
+            simple_query_string: {
+              fields: [
+                'description'
+              ],
+              query: '-(track another)',
+              default_operator: 'and'
             }
           }
         ]
@@ -419,6 +495,33 @@ module.exports = function parseQueryTests () {
         .deep.equal(expectedResult);
     });
 
+    it('should return "nested" query for $nested', () => {
+      let query = {
+        $nested: {
+          $path: 'legend',
+          'legend.name': 'Douglas'
+        }
+      };
+      let expectedResult = {
+        must: [
+          {
+            nested: {
+              path: 'legend',
+              query: {
+                bool: {
+                  filter: [
+                    { term: { 'legend.name': 'Douglas' } }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      };
+      expect(parseQuery(query, '_id')).to
+        .deep.equal(expectedResult);
+    });
+
     it('should return all types of queries together', () => {
       let query = {
         $or: [
@@ -433,6 +536,7 @@ module.exports = function parseQueryTests () {
         bio: { $match: 'javascript', $phrase: 'the good parts' },
         $child: { $type: 'address', city: 'Ashford' },
         $parent: { $type: 'people', name: 'Douglas' },
+        $nested: { $path: 'legend', 'legend.name': { $match: 'Douglas' } },
         $and: [
           { tags: 'javascript' },
           { tags: 'legend' }
@@ -505,6 +609,18 @@ module.exports = function parseQueryTests () {
                 bool: {
                   filter: [
                     { term: { name: 'Douglas' } }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            nested: {
+              path: 'legend',
+              query: {
+                bool: {
+                  must: [
+                    { match: { 'legend.name': 'Douglas' } }
                   ]
                 }
               }
