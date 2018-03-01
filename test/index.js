@@ -5,8 +5,8 @@ const { base, example } = require('feathers-service-tests');
 const feathers = require('@feathersjs/feathers');
 const errors = require('@feathersjs/errors');
 const service = require('../lib');
-const exampleApp = require('./example-app');
-const db = require('./test-db');
+const exampleApp = require('../test-utils/example-app');
+const db = require('../test-utils/test-db');
 
 describe('Elasticsearch Service', () => {
   const app = feathers();
