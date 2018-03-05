@@ -17,13 +17,21 @@ function patch (app, serviceName) {
 
     it('should patch an item with a specified parent', () => {
       return app.service('mobiles')
-        .patch(
-          'bobMobile',
-          { number: '321' },
-          { query: { parent: 'bob' } }
-        )
+        .create({ number: '0123456789', parent: 'bob', id: 'bobMobile' })
+        .then(() => {
+          return app.service('mobiles').patch(
+            'bobMobile',
+            { number: '321' },
+            { query: { parent: 'bob' } }
+          );
+        })
         .then(result => {
           expect(result.number).to.equal('321');
+
+          return app.service('mobiles').remove(
+            'bobMobile',
+            { query: { parent: 'bob' } }
+          );
         });
     });
 
@@ -44,6 +52,11 @@ function patch (app, serviceName) {
           expect(results.length).to.equal(2);
           expect(results[0].number).to.equal('patched');
           expect(results[1].number).to.equal('patched');
+
+          app.service('mobiles').remove(
+            null,
+            { query: { number: 'patched' } }
+          );
         });
     });
   });

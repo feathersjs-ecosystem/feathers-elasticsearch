@@ -15,7 +15,7 @@ function raw (app, serviceName) {
             }
           }
         }).then(results => {
-          expect(results.hits.hits.length).to.equal(2);
+          expect(results.hits.hits.length).to.equal(1);
         });
     });
 

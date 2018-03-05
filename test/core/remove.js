@@ -16,7 +16,13 @@ function remove (app, serviceName) {
 
     it('should remove an item with a specified parent', () => {
       return app.service('mobiles')
-        .remove('bobMobile', { query: { parent: 'bob' } })
+        .create({ number: '321', parent: 'bob', id: 'bobMobile' })
+        .then(() => {
+          return app.service('mobiles').remove(
+            'bobMobile',
+            { query: { parent: 'bob' } }
+          );
+        })
         .then(result => {
           expect(result.number).to.equal('321');
         });

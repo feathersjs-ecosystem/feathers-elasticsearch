@@ -15,15 +15,20 @@ function create (app, serviceName) {
         })
         .then(result => {
           expect(result.name).to.equal('Bob');
+
+          return app.service(serviceName).remove('BobId');
         });
     });
 
     it('should throw Conflict when trying to create an element with existing id', () => {
       return app.service(serviceName)
         .create({ name: 'Bob', id: 'BobId' })
+        .then(() => app.service(serviceName).create({ name: 'Bob', id: 'BobId' }))
         .then(() => { throw new Error('Should never get here'); })
         .catch(error => {
           expect(error instanceof errors.Conflict).to.be.true;
+
+          return app.service(serviceName).remove('BobId');
         });
     });
 
@@ -46,6 +51,11 @@ function create (app, serviceName) {
         .then(results => {
           expect(results[0].name).to.equal('Cal');
           expect(results[1].name).to.equal('Max');
+
+          return app.service(serviceName).remove(
+            null,
+            { query: { id: { $in: ['CalId', 'MaxId'] } } }
+          );
         });
     });
 
@@ -60,6 +70,11 @@ function create (app, serviceName) {
           expect(results[0].name).to.equal('Catnis');
           expect(results[1]._meta.status).to.equal(409);
           expect(results[2].name).to.equal('Mark');
+
+          return app.service(serviceName).remove(
+            null,
+            { query: { id: { $in: ['CatnisId', 'MarkId'] } } }
+          );
         });
     });
 
@@ -69,6 +84,11 @@ function create (app, serviceName) {
         .then(result => {
           expect(result.number).to.equal('0123456789');
           expect(result._meta._parent).to.equal('bob');
+
+          return app.service('mobiles').remove(
+            result.id,
+            { query: { parent: 'bob' } }
+          );
         });
     });
 
@@ -79,11 +99,18 @@ function create (app, serviceName) {
           { number: '1234', parent: 'moody' }
         ])
         .then(results => {
+          const [ bobMobile, moodyMobile ] = results;
+
           expect(results.length).to.equal(2);
-          expect(results[0].number).to.equal('0123');
-          expect(results[0]._meta._parent).to.equal('bob');
-          expect(results[1].number).to.equal('1234');
-          expect(results[1]._meta._parent).to.equal('moody');
+          expect(bobMobile.number).to.equal('0123');
+          expect(bobMobile._meta._parent).to.equal('bob');
+          expect(moodyMobile.number).to.equal('1234');
+          expect(moodyMobile._meta._parent).to.equal('moody');
+
+          return app.service('mobiles').remove(
+            null,
+            { query: { id: { $in: [ bobMobile.id, moodyMobile.id ] } } }
+          );
         });
     });
   });

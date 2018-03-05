@@ -5,9 +5,9 @@ function get (app, serviceName) {
   describe('get()', () => {
     it('should get an item with specified parent', () => {
       return app.service('mobiles')
-        .get('bobMobile', { query: { parent: 'bob' } })
+        .get('douglasMobile', { query: { parent: 'douglas' } })
         .then(result => {
-          expect(result.number).to.equal('0123');
+          expect(result.number).to.equal('991');
         });
     });
   });

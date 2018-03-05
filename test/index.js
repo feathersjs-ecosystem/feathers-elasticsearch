@@ -81,7 +81,7 @@ describe('Elasticsearch Service', () => {
       )
       .then(() => app.service('mobiles')
         .create([
-          { number: '991', parent: 'douglas' },
+          { number: '991', parent: 'douglas', id: 'douglasMobile' },
           { number: '992', parent: 'douglas' },
           { number: '991', parent: 'moody' }
         ])
@@ -93,12 +93,11 @@ describe('Elasticsearch Service', () => {
     });
 
     coreTests.find(app, serviceName);
-    coreTests.create(app, serviceName);
-    coreTests.raw(app, serviceName);
     coreTests.get(app, serviceName);
-    coreTests.update(app, serviceName);
+    coreTests.create(app, serviceName);
     coreTests.patch(app, serviceName);
     coreTests.remove(app, serviceName);
+    coreTests.update(app, serviceName);
     coreTests.raw(app, serviceName);
   });
 
