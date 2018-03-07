@@ -1,5 +1,14 @@
 # Change Log
 
+## [v1.1.0](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v1.1.0) (2018-03-07)
+[Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v1.0.0...v1.1.0)
+
+**Merged pull requests:**
+
+- Updates [\#44](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/44) ([jciolek](https://github.com/jciolek))
+- Update mocha to the latest version 🚀 [\#43](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/43) ([greenkeeper[bot]](https://github.com/apps/greenkeeper))
+- Update semistandard to the latest version 🚀 [\#42](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/42) ([greenkeeper[bot]](https://github.com/apps/greenkeeper))
+
 ## [v1.0.0](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v1.0.0) (2017-12-01)
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v0.4.3...v1.0.0)
 
