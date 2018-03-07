@@ -12,6 +12,7 @@ env:
   - ES_VERSION=5.3.0 ES_DOWNLOAD=https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.3.0.deb
   - ES_VERSION=5.4.3 ES_DOWNLOAD=https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.4.3.deb
   - ES_VERSION=5.5.1 ES_DOWNLOAD=https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.5.1.deb
+  - ES_VERSION=5.6.7 ES_DOWNLOAD=https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.6.7.deb
 addons:
   code_climate:
     repo_token: 'f7898d1d1ca2b76715bc35cc3ba880b35e3fbdc07c3aeb27ca98eecb5e5c064d'

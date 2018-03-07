@@ -34,11 +34,9 @@
     "lint": "semistandard --fix",
     "mocha": "mocha --opts mocha.opts",
     "coverage": "istanbul cover node_modules/mocha/bin/_mocha -- --opts mocha.opts",
-    "test": "npm run lint && npm run coverage",
-    "start": "npm run compile && node example/app"
+    "test": "npm run lint && npm run coverage"
   },
   "semistandard": {
-    "sourceType": "module",
     "env": [
       "mocha"
     ]
@@ -57,7 +55,7 @@
     "@feathersjs/feathers": "^3.0.1",
     "@feathersjs/socketio": "^3.0.1",
     "chai": "^4.0.0",
-    "elasticsearch": "^14.0.0",
+    "elasticsearch": "^14.1.0",
     "feathers-service-tests": "^0.10.0",
     "istanbul": "^1.1.0-alpha.1",
     "mocha": "^5.0.0",

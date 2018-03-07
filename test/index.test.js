@@ -4,85 +4,33 @@ const { base, example } = require('feathers-service-tests');
 
 const feathers = require('@feathersjs/feathers');
 const errors = require('@feathersjs/errors');
-const elasticsearch = require('elasticsearch');
 const service = require('../lib');
-const server = require('./test-app');
+const exampleApp = require('./example-app');
+const db = require('./test-db');
 
 describe('Elasticsearch Service', () => {
   const app = feathers();
   const serviceName = 'people';
-  const esVersion = process.env.ES_VERSION || '2.4.0';
-  const apiVersion = esVersion.split('.').slice(0, 2).join('.');
-  const keywordMapping = apiVersion === '2.4'
-    ? { type: 'string', index: 'not_analyzed' }
-    : { type: 'keyword' };
-  let client;
 
   before(() => {
-    client = new elasticsearch.Client({
-      host: 'localhost:9200',
-      apiVersion
-    });
-
-    return client.indices.exists({ index: 'test' })
-      .then(exists => exists && client.indices.delete({ index: 'test' }))
-      .then(() => client.indices.create({
-        index: 'test',
-        body: {
-          mappings: {
-            people: {
-              properties: {
-                name: keywordMapping,
-                tags: keywordMapping,
-                addresses: {
-                  type: 'nested',
-                  properties: {
-                    street: keywordMapping
-                  }
-                }
-              }
-            },
-            mobiles: {
-              _parent: {
-                type: 'people'
-              },
-              properties: {
-                number: keywordMapping
-              }
-            },
-            todos: {
-              properties: {
-                text: keywordMapping
-              }
-            }
-          }
-        }
-      }))
+    return db.resetSchema()
       .then(() => {
         app.use(`/${serviceName}`, service({
-          Model: client,
+          Model: db.getClient(),
           events: ['testing'],
           id: 'id',
-          elasticsearch: {
-            index: 'test',
-            type: 'people',
-            refresh: true
-          }
+          elasticsearch: db.getServiceConfig(serviceName)
         }));
         app.use('/mobiles', service({
-          Model: client,
+          Model: db.getClient(),
           id: 'id',
           parent: 'parent',
-          elasticsearch: {
-            index: 'test',
-            type: 'mobiles',
-            refresh: true
-          }
+          elasticsearch: db.getServiceConfig('mobiles')
         }));
       });
   });
 
-  after(() => client.indices.delete({ index: 'test' }));
+  after(() => db.deleteSchema());
 
   it('is CommonJS compatible', () => {
     expect(typeof require('../lib')).to.equal('function');
@@ -629,6 +577,12 @@ describe('Elasticsearch Service', () => {
   });
 
   describe('Elasticsearch service example test', () => {
+    let server = null;
+
+    before(() => {
+      server = exampleApp.listen(3030);
+    });
+
     after(done => server.close(() => done()));
 
     // We test example app on the default id prop '_id' to check if it falls back correctly.
