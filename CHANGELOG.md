@@ -1,5 +1,12 @@
 # Change Log
 
+## [v1.1.1](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v1.1.1) (2018-04-15)
+[Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v1.1.0...v1.1.1)
+
+**Merged pull requests:**
+
+- General maintenance [\#45](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/45) ([jciolek](https://github.com/jciolek))
+
 ## [v1.1.0](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v1.1.0) (2018-03-07)
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v1.0.0...v1.1.0)
 
