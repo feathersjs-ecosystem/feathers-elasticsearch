@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-expressions */
 const { expect } = require('chai');
 const { base, example } = require('feathers-service-tests');
 

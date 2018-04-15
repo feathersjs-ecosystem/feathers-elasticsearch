@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-expressions */
 const { expect } = require('chai');
 
 function remove (app, serviceName) {

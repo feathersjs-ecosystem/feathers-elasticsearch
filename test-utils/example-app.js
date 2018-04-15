@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-expressions */
 const feathers = require('@feathersjs/feathers');
 const express = require('@feathersjs/express');
 const rest = require('@feathersjs/express/rest');
