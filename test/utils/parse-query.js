@@ -141,10 +141,10 @@ module.exports = function parseQueryTests () {
     });
 
     ['$exists', '$missing'].forEach(query => {
-      it(`should throw BadRequest if ${query} values are not objects with a (string)field property`, () => {
+      it(`should throw BadRequest if ${query} values are not arrays with (string)field property`, () => {
         expect(() => parseQuery({ [query]: 'foo' }, '_id')).to.throw(errors.BadRequest);
+        expect(() => parseQuery({ [query]: [1234] }, '_id')).to.throw(errors.BadRequest);
         expect(() => parseQuery({ [query]: { 'foo': 'bar' } }, '_id')).to.throw(errors.BadRequest);
-        expect(() => parseQuery({ [query]: ['foo'] }, '_id')).to.throw(errors.BadRequest);
         expect(() => parseQuery({ [query]: [{ 'foo': 'bar' }] }, '_id')).to.throw(errors.BadRequest);
       });
     });
@@ -532,27 +532,9 @@ module.exports = function parseQueryTests () {
     });
 
     [['$exists', 'must'], ['$missing', 'must_not']].forEach(([q, clause]) => {
-      it(`should return "${clause} exists" query for ${q}`, () => {
+      it(`should return "${clause}" query for ${q}`, () => {
         let query = {
-          [q]: { field: 'phone' }
-        };
-        let expectedResult = {
-          [clause]: [
-            {
-              exists: { field: 'phone' }
-            }
-          ]
-        };
-        expect(parseQuery(query, '_id')).to
-          .deep.equal(expectedResult);
-      });
-
-      it(`${q} query can handle an array of values`, () => {
-        let query = {
-          [q]: [
-            { field: 'phone' },
-            { field: 'address' }
-          ]
+          [q]: ['phone', 'address']
         };
         let expectedResult = {
           [clause]: [
@@ -588,8 +570,8 @@ module.exports = function parseQueryTests () {
           { tags: 'javascript' },
           { tags: 'legend' }
         ],
-        $exists: { field: 'phone' },
-        $missing: { field: 'address' }
+        $exists: ['phone'],
+        $missing: ['address']
       };
       let expectedResult = {
         should: [
