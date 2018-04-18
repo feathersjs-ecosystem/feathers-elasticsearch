@@ -119,6 +119,26 @@ query: {
 }
 ```
 
+### $exists
+
+[Term level query `exists`](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-exists-query.html). Find all documents that have at least one non-null value in the original field (not analyzed). 
+
+```js
+query: {
+  $exists: ['phone', 'address']
+}
+```
+
+### $missing
+
+The inverse of [`exists`](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-exists-query.html). Find all documents missing the specified field (not analyzed).
+
+```js
+query: {
+  $missing: ['phone', 'address']
+}
+```
+
 ### $match
 
 [Full text query `match`](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-query.html). Find all documents which have given given fields matching the specified value (analysed).

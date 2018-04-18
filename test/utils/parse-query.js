@@ -140,6 +140,15 @@ module.exports = function parseQueryTests () {
       expect(() => parseQuery({ age: () => {} }, '_id')).to.throw(errors.BadRequest);
     });
 
+    ['$exists', '$missing'].forEach(query => {
+      it(`should throw BadRequest if ${query} values are not arrays with (string)field property`, () => {
+        expect(() => parseQuery({ [query]: 'foo' }, '_id')).to.throw(errors.BadRequest);
+        expect(() => parseQuery({ [query]: [1234] }, '_id')).to.throw(errors.BadRequest);
+        expect(() => parseQuery({ [query]: { 'foo': 'bar' } }, '_id')).to.throw(errors.BadRequest);
+        expect(() => parseQuery({ [query]: [{ 'foo': 'bar' }] }, '_id')).to.throw(errors.BadRequest);
+      });
+    });
+
     it('should return term query for each primitive param', () => {
       let query = {
         user: 'doug',
@@ -522,6 +531,26 @@ module.exports = function parseQueryTests () {
         .deep.equal(expectedResult);
     });
 
+    [['$exists', 'must'], ['$missing', 'must_not']].forEach(([q, clause]) => {
+      it(`should return "${clause}" query for ${q}`, () => {
+        let query = {
+          [q]: ['phone', 'address']
+        };
+        let expectedResult = {
+          [clause]: [
+            {
+              exists: { field: 'phone' }
+            },
+            {
+              exists: { field: 'address' }
+            }
+          ]
+        };
+        expect(parseQuery(query, '_id')).to
+          .deep.equal(expectedResult);
+      });
+    });
+
     it('should return all types of queries together', () => {
       let query = {
         $or: [
@@ -540,7 +569,9 @@ module.exports = function parseQueryTests () {
         $and: [
           { tags: 'javascript' },
           { tags: 'legend' }
-        ]
+        ],
+        $exists: ['phone'],
+        $missing: ['address']
       };
       let expectedResult = {
         should: [
@@ -585,7 +616,8 @@ module.exports = function parseQueryTests () {
           { term: { tags: 'legend' } }
         ],
         must_not: [
-          { terms: { country: [ 'us', 'pl', 'ae' ] } }
+          { terms: { country: [ 'us', 'pl', 'ae' ] } },
+          { exists: { field: 'address' } }
         ],
         must: [
           { match: { bio: 'javascript' } },
@@ -625,7 +657,8 @@ module.exports = function parseQueryTests () {
                 }
               }
             }
-          }
+          },
+          { exists: { field: 'phone' } }
         ]
       };
 
