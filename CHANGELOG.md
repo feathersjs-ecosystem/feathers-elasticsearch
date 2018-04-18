@@ -1,5 +1,12 @@
 # Change Log
 
+## [v1.2.0](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v1.2.0) (2018-04-18)
+[Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v1.1.1...v1.2.0)
+
+**Merged pull requests:**
+
+- Add support for $exists and $missing queries [\#46](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/46) ([DesignByOnyx](https://github.com/DesignByOnyx))
+
 ## [v1.1.1](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v1.1.1) (2018-04-15)
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v1.1.0...v1.1.1)
 
