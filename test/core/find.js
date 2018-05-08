@@ -171,8 +171,8 @@ function find (app, serviceName) {
             query: {
               $sort: { name: 1 },
               $child: {
-                $type: 'mobiles',
-                number: '991'
+                $type: 'aka',
+                name: 'Teacher'
               }
             }
           })
@@ -184,10 +184,10 @@ function find (app, serviceName) {
       });
 
       it('can $parent', () => {
-        return app.service('mobiles')
+        return app.service('aka')
           .find({
             query: {
-              $sort: { number: 1 },
+              $sort: { name: 1 },
               $parent: {
                 $type: 'people',
                 name: 'Douglas'
@@ -196,8 +196,8 @@ function find (app, serviceName) {
           })
           .then(results => {
             expect(results.length).to.equal(2);
-            expect(results[0].number).to.equal('991');
-            expect(results[1].number).to.equal('992');
+            expect(results[0].name).to.equal('Teacher');
+            expect(results[1].name).to.equal('The Master');
           });
       });
 

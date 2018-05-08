@@ -4,7 +4,8 @@ const errors = require('@feathersjs/errors');
 const {
   getType,
   validateType,
-  removeProps
+  removeProps,
+  getCompatVersion
 } = require('../../lib/utils/core');
 
 module.exports = function utilsCoreTests () {
@@ -108,6 +109,26 @@ module.exports = function utilsCoreTests () {
     it('should work if there are no props to remove', () => {
       expect(removeProps(object)).to
         .deep.equal(object);
+    });
+  });
+
+  describe('getCompatVersion', () => {
+    it('should return biggest version from the list, which is smaller than provided current', () => {
+      const allVersions = ['1.2', '2.3', '2.4', '2.5', '5.0'];
+
+      expect(getCompatVersion(allVersions, '2.4')).to.equal('2.4');
+      expect(getCompatVersion(allVersions, '2.6')).to.equal('2.5');
+      expect(getCompatVersion(allVersions, '2.0')).to.equal('1.2');
+      expect(getCompatVersion(allVersions, '6.0')).to.equal('5.0');
+    });
+
+    it('should return default version if no compatible version found', () => {
+      expect(getCompatVersion([], '0.9', '1.0')).to.equal('1.0');
+      expect(getCompatVersion(['1.2', '5.3'], '0.9', '1.0')).to.equal('1.0');
+    });
+
+    it('should set default value for default version to \'2.4\'', () => {
+      expect(getCompatVersion([], '0.9')).to.equal('2.4');
     });
   });
 };

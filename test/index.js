@@ -21,11 +21,11 @@ describe('Elasticsearch Service', () => {
           id: 'id',
           elasticsearch: db.getServiceConfig(serviceName)
         }));
-        app.use('/mobiles', service({
+        app.use('/aka', service({
           Model: db.getClient(),
           id: 'id',
           parent: 'parent',
-          elasticsearch: db.getServiceConfig('mobiles')
+          elasticsearch: db.getServiceConfig('aka')
         }));
       });
   });
@@ -78,11 +78,11 @@ describe('Elasticsearch Service', () => {
           }
         ])
       )
-      .then(() => app.service('mobiles')
+      .then(() => app.service('aka')
         .create([
-          { number: '991', parent: 'douglas', id: 'douglasMobile' },
-          { number: '992', parent: 'douglas' },
-          { number: '991', parent: 'moody' }
+          { name: 'The Master', parent: 'douglas', id: 'douglasAka' },
+          { name: 'Teacher', parent: 'douglas' },
+          { name: 'Teacher', parent: 'moody' }
         ])
       )
     );

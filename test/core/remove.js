@@ -14,36 +14,36 @@ function remove (app, serviceName) {
     });
 
     it('should remove an item with a specified parent', () => {
-      return app.service('mobiles')
-        .create({ number: '321', parent: 'bob', id: 'bobMobile' })
+      return app.service('aka')
+        .create({ name: 'Bobster', parent: 'bob', id: 'bobAka' })
         .then(() => {
-          return app.service('mobiles').remove(
-            'bobMobile',
+          return app.service('aka').remove(
+            'bobAka',
             { query: { parent: 'bob' } }
           );
         })
         .then(result => {
-          expect(result.number).to.equal('321');
+          expect(result.name).to.equal('Bobster');
         });
     });
 
     it('should remove items which have a parent', () => {
-      return app.service('mobiles')
+      return app.service('aka')
         .create([
-          { number: 'removeme', no: 1, parent: 'bob' },
-          { number: 'removeme', no: 2, parent: 'moody' }
+          { name: 'removeme', no: 1, parent: 'bob' },
+          { name: 'removeme', no: 2, parent: 'moody' }
         ])
-        .then(() => app.service('mobiles')
+        .then(() => app.service('aka')
           .remove(
             null,
-            { query: { number: 'removeme', $sort: { no: 1 } } }
+            { query: { name: 'removeme', $sort: { no: 1 } } }
           )
         )
         .then(results => {
           expect(results.length).to.equal(2);
-          expect(results[0].number).to.equal('removeme');
+          expect(results[0].name).to.equal('removeme');
           expect(results[0]._meta._parent).to.equal('bob');
-          expect(results[1].number).to.equal('removeme');
+          expect(results[1].name).to.equal('removeme');
           expect(results[1]._meta._parent).to.equal('moody');
         });
     });

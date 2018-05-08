@@ -1,64 +1,24 @@
 const elasticsearch = require('elasticsearch');
+const { getCompatVersion } = require('../lib/utils/core');
 
 let apiVersion = null;
 let client = null;
+let allCompatVersions = ['2.4', '5.0'];
 
-// Es 5.0+ uses proper keyword mapping, whereas 2.4 uses not analyzed strings
-// for the same purpose.
-const keywordMapping = getApiVersion() === '2.4'
-  ? { type: 'string', index: 'not_analyzed' }
-  : { type: 'keyword' };
+const compatVersion = getCompatVersion(allCompatVersions, getApiVersion());
+const compatSchema = require(`./schema-${compatVersion}`);
 
-const schema = {
-  index: 'test',
-  body: {
-    mappings: {
-      people: {
-        properties: {
-          name: keywordMapping,
-          tags: keywordMapping,
-          addresses: {
-            type: 'nested',
-            properties: {
-              street: keywordMapping
-            }
-          }
-        }
-      },
-      mobiles: {
-        _parent: {
-          type: 'people'
-        },
-        properties: {
-          number: keywordMapping
-        }
-      },
-      todos: {
-        properties: {
-          text: keywordMapping
-        }
-      }
-    }
+function getServiceConfig (serviceName) {
+  let index = 'test';
+  let type = serviceName;
+
+  if (Number(compatVersion) >= 6) {
+    index = `test-${serviceName === 'aka' ? 'people' : serviceName}`;
+    type = 'doc';
   }
-};
 
-const serviceConfigs = {
-  todos: {
-    index: 'test',
-    type: 'todos',
-    refresh: true
-  },
-  people: {
-    index: 'test',
-    type: 'people',
-    refresh: true
-  },
-  mobiles: {
-    index: 'test',
-    type: 'mobiles',
-    refresh: true
-  }
-};
+  return { index, type, refresh: true };
+}
 
 function getApiVersion () {
   if (!apiVersion) {
@@ -80,17 +40,18 @@ function getClient () {
   return client;
 }
 
-function getServiceConfig (serviceName) {
-  return serviceConfigs[serviceName] || {};
-}
-
 function deleteSchema () {
-  return getClient().indices.exists({ index: 'test' })
-    .then(exists => exists && getClient().indices.delete({ index: 'test' }));
+  const index = compatSchema.map(indexSetup => indexSetup.index);
+
+  return getClient().indices.delete({ index })
+    .catch((err) => err.status !== 404 && Promise.reject(err));
 }
 
 function createSchema () {
-  return getClient().indices.create(schema);
+  return compatSchema.reduce(
+    (result, indexSetup) => result.then(() => getClient().indices.create(indexSetup)),
+    Promise.resolve()
+  );
 }
 
 function resetSchema () {

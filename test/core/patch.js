@@ -93,46 +93,46 @@ function patch (app, serviceName) {
     });
 
     it('should patch an item with a specified parent', () => {
-      return app.service('mobiles')
-        .create({ number: '0123456789', parent: 'bob', id: 'bobMobile' })
+      return app.service('aka')
+        .create({ name: 'Bobby McBobface', parent: 'bob', id: 'bobAka' })
         .then(() => {
-          return app.service('mobiles').patch(
-            'bobMobile',
-            { number: '321' },
+          return app.service('aka').patch(
+            'bobAka',
+            { name: 'Bobster' },
             { query: { parent: 'bob' } }
           );
         })
         .then(result => {
-          expect(result.number).to.equal('321');
+          expect(result.name).to.equal('Bobster');
 
-          return app.service('mobiles').remove(
-            'bobMobile',
+          return app.service('aka').remove(
+            'bobAka',
             { query: { parent: 'bob' } }
           );
         });
     });
 
     it('should patch items which have parents (bulk)', () => {
-      return app.service('mobiles')
+      return app.service('aka')
         .create([
-          { number: 'patchme', parent: 'bob' },
-          { number: 'patchme', parent: 'moody' }
+          { name: 'patchme', parent: 'bob' },
+          { name: 'patchme', parent: 'moody' }
         ])
-        .then(() => app.service('mobiles')
+        .then(() => app.service('aka')
           .patch(
             null,
-            { number: 'patched' },
-            { query: { number: 'patchme' } }
+            { name: 'patched' },
+            { query: { name: 'patchme' } }
           )
         )
         .then(results => {
           expect(results.length).to.equal(2);
-          expect(results[0].number).to.equal('patched');
-          expect(results[1].number).to.equal('patched');
+          expect(results[0].name).to.equal('patched');
+          expect(results[1].name).to.equal('patched');
 
-          app.service('mobiles').remove(
+          app.service('aka').remove(
             null,
-            { query: { number: 'patched' } }
+            { query: { name: 'patched' } }
           );
         });
     });
