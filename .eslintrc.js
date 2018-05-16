@@ -1,3 +1,3 @@
 module.exports = {
-  "extends": "semistandard"
+  extends: 'semistandard'
 };

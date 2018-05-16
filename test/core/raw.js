@@ -1,10 +1,10 @@
-/* eslint-disable no-unused-expressions */
 const { expect } = require('chai');
+const { getCompatProp } = require('../../lib/utils');
 
-function raw (app, serviceName) {
+function raw (app, serviceName, esVersion) {
   describe('raw()', () => {
     it('should search documents in index with syntax term', () => {
-      return app.service('mobiles')
+      return app.service(serviceName)
         .raw('search', {
           size: 50,
           body: {
@@ -20,7 +20,7 @@ function raw (app, serviceName) {
     });
 
     it('should search documents in index with syntax match', () => {
-      return app.service('mobiles')
+      return app.service(serviceName)
         .raw('search', {
           size: 50,
           body: {
@@ -36,16 +36,23 @@ function raw (app, serviceName) {
     });
 
     it('should show the mapping of index test', () => {
-      return app.service('mobiles')
+      const mappings = {
+        '2.4': ['test.mappings.aka._parent.type', 'people'],
+        '6.0': ['test-people.mappings.doc.properties.aka.type', 'join']
+      };
+
+      return app.service('aka')
         .raw('indices.getMapping', {})
         .then(results => {
-          expect(results.test.mappings.mobiles._parent.type).to.equal('people');
+          expect(results).to.have.nested.property(
+            ...getCompatProp(mappings, esVersion)
+          );
         });
     });
 
     it('should return a promise when the passed in method is not defined', () => {
       app
-        .service('mobiles')
+        .service(serviceName)
         .raw(undefined, {})
         .catch(err => {
           expect(err.message === 'params.method must be defined.');
@@ -54,7 +61,7 @@ function raw (app, serviceName) {
 
     it('should return a promise when service.method is not a function', () => {
       app
-        .service('mobiles')
+        .service(serviceName)
         .raw('notafunction', {})
         .catch(err => {
           expect(err.message === 'There is no query method notafunction.');
@@ -63,7 +70,7 @@ function raw (app, serviceName) {
 
     it('should return a promise when service.method.extention is not a function', () => {
       app
-        .service('mobiles')
+        .service(serviceName)
         .raw('indices.notafunction', {})
         .catch(err => {
           expect(err.message === 'There is no query method indices.notafunction.');

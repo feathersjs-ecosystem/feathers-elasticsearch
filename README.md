@@ -41,10 +41,14 @@ app.use('/messages', service({
 The following options can be passed when creating a new Elasticsearch service:
 
 - `Model` (**required**) - The Elasticsearch client instance.
-- `elasticsearch` (**required**) - Configuration object for elasticsearch requests. The required properties are `index` and `type`. Apart from that you can specify anything that can be passed to all requests going to Elasticsearch. Another recognised property is [`refresh`](https://www.elastic.co/guide/en/elasticsearch/guide/2.x/near-real-time.html#refresh-api) which is set to `false` by default. Anything else use at your own risk.
-- `id` (default: '_id') [optional] - The id property of your documents in this service.
-- `meta` (default: '_meta') [optional] - The meta property of your documents in this service. The meta field is an object containing elasticsearch specific information, e.g. _score, _type, _index, and so forth.
+- `elasticsearch` (**required**) - Configuration object for elasticsearch requests. The required properties are `index` and `type`. Apart from that you can specify anything that should be passed to **all** requests going to Elasticsearch. Another recognised property is [`refresh`](https://www.elastic.co/guide/en/elasticsearch/guide/2.x/near-real-time.html#refresh-api) which is set to `false` by default. Anything else use at your own risk.
 - `paginate` [optional] - A pagination object containing a `default` and `max` page size (see the [Pagination documentation](https://docs.feathersjs.com/api/databases/common.html#pagination)).
+- `esVersion` (default: '2.4') [optional] - A string indicating which version of Elasticsearch the service is supposed to be talking to. Based on this setting the service will choose compatible API. If you plan on using Elasticsearch 6.0+ features (e.g. join fields) it's quite important to have it set, as there were breaking changes in Elasticsearch 6.0.
+- `id` (default: '_id') [optional] - The id property of your documents in this service.
+- `parent` (default: '_parent') [optional] - The parent property, which is used to pass document's parent id.
+- `routing` (default: '_routing') [optional] - The routing property, which is used to pass document's routing parameter.
+- `join` (default: undefined) [optional] - Elasticsearch 6.0+ specific. The name of the [join field](https://www.elastic.co/guide/en/elasticsearch/reference/6.0/parent-join.html) defined in the mapping type used by the service. It is required for parent-child relationship features (e.g. setting a parent, `$child` and `$parent` queries) to work.
+- `meta` (default: '_meta') [optional] - The meta property of your documents in this service. The meta field is an object containing elasticsearch specific information, e.g. `_score`, `_type`, `_index`, `_parent`, `_routing` and so forth. It will be stripped off from the documents passed to the service.
 
 ## Complete Example
 
@@ -61,7 +65,7 @@ const elasticsearch = require('elasticsearch');
 const messageService = service({
   Model: new elasticsearch.Client({
     host: 'localhost:9200',
-    apiVersion: '5.0'
+    apiVersion: '6.0'
   }),
   paginate: {
     default: 10,
@@ -70,7 +74,8 @@ const messageService = service({
   elasticsearch: {
     index: 'test',
     type: 'messages'
-  }
+  },
+  esVersion: '6.0'
 });
 
 // Initialize the application
@@ -180,6 +185,10 @@ query: {
 [Joining query `has_child`](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-has-child-query.html).
 Find all documents which have children matching the query. The `$child` query is essentially a full-blown query of its own. The `$child` query requires `$type` property.
 
+**Elasticsearch 6.0 change**
+
+Prior to Elasticsearch 6.0, the `$type` parameter represents the child document type in the index. As of Elasticsearch 6.0, the `$type` parameter represents the child relationship name, as defined in the [join field](https://www.elastic.co/guide/en/elasticsearch/reference/6.0/parent-join.html).
+
 
 ```js
 query: {
@@ -195,6 +204,9 @@ query: {
 [Joining query `has_parent`](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-has-parent-query.html).
 Find all documents which have parent matching the query. The `$parent` query is essentially a full-blown query of its own. The `$parent` query requires `$type` property.
 
+**Elasticsearch 6.0 change**
+
+Prior to Elasticsearch 6.0, the `$type` parameter represents the parent document type in the index. As of Elasticsearch 6.0, the `$type` parameter represents the parent relationship name, as defined in the [join field](https://www.elastic.co/guide/en/elasticsearch/reference/6.0/parent-join.html).
 
 ```js
 query: {
@@ -264,24 +276,33 @@ http://localhost:3030/users?$sqs[$fields][]=title^5&$sqs[$fields][]=description&
 
 ## Parent-child relationship
 
-Elasticsearch supports [parent-child relationship](https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-parent-field.html), however it is not exactly the same as in relational databases. feathers-elasticsearch supports all CRUD operations for Elasticsearch types with parent mapping, and does that with the Elasticsearch constrains. Therefore:
+Elasticsearch supports parent-child relationship however it is not exactly the same as in relational databases. To make things even more interesting, the relationship principles were slightly different up to (version 5.6)[https://www.elastic.co/guide/en/elasticsearch/reference/5.6/mapping-parent-field.html] and from (version 6.0+)[https://www.elastic.co/guide/en/elasticsearch/reference/6.0/parent-join.html] onwards.
+
+Even though Elasticsearch's API changed in that matter, feathers-elasticsearch offers consistent API across those changes. That is actually the main reason why the `esVersion` and `join` service options have been introduced (see the "Options" section of this manual). Having said that, it is important to notice that there are but subtle differences, which are outline below and in the description of `$parent` and `$child` queries.
+
+### Overview
+
+feathers-elasticsearch supports all CRUD operations for Elasticsearch types with parent mapping, and does that with the Elasticsearch constrains. Therefore:
 
 - each operation concering a single document (create, get, patch, update, remove) is required to provide parent id
 - creating documents in bulk (providing a list of documents) is the same as many single document operations, so parent id is required as well
-- to avoid any doubts, each query based operation (find, bulk patch, bulk remove) cannot have the parent id
+- to avoid any doubts, none of the query based operations (find, bulk patch, bulk remove) can use the parent id
+
+
+#### Elasticsearch <= 5.6
 
 Parent id should be provided as part of the data for the create operations (single and bulk):
 
 ```javascript
-parentService.create({
+postService.create({
   _id: 123,
-  title: 'JavaScript: The Good Parts'
+  text: 'JavaScript may be flawed, but it\'s better than Java anyway.'
 });
 
-childService.create({
-  _id: 1000
-  tag: 'javascript',
-  _parent: 123
+commentService.create({
+  _id: 1000,
+  _parent: 123,
+  text: 'You cannot be serious.'
 })
 ```
 Please note, that name of the parent property (`_parent` by default) is configurable through the service options, so that you can set it to whatever suits you.
@@ -295,9 +316,63 @@ childService.remove(
 );
 ```
 
+#### Elasticsearch >= 6.0
+
+As the parent-child relationship changed in Elasticsearch 6.0, it is now expressed by the [join datatype](https://www.elastic.co/guide/en/elasticsearch/reference/6.0/parent-join.html). Everything said above about the parent id holds true, although there is one more detail to be taken into account - the relationship name.
+
+Let's consider the following mapping:
+
+```javascript
+{
+  mappings: {
+    doc: {
+      properties: {
+        text: {
+          type: 'text'
+        },
+        my_join_field: { 
+          type: 'join',
+          relations: {
+            post: 'comment' 
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+Parent id (for children) and relationship name (for children and parents) should be provided for as part of the data for the create operations (single and bulk):
+
+```javascript
+docService.create({
+  _id: 123,
+  text: 'JavaScript may be flawed, but it\'s better than Java anyway.',
+  my_join_field: 'post'
+});
+
+docService.create({
+  _id: 1000,
+  _parent: 123,
+  text: 'You cannot be serious.',
+  my_join_field: 'comment'
+})
+```
+
+Please note, that name of the parent property ('_parent' by default) and the join property (`undefined` by default) are configurable through the service options, so that you can set it to whatever suits you.
+
+For all other operations (get, patch, update, remove), the parent id should be provided as part of the query:
+
+```javascript
+docService.remove(
+  1000,
+  { query: { _parent: 123 } }
+);
+```
+
 ## Supported Elasticsearch versions
 
-feathers-elasticsearch is currently tested on Elasticsearch 2.4, 5.0, 5.1, 5.2, 5.3, 5.4, 5.5 and 5.6. Please note, event though the lowest version supported is 2.4, that does not mean it wouldn't work fine on anything lower than 2.4.
+feathers-elasticsearch is currently tested on Elasticsearch 2.4, 5.0, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 6.0, 6.1 and 6.2. Please note, even though the lowest version supported is 2.4, that does not mean it wouldn't work fine on anything lower than 2.4.
 
 ## Quirks
 
@@ -328,9 +403,14 @@ None of the data mutating operations in Elasticsearch v2.4 (create, update, patc
 
 The conceptual solution for that is quite simple. This behaviour will be configurable through a `lean` switch allowing to get rid of those additional gets should they be not needed for your application. This feature will be added soon as well.
 
+## Born out of need
+
+feathers-elasticsearch was born out of need. When I was building [Hacker Search](https://hacker-search.net) (a real time search engine for Hacker News), I chose Elasticsearch for the database and Feathers for the application framework. All well and good, the only snag was a missing adapter, which would marry the two together. I decided to take a detour from the main project and create the missing piece. Three weeks had passed and the result was... another project (typical, isn't it). Everything went to plan however, and Hacker Search has been happily using feathers-elasticsearch since its first release.
+
+If you want to see the adapter in action, jump on Hacker Search and watch the queries sent from the client. Feel free to play around with the API.
 
 ## License
 
-Copyright (c) 2017
+Copyright (c) 2018
 
 Licensed under the [MIT license](LICENSE).

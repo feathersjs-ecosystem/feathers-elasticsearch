@@ -1,10 +1,9 @@
-/* eslint-disable no-unused-expressions */
 const { expect } = require('chai');
 const errors = require('@feathersjs/errors');
 
 function create (app, serviceName) {
   describe('create()', () => {
-    it('should support creating single element with provided id', () => {
+    it('should create an item with provided id', () => {
       return app.service(serviceName)
         .create({ name: 'Bob', id: 'BobId' })
         .then(result => {
@@ -32,7 +31,7 @@ function create (app, serviceName) {
         });
     });
 
-    it('should support creating multiple elements with provided ids', () => {
+    it('should create items with provided ids (bulk)', () => {
       return app.service(serviceName)
         .create([
           { name: 'Cal', id: 'CalId' },
@@ -59,7 +58,7 @@ function create (app, serviceName) {
         });
     });
 
-    it('should return created items in the same order as requested ones along with the errors', () => {
+    it('should return created items in the same order as requested ones along with the errors (bulk)', () => {
       return app.service(serviceName)
         .create([
           { name: 'Catnis', id: 'CatnisId' },
@@ -78,39 +77,55 @@ function create (app, serviceName) {
         });
     });
 
-    it('should create single item with provided parent', () => {
-      return app.service('mobiles')
-        .create({ number: '0123456789', parent: 'bob' })
+    it('should create an item with provided parent', () => {
+      return app.service('aka')
+        .create({ name: 'Bobster McBobface', parent: 'bob', aka: 'alias' })
         .then(result => {
-          expect(result.number).to.equal('0123456789');
+          expect(result.name).to.equal('Bobster McBobface');
           expect(result._meta._parent).to.equal('bob');
-
-          return app.service('mobiles').remove(
+          return app.service('aka').remove(
             result.id,
             { query: { parent: 'bob' } }
           );
         });
     });
 
-    it('should create multiple items with provided parents', () => {
-      return app.service('mobiles')
+    it('should create items with provided parents (bulk)', () => {
+      return app.service('aka')
         .create([
-          { number: '0123', parent: 'bob', id: 'bobMobile' },
-          { number: '1234', parent: 'moody' }
+          { name: 'Bobster', parent: 'bob', id: 'bobAka', aka: 'alias' },
+          { name: 'Sunshine', parent: 'moody', aka: 'alias' }
         ])
         .then(results => {
-          const [ bobMobile, moodyMobile ] = results;
+          const [ bobAka, moodyAka ] = results;
 
           expect(results.length).to.equal(2);
-          expect(bobMobile.number).to.equal('0123');
-          expect(bobMobile._meta._parent).to.equal('bob');
-          expect(moodyMobile.number).to.equal('1234');
-          expect(moodyMobile._meta._parent).to.equal('moody');
+          expect(bobAka.name).to.equal('Bobster');
+          expect(bobAka._meta._parent).to.equal('bob');
+          expect(moodyAka.name).to.equal('Sunshine');
+          expect(moodyAka._meta._parent).to.equal('moody');
 
-          return app.service('mobiles').remove(
+          return app.service('aka').remove(
             null,
-            { query: { id: { $in: [ bobMobile.id, moodyMobile.id ] } } }
+            { query: { id: { $in: [ bobAka.id, moodyAka.id ] } } }
           );
+        });
+    });
+
+    it('should return only raw response if no items were created (bulk)', () => {
+      return app.service(serviceName)
+        .create([
+          { name: { first: 'Douglas' }, id: 'wrongDouglas' },
+          { name: { first: 'Bob' }, id: 'wrongBob' }
+        ])
+        .then(results => {
+          expect(results).to.have.lengthOf(2);
+          expect(results).to.have.nested.property('[0].id', 'wrongDouglas');
+          expect(results).to.have.nested.property('[0]._meta.error');
+          expect(results).to.have.nested.property('[0]._meta.status', 400);
+          expect(results).to.have.nested.property('[1].id', 'wrongBob');
+          expect(results).to.have.nested.property('[1]._meta.error');
+          expect(results).to.have.nested.property('[1]._meta.status', 400);
         });
     });
   });

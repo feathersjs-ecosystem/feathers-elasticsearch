@@ -1,7 +1,7 @@
-/* eslint-disable no-unused-expressions */
 const { expect } = require('chai');
+const { getCompatProp } = require('../../lib/utils');
 
-function find (app, serviceName) {
+function find (app, serviceName, esVersion) {
   describe('find()', () => {
     it('should return empty array if no results found', () => {
       return app.service(serviceName)
@@ -47,12 +47,17 @@ function find (app, serviceName) {
       });
 
       it('can $all', () => {
+        const expectedLength = getCompatProp({
+          '2.4': 3,
+          '6.0': 6
+        }, esVersion);
+
         return app.service(serviceName)
           .find({
             query: { $all: true }
           })
           .then(results => {
-            expect(results.length).to.equal(3);
+            expect(results.length).to.equal(expectedLength);
           });
       });
 
@@ -167,13 +172,18 @@ function find (app, serviceName) {
       });
 
       it('can $child', () => {
+        const types = {
+          '2.4': 'aka',
+          '6.0': 'alias'
+        };
+
         return app.service(serviceName)
           .find({
             query: {
               $sort: { name: 1 },
               $child: {
-                $type: 'mobiles',
-                number: '991'
+                $type: getCompatProp(types, esVersion),
+                name: 'Teacher'
               }
             }
           })
@@ -185,20 +195,25 @@ function find (app, serviceName) {
       });
 
       it('can $parent', () => {
-        return app.service('mobiles')
+        const types = {
+          '2.4': 'people',
+          '6.0': 'real'
+        };
+
+        return app.service('aka')
           .find({
             query: {
-              $sort: { number: 1 },
+              $sort: { name: 1 },
               $parent: {
-                $type: 'people',
+                $type: getCompatProp(types, esVersion),
                 name: 'Douglas'
               }
             }
           })
           .then(results => {
             expect(results.length).to.equal(2);
-            expect(results[0].number).to.equal('991');
-            expect(results[1].number).to.equal('992');
+            expect(results[0].name).to.equal('Teacher');
+            expect(results[1].name).to.equal('The Master');
           });
       });
 

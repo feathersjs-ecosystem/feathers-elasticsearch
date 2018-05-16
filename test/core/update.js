@@ -1,23 +1,22 @@
-/* eslint-disable no-unused-expressions */
 const { expect } = require('chai');
 
 function update (app, serviceName) {
   describe('update()', () => {
     it('should update an item with specified parent', () => {
-      return app.service('mobiles')
-        .create({ number: '0123456789', parent: 'bob', id: 'bobMobile' })
+      return app.service('aka')
+        .create({ name: 'Bobster', parent: 'bob', id: 'bobAka', aka: 'alias' })
         .then(() => {
-          return app.service('mobiles').update(
-            'bobMobile',
-            { number: '123' },
+          return app.service('aka').update(
+            'bobAka',
+            { name: 'Boberson' },
             { query: { parent: 'bob' } }
           );
         })
         .then(result => {
-          expect(result.number).to.equal('123');
+          expect(result.name).to.equal('Boberson');
 
-          return app.service('mobiles').remove(
-            'bobMobile',
+          return app.service('aka').remove(
+            'bobAka',
             { query: { parent: 'bob' } }
           );
         });
