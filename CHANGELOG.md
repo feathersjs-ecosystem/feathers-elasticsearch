@@ -1,5 +1,13 @@
 # Change Log
 
+## [v1.3.0](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v1.3.0) (2018-05-16)
+[Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v1.2.0...v1.3.0)
+
+**Merged pull requests:**
+
+- Add support for Elasticsearch 6.0+ [\#49](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/49) ([jciolek](https://github.com/jciolek))
+- Update elasticsearch to the latest version 🚀 [\#48](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/48) ([greenkeeper[bot]](https://github.com/apps/greenkeeper))
+
 ## [v1.2.0](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v1.2.0) (2018-04-18)
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v1.1.1...v1.2.0)
 
