@@ -7,10 +7,12 @@ const service = require('../lib');
 const exampleApp = require('../test-utils/example-app');
 const db = require('../test-utils/test-db');
 const coreTests = require('./core');
+const { getCompatProp } = require('../lib/utils/core');
 
 describe('Elasticsearch Service', () => {
   const app = feathers();
   const serviceName = 'people';
+  const esVersion = db.getApiVersion();
 
   before(() => {
     return db.resetSchema()
@@ -19,13 +21,16 @@ describe('Elasticsearch Service', () => {
           Model: db.getClient(),
           events: ['testing'],
           id: 'id',
+          esVersion,
           elasticsearch: db.getServiceConfig(serviceName)
         }));
         app.use('/aka', service({
           Model: db.getClient(),
           id: 'id',
           parent: 'parent',
-          elasticsearch: db.getServiceConfig('aka')
+          esVersion,
+          elasticsearch: db.getServiceConfig('aka'),
+          join: getCompatProp({ '6.0': 'aka' }, esVersion)
         }));
       });
   });
@@ -60,44 +65,48 @@ describe('Elasticsearch Service', () => {
             name: 'Bob',
             bio: 'I like JavaScript.',
             tags: ['javascript', 'programmer'],
-            addresses: [ { street: '1 The Road' }, { street: 'Programmer Lane' } ]
+            addresses: [ { street: '1 The Road' }, { street: 'Programmer Lane' } ],
+            aka: 'real'
           },
           {
             id: 'moody',
             name: 'Moody',
             bio: 'I don\'t like .NET.',
             tags: ['programmer'],
-            addresses: [ { street: '2 The Road' }, { street: 'Developer Lane' } ]
+            addresses: [ { street: '2 The Road' }, { street: 'Developer Lane' } ],
+            aka: 'real'
           },
           {
             id: 'douglas',
             name: 'Douglas',
             bio: 'A legend',
             tags: ['javascript', 'legend', 'programmer'],
-            addresses: [ { street: '3 The Road' }, { street: 'Coder Alley' } ]
+            addresses: [ { street: '3 The Road' }, { street: 'Coder Alley' } ],
+            aka: 'real'
           }
         ])
       )
-      .then(() => app.service('aka')
-        .create([
-          { name: 'The Master', parent: 'douglas', id: 'douglasAka' },
-          { name: 'Teacher', parent: 'douglas' },
-          { name: 'Teacher', parent: 'moody' }
-        ])
-      )
+      .then(() => {
+        app.service('aka')
+          .create([
+            { name: 'The Master', parent: 'douglas', id: 'douglasAka', aka: 'alias' },
+            { name: 'Teacher', parent: 'douglas', aka: 'alias' },
+            { name: 'Teacher', parent: 'moody', aka: 'alias' }
+          ]);
+      })
     );
 
     after(() => {
       app.service(serviceName).remove(null, { query: { $limit: 1000 } });
     });
 
-    coreTests.find(app, serviceName);
+    coreTests.find(app, serviceName, esVersion);
     coreTests.get(app, serviceName);
     coreTests.create(app, serviceName);
-    coreTests.patch(app, serviceName);
+    coreTests.patch(app, serviceName, esVersion);
     coreTests.remove(app, serviceName);
     coreTests.update(app, serviceName);
-    coreTests.raw(app, serviceName);
+    coreTests.raw(app, serviceName, esVersion);
   });
 
   describe('Elasticsearch service example test', () => {

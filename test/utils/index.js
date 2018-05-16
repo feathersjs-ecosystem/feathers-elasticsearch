@@ -153,7 +153,7 @@ describe('Elasticsearch utils', () => {
         data: mappedResults
       };
 
-      expect(mapFind(sourceResults, '_id', '_meta', filters, true)).to
+      expect(mapFind(sourceResults, '_id', '_meta', undefined, filters, true)).to
         .deep.equal(expectedResult);
     });
   });
@@ -168,7 +168,11 @@ describe('Elasticsearch utils', () => {
         _index: 'test',
         _source: {
           name: 'John',
-          age: 13
+          age: 13,
+          aka: {
+            name: 'alias',
+            parent: 1
+          }
         },
         found: true
       };
@@ -178,6 +182,10 @@ describe('Elasticsearch utils', () => {
       let expectedResult = {
         name: 'John',
         age: 13,
+        aka: {
+          name: 'alias',
+          parent: 1
+        },
         _id: 12,
         _meta: {
           _id: 12,
@@ -188,6 +196,25 @@ describe('Elasticsearch utils', () => {
       };
 
       expect(mapGet(item, '_id', '_meta')).to
+        .deep.equal(expectedResult);
+    });
+
+    it('should extract parent from join field when join prop provided', () => {
+      let expectedResult = {
+        name: 'John',
+        age: 13,
+        aka: 'alias',
+        _id: 12,
+        _meta: {
+          _id: 12,
+          _type: 'people',
+          _index: 'test',
+          found: true,
+          _parent: 1
+        }
+      };
+
+      expect(mapGet(item, '_id', '_meta', 'aka')).to
         .deep.equal(expectedResult);
     });
 
@@ -265,16 +292,23 @@ describe('Elasticsearch utils', () => {
         { create: { status: 409, _id: '12' } },
         { index: { result: 'created', _id: '13' } },
         { delete: { result: 'deleted' } },
-        { update: { result: 'updated', get: { _source: { name: 'Bob' } } } }
+        { update: { result: 'updated', get: { _source: { name: 'Bob' } } } },
+        {
+          update: {
+            result: 'updated',
+            get: { _source: { name: 'Sunshine', aka: { name: 'alias', parent: '12' } } }
+          }
+        }
       ];
       let expectedResult = [
         { id: '12', _meta: { status: 409, _id: '12' } },
         { id: '13', _meta: { result: 'created', _id: '13' } },
         { _meta: { result: 'deleted' } },
-        { _meta: { result: 'updated' }, name: 'Bob' }
+        { _meta: { result: 'updated' }, name: 'Bob' },
+        { _meta: { result: 'updated', _parent: '12' }, name: 'Sunshine', aka: 'alias' }
       ];
 
-      expect(mapBulk(items, 'id', '_meta')).to
+      expect(mapBulk(items, 'id', '_meta', 'aka')).to
         .deep.equal(expectedResult);
     });
 

@@ -1,23 +1,31 @@
 const elasticsearch = require('elasticsearch');
-const { getCompatVersion } = require('../lib/utils/core');
+const { getCompatVersion, getCompatProp } = require('../lib/utils/core');
 
 let apiVersion = null;
 let client = null;
-let allCompatVersions = ['2.4', '5.0'];
+let schemaVersions = ['2.4', '5.0', '6.0'];
 
-const compatVersion = getCompatVersion(allCompatVersions, getApiVersion());
+const compatVersion = getCompatVersion(schemaVersions, getApiVersion());
 const compatSchema = require(`./schema-${compatVersion}`);
 
 function getServiceConfig (serviceName) {
-  let index = 'test';
-  let type = serviceName;
+  let configs = {
+    '2.4': {
+      index: 'test',
+      type: serviceName
+    },
+    '6.0': {
+      index: serviceName === 'aka'
+        ? 'test-people'
+        : `test-${serviceName}`,
+      type: 'doc'
+    }
+  };
 
-  if (Number(compatVersion) >= 6) {
-    index = `test-${serviceName === 'aka' ? 'people' : serviceName}`;
-    type = 'doc';
-  }
-
-  return { index, type, refresh: true };
+  return Object.assign(
+    { refresh: true },
+    getCompatProp(configs, getApiVersion())
+  );
 }
 
 function getApiVersion () {
@@ -49,7 +57,8 @@ function deleteSchema () {
 
 function createSchema () {
   return compatSchema.reduce(
-    (result, indexSetup) => result.then(() => getClient().indices.create(indexSetup)),
+    (result, indexSetup) =>
+      result.then(() => getClient().indices.create(indexSetup)),
     Promise.resolve()
   );
 }

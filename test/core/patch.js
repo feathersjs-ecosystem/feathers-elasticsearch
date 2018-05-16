@@ -1,7 +1,8 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
+const { getCompatProp } = require('../../lib/utils');
 
-function patch (app, serviceName) {
+function patch (app, serviceName, esVersion) {
   describe('patch()', () => {
     it('should return empty array if no items have been found (bulk)', () => {
       return app.service(serviceName)
@@ -16,11 +17,16 @@ function patch (app, serviceName) {
     });
 
     it('should return only raw response if no items were patched (bulk)', () => {
+      let queries = {
+        '2.4': { $all: true, $sort: { name: 1 } },
+        '6.0': { aka: 'real', $sort: { name: 1 } }
+      };
+
       return app.service(serviceName)
         .patch(
           null,
           { name: { first: 'Douglas' } },
-          { query: { $all: true, $sort: { name: 1 } } }
+          { query: getCompatProp(queries, esVersion) }
         )
         .then(results => {
           expect(results).to.have.lengthOf(3);
@@ -94,7 +100,7 @@ function patch (app, serviceName) {
 
     it('should patch an item with a specified parent', () => {
       return app.service('aka')
-        .create({ name: 'Bobby McBobface', parent: 'bob', id: 'bobAka' })
+        .create({ name: 'Bobby McBobface', parent: 'bob', id: 'bobAka', aka: 'alias' })
         .then(() => {
           return app.service('aka').patch(
             'bobAka',
@@ -115,8 +121,8 @@ function patch (app, serviceName) {
     it('should patch items which have parents (bulk)', () => {
       return app.service('aka')
         .create([
-          { name: 'patchme', parent: 'bob' },
-          { name: 'patchme', parent: 'moody' }
+          { name: 'patchme', parent: 'bob', aka: 'alias' },
+          { name: 'patchme', parent: 'moody', aka: 'alias' }
         ])
         .then(() => app.service('aka')
           .patch(

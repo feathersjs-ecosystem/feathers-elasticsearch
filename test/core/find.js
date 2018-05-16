@@ -1,6 +1,7 @@
 const { expect } = require('chai');
+const { getCompatProp } = require('../../lib/utils');
 
-function find (app, serviceName) {
+function find (app, serviceName, esVersion) {
   describe('find()', () => {
     it('should return empty array if no results found', () => {
       return app.service(serviceName)
@@ -46,12 +47,17 @@ function find (app, serviceName) {
       });
 
       it('can $all', () => {
+        const expectedLength = getCompatProp({
+          '2.4': 3,
+          '6.0': 6
+        }, esVersion);
+
         return app.service(serviceName)
           .find({
             query: { $all: true }
           })
           .then(results => {
-            expect(results.length).to.equal(3);
+            expect(results.length).to.equal(expectedLength);
           });
       });
 
@@ -166,12 +172,17 @@ function find (app, serviceName) {
       });
 
       it('can $child', () => {
+        const types = {
+          '2.4': 'aka',
+          '6.0': 'alias'
+        };
+
         return app.service(serviceName)
           .find({
             query: {
               $sort: { name: 1 },
               $child: {
-                $type: 'aka',
+                $type: getCompatProp(types, esVersion),
                 name: 'Teacher'
               }
             }
@@ -184,12 +195,17 @@ function find (app, serviceName) {
       });
 
       it('can $parent', () => {
+        const types = {
+          '2.4': 'people',
+          '6.0': 'real'
+        };
+
         return app.service('aka')
           .find({
             query: {
               $sort: { name: 1 },
               $parent: {
-                $type: 'people',
+                $type: getCompatProp(types, esVersion),
                 name: 'Douglas'
               }
             }

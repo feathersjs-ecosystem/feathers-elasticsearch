@@ -12,6 +12,7 @@ const todoService = service({
     default: 2,
     max: 4
   },
+  esVersion: db.getApiVersion(),
   elasticsearch: db.getServiceConfig('todos')
 });
 

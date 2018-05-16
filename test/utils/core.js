@@ -5,7 +5,9 @@ const {
   getType,
   validateType,
   removeProps,
-  getCompatVersion
+  getDocDescriptor,
+  getCompatVersion,
+  getCompatProp
 } = require('../../lib/utils/core');
 
 module.exports = function utilsCoreTests () {
@@ -112,6 +114,78 @@ module.exports = function utilsCoreTests () {
     });
   });
 
+  describe('getDocDescriptor', () => {
+    let service;
+    let doc;
+
+    beforeEach(() => {
+      service = {
+        id: 'id',
+        parent: 'parent',
+        routing: 'routing',
+        join: 'aka',
+        meta: 'meta'
+      };
+
+      doc = {
+        id: 13,
+        parent: 1,
+        routing: 2,
+        name: 'John',
+        aka: 'alias',
+        meta: { _id: 13 }
+      };
+    });
+
+    it('should return doc descriptor', () => {
+      expect(getDocDescriptor(service, doc)).to.deep.equal({
+        id: '13',
+        parent: '1',
+        routing: '2',
+        join: 'alias',
+        doc: { name: 'John' }
+      });
+    });
+
+    it('should use parent for routing if no routing specified', () => {
+      delete doc.routing;
+
+      expect(getDocDescriptor(service, doc)).to.deep.equal({
+        id: '13',
+        parent: '1',
+        routing: '1',
+        join: 'alias',
+        doc: { name: 'John' }
+      });
+    });
+
+    it('should not interpret the join field if join not configured', () => {
+      delete service.join;
+
+      expect(getDocDescriptor(service, doc)).to.deep.equal({
+        id: '13',
+        parent: '1',
+        routing: '2',
+        join: undefined,
+        doc: { name: 'John', aka: 'alias' }
+      });
+    });
+
+    it('should take overrides from the third parameter', () => {
+      delete doc.parent;
+      delete doc.routing;
+
+      expect(getDocDescriptor(service, doc, { parent: 10 }))
+        .to.deep.equal({
+          id: '13',
+          parent: '10',
+          routing: '10',
+          join: 'alias',
+          doc: { name: 'John' }
+        });
+    });
+  });
+
   describe('getCompatVersion', () => {
     it('should return biggest version from the list, which is smaller than provided current', () => {
       const allVersions = ['1.2', '2.3', '2.4', '2.5', '5.0'];
@@ -129,6 +203,21 @@ module.exports = function utilsCoreTests () {
 
     it('should set default value for default version to \'2.4\'', () => {
       expect(getCompatVersion([], '0.9')).to.equal('2.4');
+    });
+  });
+
+  describe('getCompatProp', () => {
+    it('should return the value identified by compatible version key', () => {
+      const compatMap = {
+        '2.4': 'version 2.4',
+        '2.6': 'version 2.6',
+        '6.0': 'version 6.0'
+      };
+
+      expect(getCompatProp(compatMap, '2.4')).to.equal('version 2.4');
+      expect(getCompatProp(compatMap, '2.5')).to.equal('version 2.4');
+      expect(getCompatProp(compatMap, '5.9')).to.equal('version 2.6');
+      expect(getCompatProp(compatMap, '10.0')).to.equal('version 6.0');
     });
   });
 };

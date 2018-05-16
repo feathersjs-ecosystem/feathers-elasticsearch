@@ -1,6 +1,7 @@
 const { expect } = require('chai');
+const { getCompatProp } = require('../../lib/utils');
 
-function raw (app, serviceName) {
+function raw (app, serviceName, esVersion) {
   describe('raw()', () => {
     it('should search documents in index with syntax term', () => {
       return app.service(serviceName)
@@ -35,10 +36,17 @@ function raw (app, serviceName) {
     });
 
     it('should show the mapping of index test', () => {
+      const mappings = {
+        '2.4': ['test.mappings.aka._parent.type', 'people'],
+        '6.0': ['test-people.mappings.doc.properties.aka.type', 'join']
+      };
+
       return app.service('aka')
         .raw('indices.getMapping', {})
         .then(results => {
-          expect(results.test.mappings.aka._parent.type).to.equal('people');
+          expect(results).to.have.nested.property(
+            ...getCompatProp(mappings, esVersion)
+          );
         });
     });
 
