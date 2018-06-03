@@ -21,6 +21,7 @@ addons:
     repo_token: 'f7898d1d1ca2b76715bc35cc3ba880b35e3fbdc07c3aeb27ca98eecb5e5c064d'
 notifications:
   email: false
+install: npm install
 before_install:
   - sudo sysctl vm.max_map_count=262144
   - curl -O ${ES_DOWNLOAD} && sudo dpkg -i --force-confnew elasticsearch-${ES_VERSION}.deb && sudo service elasticsearch restart
