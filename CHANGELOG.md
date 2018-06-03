@@ -1,5 +1,17 @@
 # Change Log
 
+## [v1.3.1](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v1.3.1) (2018-06-03)
+[Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v1.3.0...v1.3.1)
+
+**Closed issues:**
+
+- Travis horror [\#53](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/issues/53)
+
+**Merged pull requests:**
+
+- Update uberproto to the latest version 🚀 [\#52](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/52) ([greenkeeper[bot]](https://github.com/apps/greenkeeper))
+- Update sinon to the latest version 🚀 [\#50](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/50) ([greenkeeper[bot]](https://github.com/apps/greenkeeper))
+
 ## [v1.3.0](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v1.3.0) (2018-05-16)
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v1.2.0...v1.3.0)
 
