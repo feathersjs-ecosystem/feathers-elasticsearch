@@ -21,8 +21,7 @@ describe('Elasticsearch utils', () => {
           $sort: undefined,
           $limit: undefined,
           $skip: 0,
-          $select: true,
-          $populate: undefined
+          $select: true
         },
         query: {}
       };
@@ -78,7 +77,7 @@ describe('Elasticsearch utils', () => {
 
     [ 'some random string', 23, null, [], {} ]
       .forEach(select => {
-        it(`should pass through $select if it ${typeof select} e.g. '${JSON.stringify(select)}'`, () => {
+        it(`should pass through $select if it is ${typeof select} e.g. '${JSON.stringify(select)}'`, () => {
           expectedResult.filters.$select = select;
 
           expect(filter({ $select: select })).to
