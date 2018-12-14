@@ -124,6 +124,30 @@ query: {
 }
 ```
 
+### $wildcard
+
+[Term level query `wildcard`](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-wildcard-query.html). Find all documents which have given field containing terms matching a wildcard expression (not analyzed).
+
+```js
+query: {
+  user: {
+    $wildcard: 'B*b'
+  }
+}
+```
+
+### $regexp
+
+[Term level query `regexp`](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-regexp-query.html). Find all documents which have given field containing terms matching a regular expression (not analyzed).
+
+```js
+query: {
+  user: {
+    $regexp: 'Bo[xb]'
+  }
+}
+```
+
 ### $exists
 
 [Term level query `exists`](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-exists-query.html). Find all documents that have at least one non-null value in the original field (not analyzed). 

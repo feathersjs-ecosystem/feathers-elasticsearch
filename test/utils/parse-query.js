@@ -388,6 +388,32 @@ module.exports = function parseQueryTests () {
         .deep.equal(expectedResult);
     });
 
+    it('should return "wildcard" query for $wildcard', () => {
+      let query = {
+        user: { $wildcard: 'ada' }
+      };
+      let expectedResult = {
+        filter: [
+          { wildcard: { user: 'ada' } }
+        ]
+      };
+      expect(parseQuery(query, '_id')).to
+        .deep.equal(expectedResult);
+    });
+
+    it('should return "regexp" query for $regexp', () => {
+      let query = {
+        user: { $regexp: 'ada' }
+      };
+      let expectedResult = {
+        filter: [
+          { regexp: { user: 'ada' } }
+        ]
+      };
+      expect(parseQuery(query, '_id')).to
+        .deep.equal(expectedResult);
+    });
+
     it('should return "match_all" query for $all: true', () => {
       let query = {
         $all: true
