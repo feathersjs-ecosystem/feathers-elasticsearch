@@ -427,6 +427,34 @@ None of the data mutating operations in Elasticsearch v2.4 (create, update, patc
 
 The conceptual solution for that is quite simple. This behaviour will be configurable through a `lean` switch allowing to get rid of those additional gets should they be not needed for your application. This feature will be added soon as well.
 
+### Upsert capability
+
+An `upsert` parameter is available for the `create` operation that will update the document if it exists already instead of throwing an error.
+
+```javascript
+postService.create({
+  _id: 123,
+  text: 'JavaScript may be flawed, but it\'s better than Ruby.'
+},
+{ 
+  upsert: true
+})
+
+```
+
+Additionally, an `upsert` parameter is also available for the `update` operation that will create the document if it doesn't exist instead of throwing an error.
+
+```javascript
+postService.update(123, {
+  _id: 123,
+  text: 'JavaScript may be flawed, but Feathers makes it fly.'
+},
+{ 
+  upsert: true
+})
+
+```
+
 ## Born out of need
 
 feathers-elasticsearch was born out of need. When I was building [Hacker Search](https://hacker-search.net) (a real time search engine for Hacker News), I chose Elasticsearch for the database and Feathers for the application framework. All well and good, the only snag was a missing adapter, which would marry the two together. I decided to take a detour from the main project and create the missing piece. Three weeks had passed and the result was... another project (typical, isn't it). Everything went to plan however, and Hacker Search has been happily using feathers-elasticsearch since its first release.
