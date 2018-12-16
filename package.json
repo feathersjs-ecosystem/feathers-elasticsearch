@@ -1,7 +1,7 @@
 {
-  "name": "@remote.it/feathers-elasticsearch",
+  "name": "feathers-elasticsearch",
   "description": "Elasticsearch adapter for FeathersJs",
-  "version": "1.5.1",
+  "version": "1.3.1",
   "homepage": "https://github.com/feathersjs-ecosystem/feathers-elasticsearch",
   "main": "lib/",
   "keywords": [
