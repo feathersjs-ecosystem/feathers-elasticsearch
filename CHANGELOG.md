@@ -1,5 +1,23 @@
 # Change Log
 
+## [v1.4.0](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v1.4.0) (2018-12-16)
+[Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v1.3.1...v1.4.0)
+
+**Closed issues:**
+
+- I could also use upsert support [\#65](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/issues/65)
+- Would it be possible to implement $wildcard and $regexp [\#63](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/issues/63)
+- Issue with .create [\#60](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/issues/60)
+- Create { \_meta : { \_index: 'myindex-MM-YYY' } } is ignored [\#58](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/issues/58)
+
+**Merged pull requests:**
+
+- WIldcard, regexp \#63 and upsert \#65 support [\#66](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/66) ([penngrove](https://github.com/penngrove))
+- Update semistandard to the latest version 🚀 [\#62](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/62) ([greenkeeper[bot]](https://github.com/apps/greenkeeper))
+- Update debug to the latest version 🚀 [\#59](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/59) ([greenkeeper[bot]](https://github.com/apps/greenkeeper))
+- Update eslint to the latest version 🚀 [\#55](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/55) ([greenkeeper[bot]](https://github.com/apps/greenkeeper))
+- Update sinon to the latest version 🚀 [\#54](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/54) ([greenkeeper[bot]](https://github.com/apps/greenkeeper))
+
 ## [v1.3.1](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v1.3.1) (2018-06-03)
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v1.3.0...v1.3.1)
 
