@@ -31,6 +31,25 @@ function create (app, serviceName) {
         });
     });
 
+    it('should update when trying to create an element with existing id using upsert', () => {
+      const service = app.service(serviceName);
+
+      return service
+        .create({ name: 'Bob', id: 'BobId' })
+        .then(() => service.create({ name: 'Box', id: 'BobId' }, { upsert: true }))
+        .then(result => {
+          expect(result.name).to.equal('Box');
+          expect(result.id).to.equal('BobId');
+
+          return service.get('BobId');
+        })
+        .then(result => {
+          expect(result.name).to.equal('Box');
+
+          return service.remove('BobId');
+        });
+    });
+
     it('should create items with provided ids (bulk)', () => {
       return app.service(serviceName)
         .create([

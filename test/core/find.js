@@ -46,6 +46,28 @@ function find (app, serviceName, esVersion) {
           });
       });
 
+      it('can $wildcard', () => {
+        return app.service(serviceName)
+          .find({
+            query: { name: { $wildcard: 'B*b' } }
+          })
+          .then(results => {
+            expect(results.length).to.equal(1);
+            expect(results[0].name).to.equal('Bob');
+          });
+      });
+
+      it('can $regexp', () => {
+        return app.service(serviceName)
+          .find({
+            query: { name: { $regexp: 'Bo[xb]' } }
+          })
+          .then(results => {
+            expect(results.length).to.equal(1);
+            expect(results[0].name).to.equal('Bob');
+          });
+      });
+
       it('can $all', () => {
         const expectedLength = getCompatProp({
           '2.4': 3,

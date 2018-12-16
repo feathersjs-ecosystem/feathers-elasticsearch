@@ -124,6 +124,30 @@ query: {
 }
 ```
 
+### $wildcard
+
+[Term level query `wildcard`](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-wildcard-query.html). Find all documents which have given field containing terms matching a wildcard expression (not analyzed).
+
+```js
+query: {
+  user: {
+    $wildcard: 'B*b'
+  }
+}
+```
+
+### $regexp
+
+[Term level query `regexp`](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-regexp-query.html). Find all documents which have given field containing terms matching a regular expression (not analyzed).
+
+```js
+query: {
+  user: {
+    $regexp: 'Bo[xb]'
+  }
+}
+```
+
 ### $exists
 
 [Term level query `exists`](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-exists-query.html). Find all documents that have at least one non-null value in the original field (not analyzed). 
@@ -402,6 +426,34 @@ Currently feathers-elasticsearch supports most important full-text queries in th
 None of the data mutating operations in Elasticsearch v2.4 (create, update, patch, remove) returns the full resulting document, therefore I had to resolve to using get as well in order to return complete data. This solution is of course adding a bit of an overhead, although it is also compliant with the standard behaviour expected of a feathers database adapter.
 
 The conceptual solution for that is quite simple. This behaviour will be configurable through a `lean` switch allowing to get rid of those additional gets should they be not needed for your application. This feature will be added soon as well.
+
+### Upsert capability
+
+An `upsert` parameter is available for the `create` operation that will update the document if it exists already instead of throwing an error.
+
+```javascript
+postService.create({
+  _id: 123,
+  text: 'JavaScript may be flawed, but it\'s better than Ruby.'
+},
+{ 
+  upsert: true
+})
+
+```
+
+Additionally, an `upsert` parameter is also available for the `update` operation that will create the document if it doesn't exist instead of throwing an error.
+
+```javascript
+postService.update(123, {
+  _id: 123,
+  text: 'JavaScript may be flawed, but Feathers makes it fly.'
+},
+{ 
+  upsert: true
+})
+
+```
 
 ## Born out of need
 
