@@ -1,13 +1,72 @@
 const { expect } = require('chai');
-const { base, example } = require('feathers-service-tests');
+const adapterTests = require('@feathersjs/adapter-commons/tests');
 
 const feathers = require('@feathersjs/feathers');
 const errors = require('@feathersjs/errors');
 const service = require('../lib');
-const exampleApp = require('../test-utils/example-app');
 const db = require('../test-utils/test-db');
 const coreTests = require('./core');
 const { getCompatProp } = require('../lib/utils/core');
+const testSuite = adapterTests([
+  '.options',
+  '.events',
+  '._get',
+  '._find',
+  '._create',
+  '._update',
+  '._patch',
+  '._remove',
+  '.get',
+  '.get + $select',
+  '.get + id + query',
+  '.get + NotFound',
+  '.find',
+  '.remove',
+  '.remove + $select',
+  '.remove + id + query',
+  '.remove + multi',
+  '.update',
+  '.update + $select',
+  '.update + id + query',
+  '.update + NotFound',
+  '.patch',
+  '.patch + $select',
+  '.patch + id + query',
+  '.patch multiple',
+  '.patch multi query',
+  '.patch + NotFound',
+  '.create',
+  '.create + $select',
+  '.create multi',
+  'internal .find',
+  'internal .get',
+  'internal .create',
+  'internal .update',
+  'internal .patch',
+  'internal .remove',
+  '.find + equal',
+  '.find + equal multiple',
+  '.find + $sort',
+  '.find + $sort + string',
+  '.find + $limit',
+  '.find + $limit 0',
+  '.find + $skip',
+  '.find + $select',
+  '.find + $or',
+  '.find + $in',
+  '.find + $nin',
+  '.find + $lt',
+  '.find + $lte',
+  '.find + $gt',
+  '.find + $gte',
+  '.find + $ne',
+  '.find + $gt + $lt + $sort',
+  '.find + $or nested + $sort',
+  '.find + paginate',
+  '.find + paginate + $limit + $skip',
+  '.find + paginate + $limit 0',
+  '.find + paginate + params'
+]);
 
 describe('Elasticsearch Service', () => {
   const app = feathers();
@@ -53,7 +112,7 @@ describe('Elasticsearch Service', () => {
     });
   });
 
-  base(app, errors, 'people', 'id');
+  testSuite(app, errors, 'people', 'id');
 
   describe('Specific Elasticsearch tests', () => {
     before(() => app.service(serviceName)
@@ -107,18 +166,5 @@ describe('Elasticsearch Service', () => {
     coreTests.remove(app, serviceName);
     coreTests.update(app, serviceName);
     coreTests.raw(app, serviceName, esVersion);
-  });
-
-  describe('Elasticsearch service example test', () => {
-    let server = null;
-
-    before(() => {
-      server = exampleApp.listen(3030);
-    });
-
-    after(done => server.close(() => done()));
-
-    // We test example app on the default id prop '_id' to check if it falls back correctly.
-    example('_id');
   });
 });
