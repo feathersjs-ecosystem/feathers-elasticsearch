@@ -1,7 +1,6 @@
 const { expect } = require('chai');
 
 const {
-  filter,
   mapFind,
   mapGet,
   mapPatch,
@@ -12,81 +11,6 @@ const parseQueryTests = require('./parse-query.js');
 const coreUtilsTests = require('./core.js');
 
 describe('Elasticsearch utils', () => {
-  describe('filter', () => {
-    let expectedResult;
-
-    beforeEach(() => {
-      expectedResult = {
-        filters: {
-          $sort: undefined,
-          $limit: undefined,
-          $skip: 0,
-          $select: true,
-          $populate: undefined
-        },
-        query: {}
-      };
-    });
-
-    it('should return all filters if no parameters are defined', () => {
-      expect(filter()).to
-        .deep.equal(expectedResult);
-    });
-
-    it('should convert $sort object to Elasticsearch sort param', () => {
-      expectedResult.filters.$sort = [ 'name:asc', 'age:desc' ];
-
-      expect(filter({ $sort: { name: 1, age: -1 } })).to
-        .deep.equal(expectedResult);
-    });
-
-    // TODO: fix the original feathers-query-filters, which checkes only for typeof === 'object'.
-    // It can be an array or null.
-    [ 'some random string', 23, undefined ]
-      .forEach(sort => {
-        it(`should pass through $sort if it is ${typeof sort} '${String(sort)}'`, () => {
-          expectedResult.filters.$sort = sort;
-
-          expect(filter({ $sort: sort })).to
-            .deep.equal(expectedResult);
-        });
-      });
-
-    [ 'some random string', 23, undefined ]
-      .forEach(sort => {
-        it(`should pass through $sort if it is ${typeof sort} e.g. '${JSON.stringify(sort)}'`, () => {
-          expectedResult.filters.$sort = sort;
-
-          expect(filter({ $sort: sort })).to
-            .deep.equal(expectedResult);
-        });
-      });
-
-    it('should return $skip 0 if $skip is not a number', () => {
-      expectedResult.filters.$skip = 0;
-
-      expect(filter({ $skip: 'abc' })).to
-        .deep.equal(expectedResult);
-    });
-
-    it('should return $skip 0 if $skip is not NaN', () => {
-      expectedResult.filters.$skip = 0;
-
-      expect(filter({ $skip: NaN })).to
-        .deep.equal(expectedResult);
-    });
-
-    [ 'some random string', 23, null, [], {} ]
-      .forEach(select => {
-        it(`should pass through $select if it ${typeof select} e.g. '${JSON.stringify(select)}'`, () => {
-          expectedResult.filters.$select = select;
-
-          expect(filter({ $select: select })).to
-            .deep.equal(expectedResult);
-        });
-      });
-  });
-
   describe('mapFind', () => {
     let sourceResults;
     let mappedResults;
