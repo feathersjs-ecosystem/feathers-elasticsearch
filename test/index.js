@@ -115,45 +115,45 @@ describe('Elasticsearch Service', () => {
   testSuite(app, errors, 'people', 'id');
 
   describe('Specific Elasticsearch tests', () => {
-    before(() => app.service(serviceName)
-      .remove(null, { query: { $limit: 1000 } })
-      .then(() => app.service(serviceName)
-        .create([
-          {
-            id: 'bob',
-            name: 'Bob',
-            bio: 'I like JavaScript.',
-            tags: ['javascript', 'programmer'],
-            addresses: [ { street: '1 The Road' }, { street: 'Programmer Lane' } ],
-            aka: 'real'
-          },
-          {
-            id: 'moody',
-            name: 'Moody',
-            bio: 'I don\'t like .NET.',
-            tags: ['programmer'],
-            addresses: [ { street: '2 The Road' }, { street: 'Developer Lane' } ],
-            aka: 'real'
-          },
-          {
-            id: 'douglas',
-            name: 'Douglas',
-            bio: 'A legend',
-            tags: ['javascript', 'legend', 'programmer'],
-            addresses: [ { street: '3 The Road' }, { street: 'Coder Alley' } ],
-            aka: 'real'
-          }
-        ])
-      )
-      .then(() => {
-        app.service('aka')
-          .create([
-            { name: 'The Master', parent: 'douglas', id: 'douglasAka', aka: 'alias' },
-            { name: 'Teacher', parent: 'douglas', aka: 'alias' },
-            { name: 'Teacher', parent: 'moody', aka: 'alias' }
-          ]);
-      })
-    );
+    before(async () => {
+      const service = app.service(serviceName);
+      service.options.multi = true;
+      app.service('aka').multi = true;
+
+      await service.remove(null, { query: { $limit: 1000 } });
+      await service.create([
+        {
+          id: 'bob',
+          name: 'Bob',
+          bio: 'I like JavaScript.',
+          tags: ['javascript', 'programmer'],
+          addresses: [ { street: '1 The Road' }, { street: 'Programmer Lane' } ],
+          aka: 'real'
+        },
+        {
+          id: 'moody',
+          name: 'Moody',
+          bio: 'I don\'t like .NET.',
+          tags: ['programmer'],
+          addresses: [ { street: '2 The Road' }, { street: 'Developer Lane' } ],
+          aka: 'real'
+        },
+        {
+          id: 'douglas',
+          name: 'Douglas',
+          bio: 'A legend',
+          tags: ['javascript', 'legend', 'programmer'],
+          addresses: [ { street: '3 The Road' }, { street: 'Coder Alley' } ],
+          aka: 'real'
+        }
+      ]);
+
+      await app.service('aka').create([
+        { name: 'The Master', parent: 'douglas', id: 'douglasAka', aka: 'alias' },
+        { name: 'Teacher', parent: 'douglas', aka: 'alias' },
+        { name: 'Teacher', parent: 'moody', aka: 'alias' }
+      ]);
+    });
 
     after(() => {
       app.service(serviceName).remove(null, { query: { $limit: 1000 } });
