@@ -1,5 +1,5 @@
 const { expect } = require('chai');
-const adapterTests = require('@feathersjs/adapter-commons/tests');
+const adapterTests = require('@feathersjs/adapter-tests');
 
 const feathers = require('@feathersjs/feathers');
 const errors = require('@feathersjs/errors');
@@ -65,7 +65,10 @@ const testSuite = adapterTests([
   '.find + paginate',
   '.find + paginate + $limit + $skip',
   '.find + paginate + $limit 0',
-  '.find + paginate + params'
+  '.find + paginate + params',
+  '.remove + id + query id',
+  '.update + id + query id',
+  '.patch + id + query id'
 ]);
 
 describe('Elasticsearch Service', () => {
