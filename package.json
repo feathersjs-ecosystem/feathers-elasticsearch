@@ -54,7 +54,7 @@
     "eslint": "^5.0.0",
     "feathers-service-tests": "^0.10.0",
     "mocha": "^6.0.0",
-    "nyc": "^13.2.0",
+    "nyc": "^14.0.0",
     "semistandard": "^13.0.0",
     "sinon": "^7.2.4"
   }
