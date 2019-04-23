@@ -1,5 +1,23 @@
 # Change Log
 
+## [v2.0.0](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v2.0.0) (2019-04-23)
+[Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v1.4.0...v2.0.0)
+
+**Closed issues:**
+
+- An in-range update of elasticsearch is breaking the build 🚨 [\#72](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/issues/72)
+- An in-range update of @feathersjs/express is breaking the build 🚨 [\#70](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/issues/70)
+- An in-range update of @feathersjs/errors is breaking the build 🚨 [\#69](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/issues/69)
+- An in-range update of @feathersjs/errors is breaking the build 🚨 [\#67](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/issues/67)
+
+**Merged pull requests:**
+
+- Update nyc to the latest version 🚀 [\#76](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/76) ([greenkeeper[bot]](https://github.com/apps/greenkeeper))
+- Update mocha to the latest version 🚀 [\#74](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/74) ([greenkeeper[bot]](https://github.com/apps/greenkeeper))
+- Update sinon to the latest version 🚀 [\#73](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/73) ([greenkeeper[bot]](https://github.com/apps/greenkeeper))
+- Update nyc to the latest version 🚀 [\#71](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/71) ([greenkeeper[bot]](https://github.com/apps/greenkeeper))
+- Upgrade to @feathersjs/adapter-commons and latest common service features [\#68](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/68) ([daffl](https://github.com/daffl))
+
 ## [v1.4.0](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v1.4.0) (2018-12-16)
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v1.3.1...v1.4.0)
 
