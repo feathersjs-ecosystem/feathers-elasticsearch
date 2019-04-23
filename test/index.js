@@ -19,12 +19,14 @@ const testSuite = adapterTests([
   '.get',
   '.get + $select',
   '.get + id + query',
+  '.get + id + query id',
   '.get + NotFound',
   '.find',
   '.remove',
   '.remove + $select',
   '.remove + id + query',
   '.remove + multi',
+  '.remove + id + query id',
   '.update',
   '.update + $select',
   '.update + id + query',
@@ -120,8 +122,9 @@ describe('Elasticsearch Service', () => {
   describe('Specific Elasticsearch tests', () => {
     before(async () => {
       const service = app.service(serviceName);
+
       service.options.multi = true;
-      app.service('aka').multi = true;
+      app.service('aka').options.multi = true;
 
       await service.remove(null, { query: { $limit: 1000 } });
       await service.create([
