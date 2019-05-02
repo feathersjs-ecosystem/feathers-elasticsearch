@@ -51,7 +51,7 @@
     "@feathersjs/feathers": "^3.3.0",
     "@feathersjs/socketio": "^3.2.8",
     "chai": "^4.2.0",
-    "elasticsearch": "^15.2.0",
+    "elasticsearch": "^16.0.0",
     "eslint": "^5.11.1",
     "mocha": "^6.0.0",
     "nyc": "^14.0.0",
