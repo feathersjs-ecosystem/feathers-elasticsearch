@@ -49,6 +49,7 @@ The following options can be passed when creating a new Elasticsearch service:
 - `routing` (default: '_routing') [optional] - The routing property, which is used to pass document's routing parameter.
 - `join` (default: undefined) [optional] - Elasticsearch 6.0+ specific. The name of the [join field](https://www.elastic.co/guide/en/elasticsearch/reference/6.0/parent-join.html) defined in the mapping type used by the service. It is required for parent-child relationship features (e.g. setting a parent, `$child` and `$parent` queries) to work.
 - `meta` (default: '_meta') [optional] - The meta property of your documents in this service. The meta field is an object containing elasticsearch specific information, e.g. `_score`, `_type`, `_index`, `_parent`, `_routing` and so forth. It will be stripped off from the documents passed to the service.
+- `whitelist` (default: `['$prefix', '$wildcard', '$regexp', '$exists', '$missing', '$all', '$match', '$phrase', '$phrase_prefix', '$and', '$sqs', '$child', '$parent', '$nested', '$fields', '$path', '$type', '$query', '$operator']`) [optional] - The list of additional non-standard query parameters to allow, by default populated with all Elasticsearch specific ones. You can override, for example in order to restrict access to some queries (see the [options documentation](https://docs.feathersjs.com/api/databases/common.html#serviceoptions)).
 
 ## Complete Example
 
