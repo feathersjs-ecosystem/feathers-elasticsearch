@@ -1,5 +1,18 @@
 # Change Log
 
+## [Unreleased](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/HEAD)
+
+[Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v2.0.0...HEAD)
+
+**Closed issues:**
+
+- How to use whitelist [\#77](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/issues/77)
+- Upsert doesn't work for bulkCreate [\#75](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/issues/75)
+
+**Merged pull requests:**
+
+- Consider upsert param when setting the method in create-bulk [\#78](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/78) ([othersideofphase](https://github.com/othersideofphase))
+
 ## [v2.0.0](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v2.0.0) (2019-04-23)
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v1.4.0...v2.0.0)
 
