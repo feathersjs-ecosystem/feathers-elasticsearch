@@ -1,5 +1,18 @@
 # Change Log
 
+## [v2.0.2](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v2.0.2) (2019-05-14)
+[Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v2.0.1...v2.0.2)
+
+**Closed issues:**
+
+- $exists + $missing operators not working [\#81](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/issues/81)
+- An in-range update of elasticsearch is breaking the build 🚨 [\#79](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/issues/79)
+
+**Merged pull requests:**
+
+- Remove deprecated version tests from CI and update dependencies [\#83](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/83) ([daffl](https://github.com/daffl))
+- added $exists + $missing to whitelist [\#82](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/82) ([orgalaf](https://github.com/orgalaf))
+
 ## [v2.0.1](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v2.0.1) (2019-05-02)
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v2.0.0...v2.0.1)
 
