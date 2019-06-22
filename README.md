@@ -397,7 +397,7 @@ docService.remove(
 
 ## Supported Elasticsearch versions
 
-feathers-elasticsearch is currently tested on Elasticsearch 2.4, 5.0, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 6.0, 6.1 and 6.2. Please note, even though the lowest version supported is 2.4, that does not mean it wouldn't work fine on anything lower than 2.4.
+feathers-elasticsearch is currently tested on Elasticsearch 2.4, 5.6, 6.6, 6.7 and 6.8. Please note, even though the lowest version supported is 2.4, that does not mean it wouldn't work fine on anything lower than 2.4.
 
 ## Quirks
 
@@ -454,6 +454,28 @@ postService.update(123, {
   upsert: true
 })
 
+```
+
+## Contributing
+
+If you find a bug or something to improve we will be happy to see your PR!
+
+When adding a new feature, please make sure you write tests for it with decent coverage as well.
+
+### Running tests locally
+
+When you run the test locally, you need to set the Elasticsearch version you are testing against in an environmental variable `ES_VERSION` to tell the tests which schema it should set up. The value from this variable will be also used to determine the API version for the Elasticsearch client and the tested service.
+
+If you want to all tests:
+
+```bash
+ES_VERSION=6.7.2 npm t
+```
+
+When you just want to run coverage:
+
+```bash
+ES_VERSION=6.7.2 npm run coverage
 ```
 
 ## Born out of need
