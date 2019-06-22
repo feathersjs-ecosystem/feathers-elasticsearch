@@ -52,7 +52,7 @@
     "@feathersjs/socketio": "^3.2.8",
     "chai": "^4.2.0",
     "elasticsearch": "^15.2.0",
-    "eslint": "^5.11.1",
+    "eslint": "^6.0.0",
     "mocha": "^6.0.0",
     "nyc": "^14.0.0",
     "semistandard": "^13.0.1",
