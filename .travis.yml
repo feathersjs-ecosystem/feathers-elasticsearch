@@ -10,6 +10,8 @@ env:
   - ES_VERSION=6.6.2
   - ES_VERSION=6.7.2
   - ES_VERSION=6.8.0
+  - ES_VERSION=7.0.1
+  - ES_VERSION=7.1.1
 addons:
   code_climate:
     repo_token: 'f7898d1d1ca2b76715bc35cc3ba880b35e3fbdc07c3aeb27ca98eecb5e5c064d'
@@ -18,7 +20,7 @@ notifications:
 before_install:
   - sudo sysctl vm.max_map_count=262144
   - docker pull elasticsearch:${ES_VERSION}
-  - docker run -d -p 9200:9200 -p 9300:9300 elasticsearch:${ES_VERSION}
+  - docker run -d -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" elasticsearch:${ES_VERSION}
 install:
   - npm install
 before_script:

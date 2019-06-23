@@ -38,7 +38,8 @@ function raw (app, serviceName, esVersion) {
     it('should show the mapping of index test', () => {
       const mappings = {
         '2.4': ['test.mappings.aka._parent.type', 'people'],
-        '6.0': ['test-people.mappings.doc.properties.aka.type', 'join']
+        '6.0': ['test-people.mappings.doc.properties.aka.type', 'join'],
+        '7.0': ['test-people.mappings.properties.aka.type', 'join']
       };
 
       return app.service('aka')

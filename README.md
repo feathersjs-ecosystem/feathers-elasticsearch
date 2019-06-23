@@ -397,7 +397,7 @@ docService.remove(
 
 ## Supported Elasticsearch versions
 
-feathers-elasticsearch is currently tested on Elasticsearch 2.4, 5.6, 6.6, 6.7 and 6.8. Please note, even though the lowest version supported is 2.4, that does not mean it wouldn't work fine on anything lower than 2.4.
+feathers-elasticsearch is currently tested on Elasticsearch 2.4, 5.6, 6.6, 6.7, 6.8, 7.0 and 7.1 Please note, even though the lowest version supported is 2.4, that does not mean it wouldn't work fine on anything lower than 2.4.
 
 ## Quirks
 
