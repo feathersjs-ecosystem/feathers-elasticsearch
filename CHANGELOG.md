@@ -1,5 +1,13 @@
 # Change Log
 
+## [v2.1.0](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v2.1.0) (2019-06-27)
+[Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v2.0.2...v2.1.0)
+
+**Merged pull requests:**
+
+- Add support for elasticsearch 7+ [\#88](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/88) ([jciolek](https://github.com/jciolek))
+- Update eslint to the latest version 🚀 [\#87](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/87) ([greenkeeper[bot]](https://github.com/apps/greenkeeper))
+
 ## [v2.0.2](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v2.0.2) (2019-05-14)
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v2.0.1...v2.0.2)
 
