@@ -136,7 +136,7 @@ function patch (app, serviceName, esVersion) {
           expect(results[0].name).to.equal('patched');
           expect(results[1].name).to.equal('patched');
 
-          app.service('aka').remove(
+          return app.service('aka').remove(
             null,
             { query: { name: 'patched' } }
           );

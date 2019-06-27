@@ -150,6 +150,7 @@ describe('Elasticsearch Service', () => {
           bio: 'A legend',
           tags: ['javascript', 'legend', 'programmer'],
           addresses: [ { street: '3 The Road' }, { street: 'Coder Alley' } ],
+          phone: '0123455567',
           aka: 'real'
         }
       ]);
@@ -161,8 +162,8 @@ describe('Elasticsearch Service', () => {
       ]);
     });
 
-    after(() => {
-      app.service(serviceName).remove(null, { query: { $limit: 1000 } });
+    after(async () => {
+      await app.service(serviceName).remove(null, { query: { $limit: 1000 } });
     });
 
     coreTests.find(app, serviceName, esVersion);

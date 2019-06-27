@@ -254,6 +254,39 @@ function find (app, serviceName, esVersion) {
             expect(results[0].name).to.equal('Bob');
           });
       });
+
+      it('can $exists', () => {
+        return app.service(serviceName)
+          .find({
+            query: {
+              $exists: ['phone']
+            }
+          })
+          .then(results => {
+            expect(results.length).to.equal(1);
+            expect(results[0].name).to.equal('Douglas');
+          });
+      });
+
+      it('can $missing', () => {
+        const expectedLength = getCompatProp({
+          '2.4': 2,
+          '6.0': 5
+        }, esVersion);
+
+        return app.service(serviceName)
+          .find({
+            query: {
+              $sort: { name: 1 },
+              $missing: ['phone']
+            }
+          })
+          .then(results => {
+            expect(results.length).to.equal(expectedLength);
+            expect(results[0].name).to.equal('Bob');
+            expect(results[1].name).to.equal('Moody');
+          });
+      });
     });
   });
 }

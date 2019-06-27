@@ -13,6 +13,7 @@ const schema = [
                 street: { type: 'keyword' }
               }
             },
+            phone: { type: 'keyword' },
             aka: {
               type: 'join',
               relations: {

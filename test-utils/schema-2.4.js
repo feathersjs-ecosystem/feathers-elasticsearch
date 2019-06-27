@@ -12,7 +12,8 @@ const schema = [
               properties: {
                 street: { type: 'string', index: 'not_analyzed' }
               }
-            }
+            },
+            phone: { type: 'string', index: 'not_analyzed' }
           }
         },
         aka: {

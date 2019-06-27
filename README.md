@@ -49,6 +49,7 @@ The following options can be passed when creating a new Elasticsearch service:
 - `routing` (default: '_routing') [optional] - The routing property, which is used to pass document's routing parameter.
 - `join` (default: undefined) [optional] - Elasticsearch 6.0+ specific. The name of the [join field](https://www.elastic.co/guide/en/elasticsearch/reference/6.0/parent-join.html) defined in the mapping type used by the service. It is required for parent-child relationship features (e.g. setting a parent, `$child` and `$parent` queries) to work.
 - `meta` (default: '_meta') [optional] - The meta property of your documents in this service. The meta field is an object containing elasticsearch specific information, e.g. `_score`, `_type`, `_index`, `_parent`, `_routing` and so forth. It will be stripped off from the documents passed to the service.
+- `whitelist` (default: `['$prefix', '$wildcard', '$regexp', '$exists', '$missing', '$all', '$match', '$phrase', '$phrase_prefix', '$and', '$sqs', '$child', '$parent', '$nested', '$fields', '$path', '$type', '$query', '$operator']`) [optional] - The list of additional non-standard query parameters to allow, by default populated with all Elasticsearch specific ones. You can override, for example in order to restrict access to some queries (see the [options documentation](https://docs.feathersjs.com/api/databases/common.html#serviceoptions)).
 
 ## Complete Example
 
@@ -396,7 +397,7 @@ docService.remove(
 
 ## Supported Elasticsearch versions
 
-feathers-elasticsearch is currently tested on Elasticsearch 2.4, 5.0, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 6.0, 6.1 and 6.2. Please note, even though the lowest version supported is 2.4, that does not mean it wouldn't work fine on anything lower than 2.4.
+feathers-elasticsearch is currently tested on Elasticsearch 2.4, 5.6, 6.6, 6.7, 6.8, 7.0 and 7.1 Please note, even though the lowest version supported is 2.4, that does not mean it wouldn't work fine on anything lower than 2.4.
 
 ## Quirks
 
@@ -453,6 +454,28 @@ postService.update(123, {
   upsert: true
 })
 
+```
+
+## Contributing
+
+If you find a bug or something to improve we will be happy to see your PR!
+
+When adding a new feature, please make sure you write tests for it with decent coverage as well.
+
+### Running tests locally
+
+When you run the test locally, you need to set the Elasticsearch version you are testing against in an environmental variable `ES_VERSION` to tell the tests which schema it should set up. The value from this variable will be also used to determine the API version for the Elasticsearch client and the tested service.
+
+If you want to all tests:
+
+```bash
+ES_VERSION=6.7.2 npm t
+```
+
+When you just want to run coverage:
+
+```bash
+ES_VERSION=6.7.2 npm run coverage
 ```
 
 ## Born out of need
