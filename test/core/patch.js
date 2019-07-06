@@ -142,6 +142,42 @@ function patch (app, serviceName, esVersion) {
           );
         });
     });
+
+    it('should patch with $select (bulk)', () => {
+      return app.service(serviceName)
+        .create([
+          { name: 'patchme', age: 20, tags: ['uninteresting'], id: 'patchMeA' },
+          { name: 'patchme', age: 30, tags: ['boring'], id: 'patchMeB' }
+        ])
+        .then(() => app.service(serviceName)
+          .patch(
+            null,
+            { name: 'Patched' },
+            {
+              query: {
+                name: 'patchme',
+                $sort: { age: 1 },
+                $select: ['age']
+              },
+              paginate: { default: 10, max: 10 }
+            }
+          )
+        )
+        .then(results => {
+          const [
+            { _meta: meta1, ...result1 },
+            { _meta: meta2, ...result2 }
+          ] = results;
+
+          expect(results).to.have.lengthOf(2);
+          expect(result1).to.deep.equal({ age: 20, id: 'patchMeA' });
+          expect(result2).to.deep.equal({ age: 30, id: 'patchMeB' });
+        })
+        .then(() => app.service(serviceName).remove(
+          null,
+          { query: { id: { $in: ['patchMeA', 'patchMeB'] } } }
+        ));
+    });
   });
 }
 
