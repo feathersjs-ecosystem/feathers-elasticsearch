@@ -3,14 +3,14 @@ const { getCompatVersion, getCompatProp } = require('../lib/utils/core');
 
 let apiVersion = null;
 let client = null;
-let schemaVersions = ['2.4', '5.0', '6.0', '7.0'];
+let schemaVersions = ['5.0', '6.0', '7.0'];
 
 const compatVersion = getCompatVersion(schemaVersions, getApiVersion());
 const compatSchema = require(`./schema-${compatVersion}`);
 
 function getServiceConfig (serviceName) {
   let configs = {
-    '2.4': {
+    '5.0': {
       index: 'test',
       type: serviceName
     },
@@ -36,8 +36,11 @@ function getServiceConfig (serviceName) {
 
 function getApiVersion () {
   if (!apiVersion) {
-    const esVersion = process.env.ES_VERSION || '2.4.0';
-    apiVersion = esVersion.split('.').slice(0, 2).join('.');
+    const esVersion = process.env.ES_VERSION || '5.0.0';
+    const [major, minor] = esVersion.split('.').slice(0, 2);
+
+    // elasticsearch client 15.5 does not support api 5.0 - 5.5
+    apiVersion = (+major === 5 && +minor < 6) ? '5.6' : `${major}.${minor}`;
   }
 
   return apiVersion;

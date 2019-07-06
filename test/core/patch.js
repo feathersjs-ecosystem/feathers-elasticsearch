@@ -18,7 +18,7 @@ function patch (app, serviceName, esVersion) {
 
     it('should return only raw response if no items were patched (bulk)', () => {
       let queries = {
-        '2.4': { $all: true, $sort: { name: 1 } },
+        '5.0': { $all: true, $sort: { name: 1 } },
         '6.0': { aka: 'real', $sort: { name: 1 } }
       };
 
