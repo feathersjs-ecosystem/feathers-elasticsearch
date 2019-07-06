@@ -1,5 +1,12 @@
 # Change Log
 
+## [v3.0.0](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v3.0.0) (2019-07-06)
+[Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v2.1.0...v3.0.0)
+
+**Merged pull requests:**
+
+- Add TypeScript definitions and upgrade tests to Feathers 4 [\#90](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/90) ([daffl](https://github.com/daffl))
+
 ## [v2.1.0](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v2.1.0) (2019-06-27)
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v2.0.2...v2.1.0)
 
