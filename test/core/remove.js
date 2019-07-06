@@ -1,4 +1,5 @@
 const { expect } = require('chai');
+const sinon = require('sinon');
 
 function remove (app, serviceName) {
   describe('remove()', () => {
@@ -68,6 +69,28 @@ function remove (app, serviceName) {
           expect(results[0]).to.include({ name: 'remove me', no: 1 });
           expect(results[1]).to.include({ name: 'remove me', no: 2 });
         });
+    });
+
+    it('should return only removed items (bulk)', () => {
+      // It's easier to stub `bulk` then to try and make ES not to delete selected item.
+      const bulk = sinon.stub(app.service(serviceName).Model, 'bulk')
+        .returns(Promise.resolve({
+          errors: true,
+          items: [
+            { 'delete': { _id: 'bob', status: 200 } },
+            { 'delete': { _id: 'douglas', status: 400 } }
+          ]
+        }));
+
+      return app.service(serviceName)
+        .remove(
+          null,
+          { query: { $all: 1 } }
+        )
+        .then(results => {
+          expect(results).to.have.lengthOf(1);
+        })
+        .catch().then(() => bulk.restore());
     });
   });
 }
