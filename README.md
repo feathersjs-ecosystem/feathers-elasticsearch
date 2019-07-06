@@ -43,7 +43,7 @@ The following options can be passed when creating a new Elasticsearch service:
 - `Model` (**required**) - The Elasticsearch client instance.
 - `elasticsearch` (**required**) - Configuration object for elasticsearch requests. The required properties are `index` and `type`. Apart from that you can specify anything that should be passed to **all** requests going to Elasticsearch. Another recognised property is [`refresh`](https://www.elastic.co/guide/en/elasticsearch/guide/2.x/near-real-time.html#refresh-api) which is set to `false` by default. Anything else use at your own risk.
 - `paginate` [optional] - A pagination object containing a `default` and `max` page size (see the [Pagination documentation](https://docs.feathersjs.com/api/databases/common.html#pagination)).
-- `esVersion` (default: '2.4') [optional] - A string indicating which version of Elasticsearch the service is supposed to be talking to. Based on this setting the service will choose compatible API. If you plan on using Elasticsearch 6.0+ features (e.g. join fields) it's quite important to have it set, as there were breaking changes in Elasticsearch 6.0.
+- `esVersion` (default: '5.0') [optional] - A string indicating which version of Elasticsearch the service is supposed to be talking to. Based on this setting the service will choose compatible API. If you plan on using Elasticsearch 6.0+ features (e.g. join fields) it's quite important to have it set, as there were breaking changes in Elasticsearch 6.0.
 - `id` (default: '_id') [optional] - The id property of your documents in this service.
 - `parent` (default: '_parent') [optional] - The parent property, which is used to pass document's parent id.
 - `routing` (default: '_routing') [optional] - The routing property, which is used to pass document's routing parameter.
@@ -397,7 +397,7 @@ docService.remove(
 
 ## Supported Elasticsearch versions
 
-feathers-elasticsearch is currently tested on Elasticsearch 2.4, 5.6, 6.6, 6.7, 6.8, 7.0 and 7.1 Please note, even though the lowest version supported is 2.4, that does not mean it wouldn't work fine on anything lower than 2.4.
+feathers-elasticsearch is currently tested on Elasticsearch 5.0, 5.6, 6.6, 6.7, 6.8, 7.0 and 7.1 Please note, we have recently dropped support for version 2.4, as its life ended quite a while back. If you are still running Elasticsearch 2.4 and want to take advantage of feathers-elasticsearch, please use version 2.x of this package.
 
 ## Quirks
 
@@ -424,7 +424,7 @@ Currently feathers-elasticsearch supports most important full-text queries in th
 
 ### Performance considerations
 
-None of the data mutating operations in Elasticsearch v2.4 (create, update, patch, remove) returns the full resulting document, therefore I had to resolve to using get as well in order to return complete data. This solution is of course adding a bit of an overhead, although it is also compliant with the standard behaviour expected of a feathers database adapter.
+Most of the data mutating operations in Elasticsearch v5.0 (create, update, remove) do not return the full resulting document, therefore I had to resolve to using get as well in order to return complete data. This solution is of course adding a bit of an overhead, although it is also compliant with the standard behaviour expected of a feathers database adapter.
 
 The conceptual solution for that is quite simple. This behaviour will be configurable through a `lean` switch allowing to get rid of those additional gets should they be not needed for your application. This feature will be added soon as well.
 
