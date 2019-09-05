@@ -70,7 +70,7 @@ function find (app, serviceName, esVersion) {
 
       it('can $all', () => {
         const expectedLength = getCompatProp({
-          '2.4': 3,
+          '5.0': 3,
           '6.0': 6
         }, esVersion);
 
@@ -195,7 +195,7 @@ function find (app, serviceName, esVersion) {
 
       it('can $child', () => {
         const types = {
-          '2.4': 'aka',
+          '5.0': 'aka',
           '6.0': 'alias'
         };
 
@@ -218,7 +218,7 @@ function find (app, serviceName, esVersion) {
 
       it('can $parent', () => {
         const types = {
-          '2.4': 'people',
+          '5.0': 'people',
           '6.0': 'real'
         };
 
@@ -270,7 +270,7 @@ function find (app, serviceName, esVersion) {
 
       it('can $missing', () => {
         const expectedLength = getCompatProp({
-          '2.4': 2,
+          '5.0': 2,
           '6.0': 5
         }, esVersion);
 

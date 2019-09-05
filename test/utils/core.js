@@ -201,8 +201,8 @@ module.exports = function utilsCoreTests () {
       expect(getCompatVersion(['1.2', '5.3'], '0.9', '1.0')).to.equal('1.0');
     });
 
-    it('should set default value for default version to \'2.4\'', () => {
-      expect(getCompatVersion([], '0.9')).to.equal('2.4');
+    it('should set default value for default version to \'5.0\'', () => {
+      expect(getCompatVersion([], '0.9')).to.equal('5.0');
     });
   });
 

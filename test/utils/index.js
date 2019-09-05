@@ -80,6 +80,25 @@ describe('Elasticsearch utils', () => {
       expect(mapFind(sourceResults, '_id', '_meta', undefined, filters, true)).to
         .deep.equal(expectedResult);
     });
+
+    it('should support `hits.total` as an object in the response', () => {
+      let filters = {
+        $skip: 10,
+        $limit: 25
+      };
+      let expectedResult = {
+        total: 2,
+        skip: filters.$skip,
+        limit: filters.$limit,
+        data: mappedResults
+      };
+      const { total } = sourceResults.hits;
+
+      sourceResults.hits.total = { value: total };
+
+      expect(mapFind(sourceResults, '_id', '_meta', undefined, filters, true)).to
+        .deep.equal(expectedResult);
+    });
   });
 
   describe('mapGet', () => {

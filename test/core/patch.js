@@ -18,7 +18,7 @@ function patch (app, serviceName, esVersion) {
 
     it('should return only raw response if no items were patched (bulk)', () => {
       let queries = {
-        '2.4': { $all: true, $sort: { name: 1 } },
+        '5.0': { $all: true, $sort: { name: 1 } },
         '6.0': { aka: 'real', $sort: { name: 1 } }
       };
 
@@ -48,9 +48,9 @@ function patch (app, serviceName, esVersion) {
         .returns(Promise.resolve({
           errors: true,
           items: [
-            { 'update': { _id: 'bob', status: 200 } },
+            { 'update': { _id: 'bob', status: 200, get: { _source: { name: 'Whatever' } } } },
             { 'update': { _id: 'douglas', status: 400, error: {} } },
-            { 'update': { _id: 'moody', status: 200 } }
+            { 'update': { _id: 'moody', status: 200, get: { _source: { name: 'Whatever' } } } }
           ]
         }));
 
@@ -62,11 +62,11 @@ function patch (app, serviceName, esVersion) {
         )
         .then(results => {
           expect(results).to.have.lengthOf(3);
-          expect(results[0]).to.include({ name: 'Bob', id: 'bob' });
+          expect(results[0]).to.include({ name: 'Whatever', id: 'bob' });
           expect(results[1]).to.have.property('id', 'douglas');
           expect(results[1]).to.have.nested.property('_meta.error');
           expect(results[1]).to.have.nested.property('_meta.status', 400);
-          expect(results[2]).to.include({ name: 'Moody', id: 'moody' });
+          expect(results[2]).to.include({ name: 'Whatever', id: 'moody' });
         })
         .catch().then(() => bulk.restore());
     });
@@ -141,6 +141,42 @@ function patch (app, serviceName, esVersion) {
             { query: { name: 'patched' } }
           );
         });
+    });
+
+    it('should patch with $select (bulk)', () => {
+      return app.service(serviceName)
+        .create([
+          { name: 'patchme', age: 20, tags: ['uninteresting'], id: 'patchMeA' },
+          { name: 'patchme', age: 30, tags: ['boring'], id: 'patchMeB' }
+        ])
+        .then(() => app.service(serviceName)
+          .patch(
+            null,
+            { name: 'Patched' },
+            {
+              query: {
+                name: 'patchme',
+                $sort: { age: 1 },
+                $select: ['age']
+              },
+              paginate: { default: 10, max: 10 }
+            }
+          )
+        )
+        .then(results => {
+          const [
+            { _meta: meta1, ...result1 },
+            { _meta: meta2, ...result2 }
+          ] = results;
+
+          expect(results).to.have.lengthOf(2);
+          expect(result1).to.deep.equal({ age: 20, id: 'patchMeA' });
+          expect(result2).to.deep.equal({ age: 30, id: 'patchMeB' });
+        })
+        .then(() => app.service(serviceName).remove(
+          null,
+          { query: { id: { $in: ['patchMeA', 'patchMeB'] } } }
+        ));
     });
   });
 }
