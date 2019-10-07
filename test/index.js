@@ -133,7 +133,7 @@ describe('Elasticsearch Service', () => {
           name: 'Bob',
           bio: 'I like JavaScript.',
           tags: ['javascript', 'programmer'],
-          addresses: [ { street: '1 The Road' }, { street: 'Programmer Lane' } ],
+          addresses: [{ street: '1 The Road' }, { street: 'Programmer Lane' }],
           aka: 'real'
         },
         {
@@ -141,7 +141,7 @@ describe('Elasticsearch Service', () => {
           name: 'Moody',
           bio: 'I don\'t like .NET.',
           tags: ['programmer'],
-          addresses: [ { street: '2 The Road' }, { street: 'Developer Lane' } ],
+          addresses: [{ street: '2 The Road' }, { street: 'Developer Lane' }],
           aka: 'real'
         },
         {
@@ -149,7 +149,7 @@ describe('Elasticsearch Service', () => {
           name: 'Douglas',
           bio: 'A legend',
           tags: ['javascript', 'legend', 'programmer'],
-          addresses: [ { street: '3 The Road' }, { street: 'Coder Alley' } ],
+          addresses: [{ street: '3 The Road' }, { street: 'Coder Alley' }],
           phone: '0123455567',
           aka: 'real'
         }

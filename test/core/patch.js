@@ -17,7 +17,7 @@ function patch (app, serviceName, esVersion) {
     });
 
     it('should return only raw response if no items were patched (bulk)', () => {
-      let queries = {
+      const queries = {
         '5.0': { $all: true, $sort: { name: 1 } },
         '6.0': { aka: 'real', $sort: { name: 1 } }
       };
@@ -48,9 +48,9 @@ function patch (app, serviceName, esVersion) {
         .returns(Promise.resolve({
           errors: true,
           items: [
-            { 'update': { _id: 'bob', status: 200, get: { _source: { name: 'Whatever' } } } },
-            { 'update': { _id: 'douglas', status: 400, error: {} } },
-            { 'update': { _id: 'moody', status: 200, get: { _source: { name: 'Whatever' } } } }
+            { update: { _id: 'bob', status: 200, get: { _source: { name: 'Whatever' } } } },
+            { update: { _id: 'douglas', status: 400, error: {} } },
+            { update: { _id: 'moody', status: 200, get: { _source: { name: 'Whatever' } } } }
           ]
         }));
 
