@@ -3,13 +3,13 @@ const { getCompatVersion, getCompatProp } = require('../lib/utils/core');
 
 let apiVersion = null;
 let client = null;
-let schemaVersions = ['5.0', '6.0', '7.0'];
+const schemaVersions = ['5.0', '6.0', '7.0'];
 
 const compatVersion = getCompatVersion(schemaVersions, getApiVersion());
 const compatSchema = require(`./schema-${compatVersion}`);
 
 function getServiceConfig (serviceName) {
-  let configs = {
+  const configs = {
     '5.0': {
       index: 'test',
       type: serviceName

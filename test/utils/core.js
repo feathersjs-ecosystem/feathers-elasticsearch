@@ -96,7 +96,7 @@ module.exports = function utilsCoreTests () {
     });
 
     it('should not change the original object', () => {
-      let objectSnapshot = JSON.stringify(object);
+      const objectSnapshot = JSON.stringify(object);
 
       removeProps(object);
       expect(JSON.stringify(object)).to
@@ -209,8 +209,8 @@ module.exports = function utilsCoreTests () {
   describe('getCompatProp', () => {
     it('should return the value identified by compatible version key', () => {
       const compatMap = {
-        '2.4': 'version 2.4',
-        '2.6': 'version 2.6',
+        2.4: 'version 2.4',
+        2.6: 'version 2.6',
         '6.0': 'version 6.0'
       };
 

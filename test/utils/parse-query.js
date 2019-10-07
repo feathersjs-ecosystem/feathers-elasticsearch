@@ -11,7 +11,7 @@ module.exports = function parseQueryTests () {
     });
 
     it('should return null if query has no own properties', () => {
-      let query = Object.create({ hello: 'world' });
+      const query = Object.create({ hello: 'world' });
 
       expect(parseQuery({}, '_id')).to.be.null;
       expect(parseQuery(query, '_id')).to.be.null;
@@ -143,18 +143,18 @@ module.exports = function parseQueryTests () {
       it(`should throw BadRequest if ${query} values are not arrays with (string)field property`, () => {
         expect(() => parseQuery({ [query]: 'foo' }, '_id')).to.throw(errors.BadRequest);
         expect(() => parseQuery({ [query]: [1234] }, '_id')).to.throw(errors.BadRequest);
-        expect(() => parseQuery({ [query]: { 'foo': 'bar' } }, '_id')).to.throw(errors.BadRequest);
-        expect(() => parseQuery({ [query]: [{ 'foo': 'bar' }] }, '_id')).to.throw(errors.BadRequest);
+        expect(() => parseQuery({ [query]: { foo: 'bar' } }, '_id')).to.throw(errors.BadRequest);
+        expect(() => parseQuery({ [query]: [{ foo: 'bar' }] }, '_id')).to.throw(errors.BadRequest);
       });
     });
 
     it('should return term query for each primitive param', () => {
-      let query = {
+      const query = {
         user: 'doug',
         age: 23,
         active: true
       };
-      let expectedResult = {
+      const expectedResult = {
         filter: [
           { term: { user: 'doug' } },
           { term: { age: 23 } },
@@ -167,11 +167,11 @@ module.exports = function parseQueryTests () {
     });
 
     it('should return term query for each value from an array', () => {
-      let query = {
+      const query = {
         tags: ['javascript', 'nodejs'],
         user: 'doug'
       };
-      let expectedResult = {
+      const expectedResult = {
         filter: [
           { term: { tags: 'javascript' } },
           { term: { tags: 'nodejs' } },
@@ -184,8 +184,8 @@ module.exports = function parseQueryTests () {
     });
 
     it('should convert provided id property name to _id', () => {
-      let query = { id: 12 };
-      let expectedResult = {
+      const query = { id: 12 };
+      const expectedResult = {
         filter: [
           { term: { _id: 12 } }
         ]
@@ -195,14 +195,14 @@ module.exports = function parseQueryTests () {
     });
 
     it('should return terms query for each $in param', () => {
-      let query = {
-        user: { $in: [ 'doug', 'bob' ] },
-        age: { $in: [ 23, 24, 50 ] }
+      const query = {
+        user: { $in: ['doug', 'bob'] },
+        age: { $in: [23, 24, 50] }
       };
-      let expectedResult = {
+      const expectedResult = {
         filter: [
-          { terms: { user: [ 'doug', 'bob' ] } },
-          { terms: { age: [ 23, 24, 50 ] } }
+          { terms: { user: ['doug', 'bob'] } },
+          { terms: { age: [23, 24, 50] } }
         ]
       };
 
@@ -211,14 +211,14 @@ module.exports = function parseQueryTests () {
     });
 
     it('should return term and terms query together', () => {
-      let query = {
+      const query = {
         user: 'doug',
-        age: { $in: [ 23, 24 ] }
+        age: { $in: [23, 24] }
       };
-      let expectedResult = {
+      const expectedResult = {
         filter: [
           { term: { user: 'doug' } },
-          { terms: { age: [ 23, 24 ] } }
+          { terms: { age: [23, 24] } }
         ]
       };
 
@@ -227,14 +227,14 @@ module.exports = function parseQueryTests () {
     });
 
     it('should return must_not terms query for each $nin param', () => {
-      let query = {
-        user: { $nin: [ 'doug', 'bob' ] },
-        age: { $nin: [ 23, 24, 50 ] }
+      const query = {
+        user: { $nin: ['doug', 'bob'] },
+        age: { $nin: [23, 24, 50] }
       };
-      let expectedResult = {
+      const expectedResult = {
         must_not: [
-          { terms: { user: [ 'doug', 'bob' ] } },
-          { terms: { age: [ 23, 24, 50 ] } }
+          { terms: { user: ['doug', 'bob'] } },
+          { terms: { age: [23, 24, 50] } }
         ]
       };
 
@@ -243,12 +243,12 @@ module.exports = function parseQueryTests () {
     });
 
     it('should return range query for $lt, $lte, $gt, $gte', () => {
-      let query = {
+      const query = {
         age: { $gt: 30, $lt: 40 },
         likes: { $lte: 100 },
         cars: { $gte: 2, $lt: 5 }
       };
-      let expectedResult = {
+      const expectedResult = {
         filter: [
           { range: { age: { gt: 30 } } },
           { range: { age: { lt: 40 } } },
@@ -262,13 +262,13 @@ module.exports = function parseQueryTests () {
     });
 
     it('should return "should" subquery for $or', () => {
-      let query = {
+      const query = {
         $or: [
           { user: 'Adam', age: { $gt: 40 } },
           { age: { $gt: 40 } }
         ]
       };
-      let expectedResult = {
+      const expectedResult = {
         should: [
           {
             bool: {
@@ -293,7 +293,7 @@ module.exports = function parseQueryTests () {
     });
 
     it('should return all queries for $and', () => {
-      let query = {
+      const query = {
         $and: [
           { tags: 'javascript' },
           { tags: { $ne: 'legend' } },
@@ -302,7 +302,7 @@ module.exports = function parseQueryTests () {
         ],
         name: 'Doug'
       };
-      let expectedResult = {
+      const expectedResult = {
         filter: [
           { term: { tags: 'javascript' } },
           { terms: { age: [25, 26] } },
@@ -319,7 +319,7 @@ module.exports = function parseQueryTests () {
     });
 
     it('should return "simple_query_string" for $sqs with default_operator "or" by default', () => {
-      let query = {
+      const query = {
         $sqs: {
           $fields: [
             'description',
@@ -328,7 +328,7 @@ module.exports = function parseQueryTests () {
           $query: '-(track another)'
         }
       };
-      let expectedResult = {
+      const expectedResult = {
         must: [
           {
             simple_query_string: {
@@ -348,7 +348,7 @@ module.exports = function parseQueryTests () {
     });
 
     it('should return "simple_query_string" for $sqs with specified default_operator', () => {
-      let query = {
+      const query = {
         $sqs: {
           $fields: [
             'description'
@@ -357,7 +357,7 @@ module.exports = function parseQueryTests () {
           $operator: 'and'
         }
       };
-      let expectedResult = {
+      const expectedResult = {
         must: [
           {
             simple_query_string: {
@@ -376,10 +376,10 @@ module.exports = function parseQueryTests () {
     });
 
     it('should return "prefix" query for $prefix', () => {
-      let query = {
+      const query = {
         user: { $prefix: 'ada' }
       };
-      let expectedResult = {
+      const expectedResult = {
         filter: [
           { prefix: { user: 'ada' } }
         ]
@@ -389,10 +389,10 @@ module.exports = function parseQueryTests () {
     });
 
     it('should return "wildcard" query for $wildcard', () => {
-      let query = {
+      const query = {
         user: { $wildcard: 'ada' }
       };
-      let expectedResult = {
+      const expectedResult = {
         filter: [
           { wildcard: { user: 'ada' } }
         ]
@@ -402,10 +402,10 @@ module.exports = function parseQueryTests () {
     });
 
     it('should return "regexp" query for $regexp', () => {
-      let query = {
+      const query = {
         user: { $regexp: 'ada' }
       };
-      let expectedResult = {
+      const expectedResult = {
         filter: [
           { regexp: { user: 'ada' } }
         ]
@@ -415,10 +415,10 @@ module.exports = function parseQueryTests () {
     });
 
     it('should return "match_all" query for $all: true', () => {
-      let query = {
+      const query = {
         $all: true
       };
-      let expectedResult = {
+      const expectedResult = {
         must: [
           { match_all: {} }
         ]
@@ -428,19 +428,19 @@ module.exports = function parseQueryTests () {
     });
 
     it('should not return "match_all" query for $all: false', () => {
-      let query = {
+      const query = {
         $all: false
       };
-      let expectedResult = null;
+      const expectedResult = null;
       expect(parseQuery(query, '_id')).to
         .deep.equal(expectedResult);
     });
 
     it('should return "match" query for $match', () => {
-      let query = {
+      const query = {
         text: { $match: 'javascript' }
       };
-      let expectedResult = {
+      const expectedResult = {
         must: [
           { match: { text: 'javascript' } }
         ]
@@ -450,10 +450,10 @@ module.exports = function parseQueryTests () {
     });
 
     it('should return "match_phrase" query for $phrase', () => {
-      let query = {
+      const query = {
         text: { $phrase: 'javascript' }
       };
-      let expectedResult = {
+      const expectedResult = {
         must: [
           { match_phrase: { text: 'javascript' } }
         ]
@@ -463,10 +463,10 @@ module.exports = function parseQueryTests () {
     });
 
     it('should return "match_phrase_prefix" query for $phrase_prefix', () => {
-      let query = {
+      const query = {
         text: { $phrase_prefix: 'javasc' }
       };
-      let expectedResult = {
+      const expectedResult = {
         must: [
           { match_phrase_prefix: { text: 'javasc' } }
         ]
@@ -476,13 +476,13 @@ module.exports = function parseQueryTests () {
     });
 
     it('should return "has_child" query for $child', () => {
-      let query = {
+      const query = {
         $child: {
           $type: 'address',
           city: 'Ashford'
         }
       };
-      let expectedResult = {
+      const expectedResult = {
         must: [
           {
             has_child: {
@@ -503,13 +503,13 @@ module.exports = function parseQueryTests () {
     });
 
     it('should return "has_parent" query for $parent', () => {
-      let query = {
+      const query = {
         $parent: {
           $type: 'people',
           name: 'Douglas'
         }
       };
-      let expectedResult = {
+      const expectedResult = {
         must: [
           {
             has_parent: {
@@ -530,13 +530,13 @@ module.exports = function parseQueryTests () {
     });
 
     it('should return "nested" query for $nested', () => {
-      let query = {
+      const query = {
         $nested: {
           $path: 'legend',
           'legend.name': 'Douglas'
         }
       };
-      let expectedResult = {
+      const expectedResult = {
         must: [
           {
             nested: {
@@ -558,10 +558,10 @@ module.exports = function parseQueryTests () {
 
     [['$exists', 'must'], ['$missing', 'must_not']].forEach(([q, clause]) => {
       it(`should return "${clause}" query for ${q}`, () => {
-        let query = {
+        const query = {
           [q]: ['phone', 'address']
         };
-        let expectedResult = {
+        const expectedResult = {
           [clause]: [
             {
               exists: { field: 'phone' }
@@ -577,16 +577,16 @@ module.exports = function parseQueryTests () {
     });
 
     it('should return all types of queries together', () => {
-      let query = {
+      const query = {
         $or: [
           { likes: { $gt: 9, $lt: 12 }, age: { $ne: 10 } },
-          { user: { $nin: [ 'Anakin', 'Luke' ] } },
+          { user: { $nin: ['Anakin', 'Luke'] } },
           { user: { $prefix: 'ada' } },
           { $all: true }
         ],
-        age: { $in: [ 12, 13 ] },
+        age: { $in: [12, 13] },
         user: 'Obi Wan',
-        country: { $nin: [ 'us', 'pl', 'ae' ] },
+        country: { $nin: ['us', 'pl', 'ae'] },
         bio: { $match: 'javascript', $phrase: 'the good parts' },
         $child: { $type: 'address', city: 'Ashford' },
         $parent: { $type: 'people', name: 'Douglas' },
@@ -598,7 +598,7 @@ module.exports = function parseQueryTests () {
         $exists: ['phone'],
         $missing: ['address']
       };
-      let expectedResult = {
+      const expectedResult = {
         should: [
           {
             bool: {
@@ -606,7 +606,7 @@ module.exports = function parseQueryTests () {
                 { range: { likes: { gt: 9 } } },
                 { range: { likes: { lt: 12 } } }
               ],
-              'must_not': [
+              must_not: [
                 { term: { age: 10 } }
               ]
             }
@@ -614,7 +614,7 @@ module.exports = function parseQueryTests () {
           {
             bool: {
               must_not: [
-                { terms: { user: [ 'Anakin', 'Luke' ] } }
+                { terms: { user: ['Anakin', 'Luke'] } }
               ]
             }
           },
@@ -635,13 +635,13 @@ module.exports = function parseQueryTests () {
         ],
         minimum_should_match: 1,
         filter: [
-          { terms: { age: [ 12, 13 ] } },
+          { terms: { age: [12, 13] } },
           { term: { user: 'Obi Wan' } },
           { term: { tags: 'javascript' } },
           { term: { tags: 'legend' } }
         ],
         must_not: [
-          { terms: { country: [ 'us', 'pl', 'ae' ] } },
+          { terms: { country: ['us', 'pl', 'ae'] } },
           { exists: { field: 'address' } }
         ],
         must: [

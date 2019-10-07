@@ -59,18 +59,18 @@ describe('Elasticsearch utils', () => {
     });
 
     it('should swap around meta and the docs', () => {
-      let expectedResult = mappedResults;
+      const expectedResult = mappedResults;
 
       expect(mapFind(sourceResults, '_id', '_meta')).to
         .deep.equal(expectedResult);
     });
 
     it('should returned paginated results when hasPagination is true', () => {
-      let filters = {
+      const filters = {
         $skip: 10,
         $limit: 25
       };
-      let expectedResult = {
+      const expectedResult = {
         total: 2,
         skip: filters.$skip,
         limit: filters.$limit,
@@ -82,11 +82,11 @@ describe('Elasticsearch utils', () => {
     });
 
     it('should support `hits.total` as an object in the response', () => {
-      let filters = {
+      const filters = {
         $skip: 10,
         $limit: 25
       };
-      let expectedResult = {
+      const expectedResult = {
         total: 2,
         skip: filters.$skip,
         limit: filters.$limit,
@@ -122,7 +122,7 @@ describe('Elasticsearch utils', () => {
     });
 
     it('should swap around meta and the doc', () => {
-      let expectedResult = {
+      const expectedResult = {
         name: 'John',
         age: 13,
         aka: {
@@ -143,7 +143,7 @@ describe('Elasticsearch utils', () => {
     });
 
     it('should extract parent from join field when join prop provided', () => {
-      let expectedResult = {
+      const expectedResult = {
         name: 'John',
         age: 13,
         aka: 'alias',
@@ -162,7 +162,7 @@ describe('Elasticsearch utils', () => {
     });
 
     it('should not change the original item', () => {
-      let itemSnapshot = JSON.stringify(item);
+      const itemSnapshot = JSON.stringify(item);
 
       mapGet(item, '_id', '_meta');
       expect(item).to.deep.equal(JSON.parse(itemSnapshot));
@@ -189,7 +189,7 @@ describe('Elasticsearch utils', () => {
     });
 
     it('should swap around meta and the doc', () => {
-      let expectedResult = {
+      const expectedResult = {
         _id: 12,
         name: 'John',
         age: 13,
@@ -207,7 +207,7 @@ describe('Elasticsearch utils', () => {
 
     it('should return just meta if patched document not present', () => {
       delete item.get;
-      let expectedResult = {
+      const expectedResult = {
         _id: 12,
         _meta: {
           _id: 12,
@@ -222,7 +222,7 @@ describe('Elasticsearch utils', () => {
     });
 
     it('should not change the original item', () => {
-      let itemSnapshot = JSON.stringify(item);
+      const itemSnapshot = JSON.stringify(item);
 
       mapPatch(item, '_id', '_meta');
       expect(item).to.deep.equal(JSON.parse(itemSnapshot));
@@ -231,7 +231,7 @@ describe('Elasticsearch utils', () => {
 
   describe('mapBulk', () => {
     it('should get rid of action name property swap around meta and the doc', () => {
-      let items = [
+      const items = [
         { create: { status: 409, _id: '12' } },
         { index: { result: 'created', _id: '13' } },
         { delete: { result: 'deleted' } },
@@ -243,7 +243,7 @@ describe('Elasticsearch utils', () => {
           }
         }
       ];
-      let expectedResult = [
+      const expectedResult = [
         { id: '12', _meta: { status: 409, _id: '12' } },
         { id: '13', _meta: { result: 'created', _id: '13' } },
         { _meta: { result: 'deleted' } },
@@ -256,10 +256,10 @@ describe('Elasticsearch utils', () => {
     });
 
     it('should not change original items', () => {
-      let items = [
+      const items = [
         { create: { status: 409, _id: '12' } }
       ];
-      let itemsSnapshot = JSON.stringify(items);
+      const itemsSnapshot = JSON.stringify(items);
 
       mapBulk(items, 'id', '_meta');
       expect(items).to.deep.equal(JSON.parse(itemsSnapshot));

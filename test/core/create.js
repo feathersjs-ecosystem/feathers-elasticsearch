@@ -116,7 +116,7 @@ function create (app, serviceName) {
           { name: 'Sunshine', parent: 'moody', aka: 'alias' }
         ])
         .then(results => {
-          const [ bobAka, moodyAka ] = results;
+          const [bobAka, moodyAka] = results;
 
           expect(results.length).to.equal(2);
           expect(bobAka.name).to.equal('Bobster');
@@ -126,7 +126,7 @@ function create (app, serviceName) {
 
           return app.service('aka').remove(
             null,
-            { query: { id: { $in: [ bobAka.id, moodyAka.id ] } } }
+            { query: { id: { $in: [bobAka.id, moodyAka.id] } } }
           );
         });
     });

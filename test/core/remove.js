@@ -77,8 +77,8 @@ function remove (app, serviceName) {
         .returns(Promise.resolve({
           errors: true,
           items: [
-            { 'delete': { _id: 'bob', status: 200 } },
-            { 'delete': { _id: 'douglas', status: 400 } }
+            { delete: { _id: 'bob', status: 200 } },
+            { delete: { _id: 'douglas', status: 400 } }
           ]
         }));
 
