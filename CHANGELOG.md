@@ -1,5 +1,20 @@
 # Change Log
 
+## [v3.1.0](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v3.1.0) (2019-10-07)
+[Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v3.0.0...v3.1.0)
+
+**Closed issues:**
+
+- An in-range update of @feathersjs/adapter-tests is breaking the build 🚨 [\#96](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/issues/96)
+- An in-range update of @feathersjs/commons is breaking the build 🚨 [\#95](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/issues/95)
+- An in-range update of dtslint is breaking the build 🚨 [\#93](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/issues/93)
+
+**Merged pull requests:**
+
+- Update all dependencies [\#97](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/97) ([daffl](https://github.com/daffl))
+- Update dtslint to the latest version 🚀 [\#92](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/92) ([greenkeeper[bot]](https://github.com/apps/greenkeeper))
+- Drop support for elasticsearch 2.4 [\#91](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/91) ([jciolek](https://github.com/jciolek))
+
 ## [v3.0.0](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v3.0.0) (2019-07-06)
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v2.1.0...v3.0.0)
 
