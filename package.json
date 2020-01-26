@@ -57,7 +57,7 @@
     "dtslint": "^2.0.0",
     "elasticsearch": "^16.4.0",
     "eslint": "^6.5.1",
-    "mocha": "^6.2.1",
+    "mocha": "^7.0.1",
     "nyc": "^15.0.0",
     "semistandard": "^14.2.0",
     "sinon": "^8.0.0"
