@@ -54,7 +54,7 @@
     "@feathersjs/socketio": "^4.3.5",
     "@types/elasticsearch": "^5.0.35",
     "chai": "^4.2.0",
-    "dtslint": "^2.0.0",
+    "dtslint": "^3.0.0",
     "elasticsearch": "^16.4.0",
     "eslint": "^6.5.1",
     "mocha": "^6.2.1",
