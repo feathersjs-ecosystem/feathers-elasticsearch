@@ -1,6 +1,30 @@
-# Change Log
+# Changelog
+
+## [Unreleased](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/HEAD)
+
+[Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v3.1.1-0...HEAD)
+
+**Merged pull requests:**
+
+- Update sinon to the latest version 🚀 [\#111](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/111) ([greenkeeper[bot]](https://github.com/apps/greenkeeper))
+- Update dtslint to the latest version 🚀 [\#110](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/110) ([greenkeeper[bot]](https://github.com/apps/greenkeeper))
+- Update nyc to the latest version 🚀 [\#106](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/106) ([greenkeeper[bot]](https://github.com/apps/greenkeeper))
+- Update sinon to the latest version 🚀 [\#105](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/105) ([greenkeeper[bot]](https://github.com/apps/greenkeeper))
+- Update dtslint to the latest version 🚀 [\#102](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/102) ([greenkeeper[bot]](https://github.com/apps/greenkeeper))
+- Greenkeeper/dtslint 1.0.2 [\#101](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/101) ([daffl](https://github.com/daffl))
+- Greenkeeper/@feathersjs/adapter commons 4.3.8 [\#99](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/99) ([daffl](https://github.com/daffl))
+
+## [v3.1.1-0](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v3.1.1-0) (2021-11-10)
+
+[Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v3.1.0...v3.1.1-0)
+
+**Closed issues:**
+
+- An in-range update of @feathersjs/adapter-commons is breaking the build 🚨 [\#103](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/issues/103)
+- An in-range update of @feathersjs/adapter-commons is breaking the build 🚨 [\#98](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/issues/98)
 
 ## [v3.1.0](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v3.1.0) (2019-10-07)
+
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v3.0.0...v3.1.0)
 
 **Closed issues:**
@@ -16,6 +40,7 @@
 - Drop support for elasticsearch 2.4 [\#91](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/91) ([jciolek](https://github.com/jciolek))
 
 ## [v3.0.0](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v3.0.0) (2019-07-06)
+
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v2.1.0...v3.0.0)
 
 **Merged pull requests:**
@@ -23,6 +48,7 @@
 - Add TypeScript definitions and upgrade tests to Feathers 4 [\#90](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/90) ([daffl](https://github.com/daffl))
 
 ## [v2.1.0](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v2.1.0) (2019-06-27)
+
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v2.0.2...v2.1.0)
 
 **Merged pull requests:**
@@ -31,6 +57,7 @@
 - Update eslint to the latest version 🚀 [\#87](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/87) ([greenkeeper[bot]](https://github.com/apps/greenkeeper))
 
 ## [v2.0.2](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v2.0.2) (2019-05-14)
+
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v2.0.1...v2.0.2)
 
 **Closed issues:**
@@ -44,6 +71,7 @@
 - added $exists + $missing to whitelist [\#82](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/82) ([orgalaf](https://github.com/orgalaf))
 
 ## [v2.0.1](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v2.0.1) (2019-05-02)
+
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v2.0.0...v2.0.1)
 
 **Closed issues:**
@@ -56,6 +84,7 @@
 - Consider upsert param when setting the method in create-bulk [\#78](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/78) ([othersideofphase](https://github.com/othersideofphase))
 
 ## [v2.0.0](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v2.0.0) (2019-04-23)
+
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v1.4.0...v2.0.0)
 
 **Closed issues:**
@@ -74,6 +103,7 @@
 - Upgrade to @feathersjs/adapter-commons and latest common service features [\#68](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/68) ([daffl](https://github.com/daffl))
 
 ## [v1.4.0](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v1.4.0) (2018-12-16)
+
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v1.3.1...v1.4.0)
 
 **Closed issues:**
@@ -92,6 +122,7 @@
 - Update sinon to the latest version 🚀 [\#54](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/54) ([greenkeeper[bot]](https://github.com/apps/greenkeeper))
 
 ## [v1.3.1](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v1.3.1) (2018-06-03)
+
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v1.3.0...v1.3.1)
 
 **Closed issues:**
@@ -104,6 +135,7 @@
 - Update sinon to the latest version 🚀 [\#50](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/50) ([greenkeeper[bot]](https://github.com/apps/greenkeeper))
 
 ## [v1.3.0](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v1.3.0) (2018-05-16)
+
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v1.2.0...v1.3.0)
 
 **Merged pull requests:**
@@ -112,6 +144,7 @@
 - Update elasticsearch to the latest version 🚀 [\#48](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/48) ([greenkeeper[bot]](https://github.com/apps/greenkeeper))
 
 ## [v1.2.0](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v1.2.0) (2018-04-18)
+
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v1.1.1...v1.2.0)
 
 **Merged pull requests:**
@@ -119,6 +152,7 @@
 - Add support for $exists and $missing queries [\#46](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/46) ([DesignByOnyx](https://github.com/DesignByOnyx))
 
 ## [v1.1.1](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v1.1.1) (2018-04-15)
+
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v1.1.0...v1.1.1)
 
 **Merged pull requests:**
@@ -126,6 +160,7 @@
 - General maintenance [\#45](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/45) ([jciolek](https://github.com/jciolek))
 
 ## [v1.1.0](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v1.1.0) (2018-03-07)
+
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v1.0.0...v1.1.0)
 
 **Merged pull requests:**
@@ -135,6 +170,7 @@
 - Update semistandard to the latest version 🚀 [\#42](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/42) ([greenkeeper[bot]](https://github.com/apps/greenkeeper))
 
 ## [v1.0.0](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v1.0.0) (2017-12-01)
+
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v0.4.3...v1.0.0)
 
 **Merged pull requests:**
@@ -144,6 +180,7 @@
 - Add logic control to raw method and tests for corresponding codes [\#34](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/34) ([xwa130](https://github.com/xwa130))
 
 ## [v0.4.3](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v0.4.3) (2017-11-24)
+
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v0.4.2...v0.4.3)
 
 **Merged pull requests:**
@@ -154,6 +191,7 @@
 - Fixed a typo! [\#35](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/35) ([martineboh](https://github.com/martineboh))
 
 ## [v0.4.2](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v0.4.2) (2017-08-14)
+
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v0.4.1...v0.4.2)
 
 **Merged pull requests:**
@@ -161,6 +199,7 @@
 - make raw method robuster [\#31](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/31) ([xwa130](https://github.com/xwa130))
 
 ## [v0.4.1](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v0.4.1) (2017-08-11)
+
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v0.4.0...v0.4.1)
 
 **Merged pull requests:**
@@ -169,6 +208,7 @@
 - Update debug to the latest version 🚀 [\#32](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/32) ([greenkeeper[bot]](https://github.com/apps/greenkeeper))
 
 ## [v0.4.0](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v0.4.0) (2017-07-21)
+
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v0.3.1...v0.4.0)
 
 **Closed issues:**
@@ -180,6 +220,7 @@
 - add raw method [\#30](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/30) ([xwa130](https://github.com/xwa130))
 
 ## [v0.3.1](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v0.3.1) (2017-06-07)
+
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v0.3.0...v0.3.1)
 
 **Merged pull requests:**
@@ -188,6 +229,7 @@
 - export Service [\#25](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/25) ([christopherjbaker](https://github.com/christopherjbaker))
 
 ## [v0.3.0](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v0.3.0) (2017-06-03)
+
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v0.2.3...v0.3.0)
 
 **Closed issues:**
@@ -203,6 +245,7 @@
 - Update feathers-socketio to the latest version 🚀 [\#17](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/17) ([greenkeeper[bot]](https://github.com/apps/greenkeeper))
 
 ## [v0.2.3](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v0.2.3) (2017-05-06)
+
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v0.2.2...v0.2.3)
 
 **Implemented enhancements:**
@@ -217,6 +260,7 @@
 - Update semistandard to the latest version 🚀 [\#12](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/12) ([greenkeeper[bot]](https://github.com/apps/greenkeeper))
 
 ## [v0.2.2](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v0.2.2) (2017-04-15)
+
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v0.2.1...v0.2.2)
 
 **Closed issues:**
@@ -229,6 +273,7 @@
 - Add Greenkeeper badge 🌴 [\#10](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/10) ([greenkeeper[bot]](https://github.com/apps/greenkeeper))
 
 ## [v0.2.1](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v0.2.1) (2017-03-19)
+
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v0.2.0...v0.2.1)
 
 **Merged pull requests:**
@@ -238,6 +283,7 @@
 - Update all dependencies 🌴 [\#6](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/6) ([greenkeeperio-bot](https://github.com/greenkeeperio-bot))
 
 ## [v0.2.0](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v0.2.0) (2017-03-15)
+
 [Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/v0.1.0...v0.2.0)
 
 **Closed issues:**
@@ -247,11 +293,12 @@
 **Merged pull requests:**
 
 - Add full-text and term level queries specific to Elasticsearch [\#5](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/5) ([jciolek](https://github.com/jciolek))
-- Merged master to es-5.1-tests  [\#4](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/4) ([jciolek](https://github.com/jciolek))
-- Merged master to es-5.0-tests [\#3](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/3) ([jciolek](https://github.com/jciolek))
 - Update repo links in package.json. [\#2](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/pull/2) ([jciolek](https://github.com/jciolek))
 
 ## [v0.1.0](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/tree/v0.1.0) (2017-01-20)
 
+[Full Changelog](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/compare/3eb0825ab5bc5d9e3ca6bd285474e144791a2c76...v0.1.0)
 
-\* *This Change Log was automatically generated by [github_changelog_generator](https://github.com/skywinder/Github-Changelog-Generator)*
+
+
+\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/github-changelog-generator/github-changelog-generator)*
