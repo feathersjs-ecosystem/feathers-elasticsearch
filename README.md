@@ -8,9 +8,10 @@
 
 [feathers-elasticsearch](https://github.com/feathersjs-ecosystem/feathers-elasticsearch/) is a database adapter for [Elasticsearch](https://www.elastic.co/products/elasticsearch). This adapter is not using any ORM, it is dealing with the database directly through the [elasticsearch.js client](https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/quick-start.html).
 
+To install the prerelease run:
 
 ```bash
-$ npm install --save elasticsearch feathers-elasticsearch
+$ npm install --save @elastic/elasticsearch feathers-elasticsearch@pre
 ```
 
 > __Important:__ `feathers-elasticsearch` implements the [Feathers Common database adapter API](https://docs.feathersjs.com/api/databases/common.html) and [querying syntax](https://docs.feathersjs.com/api/databases/querying.html).
