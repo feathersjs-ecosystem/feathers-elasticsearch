@@ -21,13 +21,12 @@ The following bare-bones example will create a `messages` endpoint and connect t
 
 ```js
 const feathers = require('@feathersjs/feathers');
-const elasticsearch = require('elasticsearch');
+const elasticsearch = require('@elastic/elasticsearch');
 const service = require('feathers-elasticsearch');
 
 app.use('/messages', service({
   Model: new elasticsearch.Client({
-    host: 'localhost:9200',
-    apiVersion: '5.0'
+    node: 'http://localhost:9200'
   }),
   elasticsearch: {
     index: 'test',
@@ -61,12 +60,11 @@ const rest = require('@feathersjs/express/rest');
 const express = require('@feathersjs/express');
 
 const service = require('feathers-elasticsearch');
-const elasticsearch = require('elasticsearch');
+const elasticsearch = require('@elastic/elasticsearch');
 
 const messageService = service({
   Model: new elasticsearch.Client({
-    host: 'localhost:9200',
-    apiVersion: '6.0'
+    node: 'http://localhost:9200'
   }),
   paginate: {
     default: 10,
@@ -350,16 +348,14 @@ Let's consider the following mapping:
 ```javascript
 {
   mappings: {
-    doc: {
-      properties: {
-        text: {
-          type: 'text'
-        },
-        my_join_field: { 
-          type: 'join',
-          relations: {
-            post: 'comment' 
-          }
+    properties: {
+      text: {
+        type: 'text'
+      },
+      my_join_field: { 
+        type: 'join',
+        relations: {
+          post: 'comment' 
         }
       }
     }

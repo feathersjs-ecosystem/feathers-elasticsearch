@@ -1,10 +1,9 @@
 import { default as service } from 'feathers-elasticsearch';
-import * as elasticsearch from 'elasticsearch';
+import * as elasticsearch from '@elastic/elasticsearch';
 
 const messageService = service({
   Model: new elasticsearch.Client({
-    host: 'localhost:9200',
-    apiVersion: '6.0'
+    node: 'http://localhost:9200'
   }),
   paginate: {
     default: 10,

@@ -10,6 +10,7 @@ env:
   - ES_VERSION=6.8.0
   - ES_VERSION=7.0.1
   - ES_VERSION=7.1.1
+  - ES_VERSION=7.14.1
 addons:
   code_climate:
     repo_token: 'f7898d1d1ca2b76715bc35cc3ba880b35e3fbdc07c3aeb27ca98eecb5e5c064d'

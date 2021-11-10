@@ -1,4 +1,4 @@
-const elasticsearch = require('elasticsearch');
+const elasticsearch = require('@elastic/elasticsearch');
 const { getCompatVersion, getCompatProp } = require('../lib/utils/core');
 
 let apiVersion = null;
@@ -36,7 +36,7 @@ function getServiceConfig (serviceName) {
 
 function getApiVersion () {
   if (!apiVersion) {
-    const esVersion = process.env.ES_VERSION || '5.0.0';
+    const esVersion = process.env.ES_VERSION || '7.0.0';
     const [major, minor] = esVersion.split('.').slice(0, 2);
 
     // elasticsearch client 15.5 does not support api 5.0 - 5.5
@@ -49,8 +49,7 @@ function getApiVersion () {
 function getClient () {
   if (!client) {
     client = new elasticsearch.Client({
-      host: 'localhost:9200',
-      apiVersion: getApiVersion()
+      node: 'http://localhost:9200'
     });
   }
 
@@ -61,7 +60,7 @@ function deleteSchema () {
   const index = compatSchema.map(indexSetup => indexSetup.index);
 
   return getClient().indices.delete({ index })
-    .catch((err) => err.status !== 404 && Promise.reject(err));
+    .catch((err) => err.statusCode !== 404 && Promise.reject(err));
 }
 
 function createSchema () {

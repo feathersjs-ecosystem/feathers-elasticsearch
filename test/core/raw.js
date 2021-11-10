@@ -15,7 +15,7 @@ function raw (app, serviceName, esVersion) {
             }
           }
         }).then(results => {
-          expect(results.hits.hits.length).to.equal(1);
+          expect(results.body.hits.hits.length).to.equal(1);
         });
     });
 
@@ -31,7 +31,7 @@ function raw (app, serviceName, esVersion) {
             }
           }
         }).then(results => {
-          expect(results.hits.hits.length).to.equal(1);
+          expect(results.body.hits.hits.length).to.equal(1);
         });
     });
 
@@ -45,7 +45,7 @@ function raw (app, serviceName, esVersion) {
       return app.service('aka')
         .raw('indices.getMapping', {})
         .then(results => {
-          expect(results).to.have.nested.property(
+          expect(results.body).to.have.nested.property(
             ...getCompatProp(mappings, esVersion)
           );
         });

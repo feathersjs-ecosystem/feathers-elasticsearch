@@ -34,7 +34,7 @@
     "changelog": "github_changelog_generator && git add CHANGELOG.md && git commit -am \"Updating changelog\"",
     "lint": "eslint --fix .",
     "dtslint": "dtslint types",
-    "mocha": "mocha --opts mocha.opts",
+    "mocha": "mocha --recursive test/",
     "coverage": "nyc npm run mocha",
     "test": "npm run lint && npm run dtslint && npm run coverage"
   },
@@ -42,24 +42,23 @@
     "lib": "lib"
   },
   "dependencies": {
-    "@feathersjs/adapter-commons": "^4.3.8",
-    "@feathersjs/commons": "^4.3.0",
-    "@feathersjs/errors": "^4.3.4",
-    "debug": "^4.1.1"
+    "@feathersjs/adapter-commons": "^4.5.11",
+    "@feathersjs/commons": "^4.5.11",
+    "@feathersjs/errors": "^4.5.11",
+    "debug": "^4.3.2"
   },
   "devDependencies": {
-    "@feathersjs/adapter-tests": "^4.3.4",
-    "@feathersjs/express": "^4.3.5",
-    "@feathersjs/feathers": "^4.3.4",
-    "@feathersjs/socketio": "^4.3.5",
-    "@types/elasticsearch": "^5.0.35",
-    "chai": "^4.2.0",
-    "dtslint": "^3.0.0",
-    "elasticsearch": "^16.4.0",
-    "eslint": "^6.5.1",
-    "mocha": "^6.2.1",
-    "nyc": "^15.0.0",
-    "semistandard": "^14.2.0",
-    "sinon": "^9.0.0"
+    "@elastic/elasticsearch": "^7.14.1",
+    "@feathersjs/adapter-tests": "^4.5.11",
+    "@feathersjs/express": "^4.5.11",
+    "@feathersjs/feathers": "^4.5.11",
+    "@feathersjs/socketio": "^4.5.11",
+    "chai": "^4.3.4",
+    "dtslint": "^4.1.6",
+    "eslint": "^7.32.0",
+    "mocha": "^9.1.1",
+    "nyc": "^15.1.0",
+    "semistandard": "^16.0.1",
+    "sinon": "^11.1.2"
   }
 }

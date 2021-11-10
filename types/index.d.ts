@@ -1,7 +1,7 @@
 // TypeScript Version: 3.0
 import { Params, Paginated, Id, NullableId, Query, Hook } from '@feathersjs/feathers';
 import { AdapterService, ServiceOptions, InternalServiceMethods } from '@feathersjs/adapter-commons';
-import { Client } from 'elasticsearch';
+import { Client } from '@elastic/elasticsearch';
 
 export interface ElasticsearchServiceOptions extends ServiceOptions {
   Model: Client;
